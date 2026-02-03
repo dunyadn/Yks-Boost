@@ -563,8 +563,8 @@ const styles = StyleSheet.create({
     borderColor: Colors.dark.border,
   },
   questionText: {
-    fontSize: 14,
-    lineHeight: 22,
+    fontSize: 16,
+    lineHeight: 24,
     color: Colors.dark.text,
   },
   optionsContainer: {
