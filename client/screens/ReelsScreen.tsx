@@ -269,7 +269,6 @@ function OptionButton({
                 : Colors.dark.text,
             },
           ]}
-          numberOfLines={2}
         >
           {option.text}
         </ThemedText>
