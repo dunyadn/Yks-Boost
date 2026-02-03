@@ -332,7 +332,7 @@ function ReelCard({
             label={`#${question.examType}`}
             variant={question.examType === "TYT" ? "primary" : "secondary"}
           />
-          <Tag label={`#${question.subject}`} variant="outline" />
+          <Tag label={`#${question.subject}`} variant="accent" />
           <View style={styles.questionNumber}>
             <ThemedText style={styles.questionNumberText}>
               Soru {question.questionNumber}
