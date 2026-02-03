@@ -6,9 +6,10 @@ import {
   FlatList,
   ViewToken,
   Pressable,
+  ScrollView,
+  Platform,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { Image } from "expo-image";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import Animated, {
@@ -16,7 +17,7 @@ import Animated, {
   useSharedValue,
   withSpring,
   FadeIn,
-  SlideInRight,
+  SlideInUp,
 } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -34,9 +35,9 @@ interface Option {
 
 interface Question {
   id: string;
+  questionNumber: number;
   questionText: string;
   options: Option[];
-  imageUrl?: string;
   subject: string;
   examType: "TYT" | "AYT";
   likes: number;
@@ -45,7 +46,6 @@ interface Question {
   liked: boolean;
   author: {
     name: string;
-    avatar?: string;
     username: string;
   };
   solution?: string;
@@ -54,51 +54,54 @@ interface Question {
 const MOCK_REELS: Question[] = [
   {
     id: "1",
-    questionText: "f(x) = x³ - 3x² + 2x fonksiyonunun [0,2] aralığındaki en büyük değeri kaçtır?",
+    questionNumber: 1,
+    questionText: "İnsanın gelişiminde edebiyatın etkisinin dolaylı ve kısıtlı olduğunu düşünmeye yatkınız maalesef. Edebiyatın sağaltıcı, kurtarıcı veya dönüştürücü yanını giderek daha az dile getiriyoruz.\n\nBu parçada altı çizili sözcüğü anlamca karşılayabilecek bir kullanım aşağıdakilerden hangisinde vardır?",
     options: [
-      { label: "A", text: "0", isCorrect: false },
-      { label: "B", text: "1", isCorrect: false },
-      { label: "C", text: "2", isCorrect: true },
-      { label: "D", text: "3", isCorrect: false },
-      { label: "E", text: "4", isCorrect: false },
+      { label: "A", text: "Hapsolduğu dar çevre içerisinden çıkarmak", isCorrect: false },
+      { label: "B", text: "Sanatın tedavi edici bir gücü olduğunu ispatlıyor", isCorrect: true },
+      { label: "C", text: "Gerçeklikten uzaklaşmasına neden oluyor", isCorrect: false },
+      { label: "D", text: "Yetisini kazandığını düşünmek istiyor", isCorrect: false },
+      { label: "E", text: "Yeni arayışlara girdiğini gösteriyor", isCorrect: false },
     ],
-    subject: "Matematik",
-    examType: "AYT",
+    subject: "Türkçe",
+    examType: "TYT",
     likes: 234,
     comments: 45,
     saved: false,
     liked: false,
-    author: { name: "Matematik Pro", username: "mathpro" },
-    solution: "Türev alarak kritik noktaları buluyoruz: f'(x) = 3x² - 6x + 2 = 0. Cevap C şıkkıdır.",
+    author: { name: "TYT Türkçe", username: "tytturkce" },
+    solution: "'Sağaltıcı' kelimesi 'tedavi edici, iyileştirici' anlamına gelir. B şıkkındaki 'tedavi edici' ifadesi bu anlama en yakın kullanımdır.",
   },
   {
     id: "2",
-    questionText: "Bir cisim 20 m/s hızla yukarı doğru atılıyor. Cismin maksimum yüksekliğe ulaşma süresi kaç saniyedir? (g = 10 m/s²)",
+    questionNumber: 3,
+    questionText: "Yönetmenin son filmi, olacakların tahmin edilememesiyle önceki eserlerinden ayrılıyor. Bu filmi izlerken kavuşturduğumuz kolları çözmemiz gerekiyor.\n\nBu parçada altı çizili sözle anlatılmak istenen aşağıdakilerden hangisidir?",
     options: [
-      { label: "A", text: "1", isCorrect: false },
-      { label: "B", text: "2", isCorrect: true },
-      { label: "C", text: "3", isCorrect: false },
-      { label: "D", text: "4", isCorrect: false },
-      { label: "E", text: "5", isCorrect: false },
+      { label: "A", text: "Örtük anlamları ortaya çıkarmak için ön hazırlık yapma", isCorrect: false },
+      { label: "B", text: "Filmde verilmek isteneni anlamak için çaba harcama", isCorrect: true },
+      { label: "C", text: "Hayal gücüyle kurguya katkıda bulunmaya çalışma", isCorrect: false },
+      { label: "D", text: "Kişiden kişiye değişen mesajlar vermeye uğraşma", isCorrect: false },
+      { label: "E", text: "İçeriği çözümleyip başkalarına iletme işini üstlenme", isCorrect: false },
     ],
-    subject: "Fizik",
+    subject: "Türkçe",
     examType: "TYT",
     likes: 189,
     comments: 32,
-    saved: true,
-    liked: true,
-    author: { name: "Fizik Ustası", username: "fizikusta" },
-    solution: "v = v₀ - gt formülünden t = v₀/g = 20/10 = 2 saniye. Cevap B şıkkıdır.",
+    saved: false,
+    liked: false,
+    author: { name: "Paragraf Ustası", username: "paragrafusta" },
+    solution: "'Kavuşturduğumuz kolları çözmek' deyimi, rahat bir şekilde izlemekten vazgeçip dikkatle anlamaya çalışmak anlamına gelir. B şıkkı doğrudur.",
   },
   {
     id: "3",
-    questionText: "Aşağıdaki cümlelerin hangisinde bir yazım yanlışı vardır?",
+    questionNumber: 6,
+    questionText: "Balinalar, beyinlerindeki manyetik özelliğe sahip kristallerle yönlerini bulur. Dünya'nın manyetik alanındaki değişimler, balinaların karaya vurmalarına sebep olabilir.\n\nBu iki cümlede ifade edilenlerin doğru birleştirilmiş hâli hangisidir?",
     options: [
-      { label: "A", text: "Herkes kendi işine baksın.", isCorrect: false },
-      { label: "B", text: "Yarın saat sekizde buluşalım.", isCorrect: false },
-      { label: "C", text: "Bu kitabı her kes okumalı.", isCorrect: true },
-      { label: "D", text: "Çocuklar parkta oynuyor.", isCorrect: false },
-      { label: "E", text: "Hava çok güzel bugün.", isCorrect: false },
+      { label: "A", text: "Balinalar kristallerle yönlerini buldukları için manyetik değişimler karaya vurmalarına yol açabilir", isCorrect: true },
+      { label: "B", text: "Balinaların karaya vurma nedenleri manyetik değişimlerle açıklanabilir", isCorrect: false },
+      { label: "C", text: "Kristallerle yön bulan balinaların karaya vurması mümkün değildir", isCorrect: false },
+      { label: "D", text: "Manyetik alan değişimleri balinaların yön bulmasını kolaylaştırır", isCorrect: false },
+      { label: "E", text: "Balinalar manyetik alan sayesinde karaya vurmaktan korunur", isCorrect: false },
     ],
     subject: "Türkçe",
     examType: "TYT",
@@ -106,46 +109,68 @@ const MOCK_REELS: Question[] = [
     comments: 28,
     saved: false,
     liked: false,
-    author: { name: "Türkçe Hocası", username: "turkcehocasi" },
-    solution: "C şıkkında 'her kes' yazımı yanlıştır. Doğrusu 'herkes' şeklinde bitişik yazılır.",
+    author: { name: "Dil Bilgisi", username: "dilbilgisi" },
+    solution: "İki cümle arasında neden-sonuç ilişkisi kurulmalıdır. Balinalar manyetik kristallerle yön bulduğu için, manyetik alan değişince yönlerini kaybedip karaya vururlar. A şıkkı doğrudur.",
   },
   {
     id: "4",
-    questionText: "Osmanlı Devleti'nde Tanzimat Fermanı hangi padişah döneminde ilan edilmiştir?",
+    questionNumber: 1,
+    questionText: "f(x) = 2x³ - 3x² - 12x + 5 fonksiyonunun azalan olduğu aralık aşağıdakilerden hangisidir?",
     options: [
-      { label: "A", text: "II. Mahmut", isCorrect: false },
-      { label: "B", text: "Abdülmecit", isCorrect: true },
-      { label: "C", text: "Abdülaziz", isCorrect: false },
-      { label: "D", text: "II. Abdülhamit", isCorrect: false },
-      { label: "E", text: "V. Mehmet", isCorrect: false },
+      { label: "A", text: "(-∞, -1)", isCorrect: false },
+      { label: "B", text: "(-1, 2)", isCorrect: true },
+      { label: "C", text: "(2, +∞)", isCorrect: false },
+      { label: "D", text: "(-∞, 2)", isCorrect: false },
+      { label: "E", text: "(-1, +∞)", isCorrect: false },
     ],
-    subject: "Tarih",
+    subject: "Matematik",
+    examType: "AYT",
+    likes: 312,
+    comments: 67,
+    saved: true,
+    liked: true,
+    author: { name: "Matematik Pro", username: "mathpro" },
+    solution: "f'(x) = 6x² - 6x - 12 = 6(x² - x - 2) = 6(x-2)(x+1)\nf'(x) < 0 olduğu aralık: -1 < x < 2\nCevap: B şıkkı (-1, 2)",
+  },
+  {
+    id: "5",
+    questionNumber: 8,
+    questionText: "Bir cisim 40 m/s hızla yukarı doğru atılıyor. Cismin 3 saniye sonraki hızı kaç m/s'dir?\n(g = 10 m/s²)",
+    options: [
+      { label: "A", text: "10 m/s yukarı", isCorrect: true },
+      { label: "B", text: "10 m/s aşağı", isCorrect: false },
+      { label: "C", text: "20 m/s yukarı", isCorrect: false },
+      { label: "D", text: "30 m/s aşağı", isCorrect: false },
+      { label: "E", text: "0", isCorrect: false },
+    ],
+    subject: "Fizik",
     examType: "TYT",
     likes: 98,
     comments: 15,
     saved: false,
     liked: false,
-    author: { name: "Tarih Uzmanı", username: "tarihuzmani" },
-    solution: "Tanzimat Fermanı 1839'da Sultan Abdülmecit döneminde ilan edilmiştir. Cevap B şıkkıdır.",
+    author: { name: "Fizik Hocası", username: "fizikhocasi" },
+    solution: "v = v₀ - gt\nv = 40 - 10×3 = 40 - 30 = 10 m/s\nHız pozitif olduğundan cisim hâlâ yukarı doğru hareket ediyor.\nCevap: A şıkkı",
   },
   {
-    id: "5",
-    questionText: "NH₃ molekülünün geometrik şekli aşağıdakilerden hangisidir?",
+    id: "6",
+    questionNumber: 12,
+    questionText: "NH₃ + HCl → NH₄Cl tepkimesinde NH₃ molekülü hangi görevi üstlenir?",
     options: [
-      { label: "A", text: "Doğrusal", isCorrect: false },
-      { label: "B", text: "Üçgen düzlem", isCorrect: false },
-      { label: "C", text: "Üçgen piramit", isCorrect: true },
-      { label: "D", text: "Dörtyüzlü", isCorrect: false },
-      { label: "E", text: "Kare düzlem", isCorrect: false },
+      { label: "A", text: "Asit", isCorrect: false },
+      { label: "B", text: "Baz", isCorrect: true },
+      { label: "C", text: "Tuz", isCorrect: false },
+      { label: "D", text: "İndirgen", isCorrect: false },
+      { label: "E", text: "Yükseltgen", isCorrect: false },
     ],
     subject: "Kimya",
-    examType: "AYT",
+    examType: "TYT",
     likes: 145,
     comments: 22,
     saved: false,
     liked: false,
-    author: { name: "Kimya Profesörü", username: "kimyaprof" },
-    solution: "NH₃'te N atomu 3 bağ çifti ve 1 ortaklanmamış elektron çiftine sahiptir → Üçgen piramit. Cevap C şıkkıdır.",
+    author: { name: "Kimya Uzmanı", username: "kimyauzmani" },
+    solution: "NH₃ (amonyak) Brønsted-Lowry teorisine göre proton (H⁺) alıcısıdır, yani baz özelliği gösterir. HCl'den H⁺ alarak NH₄⁺ oluşturur.\nCevap: B şıkkı",
   },
 ];
 
@@ -167,20 +192,20 @@ function OptionButton({
   }));
 
   const handlePress = () => {
-    scale.value = withSpring(0.95, { damping: 10, stiffness: 200 });
+    scale.value = withSpring(0.97, { damping: 15, stiffness: 300 });
     setTimeout(() => {
-      scale.value = withSpring(1, { damping: 15, stiffness: 150 });
-    }, 100);
+      scale.value = withSpring(1, { damping: 15, stiffness: 200 });
+    }, 80);
     onPress();
   };
 
   const getBackgroundColor = () => {
     if (revealed) {
-      if (option.isCorrect) return Colors.dark.success + "30";
-      if (selected && !option.isCorrect) return Colors.dark.accent + "30";
+      if (option.isCorrect) return Colors.dark.success + "25";
+      if (selected && !option.isCorrect) return Colors.dark.accent + "25";
       return Colors.dark.backgroundSecondary;
     }
-    if (selected) return Colors.dark.primary + "30";
+    if (selected) return Colors.dark.primary + "20";
     return Colors.dark.backgroundSecondary;
   };
 
@@ -194,12 +219,11 @@ function OptionButton({
     return Colors.dark.border;
   };
 
-  const getTextColor = () => {
-    if (revealed) {
-      if (option.isCorrect) return Colors.dark.success;
-      if (selected && !option.isCorrect) return Colors.dark.accent;
-    }
-    return Colors.dark.text;
+  const getLabelColor = () => {
+    if (revealed && option.isCorrect) return Colors.dark.success;
+    if (revealed && selected && !option.isCorrect) return Colors.dark.accent;
+    if (selected) return Colors.dark.primary;
+    return Colors.dark.textSecondary;
   };
 
   return (
@@ -218,28 +242,33 @@ function OptionButton({
           style={[
             styles.optionLabel,
             {
-              backgroundColor: selected || (revealed && option.isCorrect)
-                ? getBorderColor()
-                : Colors.dark.backgroundTertiary,
+              borderColor: getLabelColor(),
+              backgroundColor: (selected || (revealed && option.isCorrect)) 
+                ? getLabelColor() + "20" 
+                : "transparent",
             },
           ]}
         >
           <ThemedText
             style={[
               styles.optionLabelText,
-              {
-                color:
-                  selected || (revealed && option.isCorrect)
-                    ? Colors.dark.backgroundRoot
-                    : Colors.dark.text,
-              },
+              { color: getLabelColor() },
             ]}
           >
             {option.label}
           </ThemedText>
         </View>
         <ThemedText
-          style={[styles.optionText, { color: getTextColor() }]}
+          style={[
+            styles.optionText,
+            {
+              color: revealed && option.isCorrect
+                ? Colors.dark.success
+                : revealed && selected && !option.isCorrect
+                ? Colors.dark.accent
+                : Colors.dark.text,
+            },
+          ]}
           numberOfLines={2}
         >
           {option.text}
@@ -252,12 +281,14 @@ function OptionButton({
 function ReelCard({
   question,
   isActive,
+  tabBarHeight,
   onLike,
   onSave,
   onComment,
 }: {
   question: Question;
   isActive: boolean;
+  tabBarHeight: number;
   onLike: () => void;
   onSave: () => void;
   onComment: () => void;
@@ -272,106 +303,114 @@ function ReelCard({
     setSelectedOption(label);
     setTimeout(() => {
       setRevealed(true);
+      const isCorrect = question.options.find((o) => o.label === label)?.isCorrect;
       Haptics.notificationAsync(
-        question.options.find((o) => o.label === label)?.isCorrect
+        isCorrect
           ? Haptics.NotificationFeedbackType.Success
           : Haptics.NotificationFeedbackType.Error
       );
-    }, 500);
+    }, 400);
   };
 
   const handleShowSolution = () => {
-    if (!selectedOption) {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      setRevealed(true);
-    }
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    setRevealed(true);
   };
+
+  const contentPaddingBottom = tabBarHeight + 70;
 
   return (
     <View style={[styles.reelCard, { height: SCREEN_HEIGHT }]}>
       <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.6)"]}
+        colors={["rgba(10,10,15,0.95)", "rgba(10,10,15,0.7)", "rgba(10,10,15,0.95)"]}
+        locations={[0, 0.5, 1]}
         style={styles.gradient}
       />
 
-      <View
-        style={[styles.contentContainer, { paddingTop: insets.top + Spacing.xl }]}
-      >
-        <Animated.View entering={FadeIn.delay(100)} style={styles.tagContainer}>
+      <View style={[styles.headerContainer, { paddingTop: insets.top + Spacing.sm }]}>
+        <View style={styles.tagRow}>
           <Tag
-            label={`#${question.examType} ${question.subject}`}
+            label={`#${question.examType}`}
             variant={question.examType === "TYT" ? "primary" : "secondary"}
           />
-        </Animated.View>
-
-        <View style={styles.questionContainer}>
-          <View style={styles.questionTextContainer}>
-            <ThemedText style={styles.questionText}>
-              {question.questionText}
+          <Tag label={`#${question.subject}`} variant="outline" />
+          <View style={styles.questionNumber}>
+            <ThemedText style={styles.questionNumberText}>
+              Soru {question.questionNumber}
             </ThemedText>
           </View>
-
-          <View style={styles.optionsContainer}>
-            {question.options.map((option, index) => (
-              <Animated.View
-                key={option.label}
-                entering={FadeIn.delay(150 + index * 50)}
-              >
-                <OptionButton
-                  option={option}
-                  selected={selectedOption === option.label}
-                  revealed={revealed}
-                  onPress={() => handleOptionPress(option.label)}
-                />
-              </Animated.View>
-            ))}
-          </View>
-
-          {revealed && question.solution ? (
-            <Animated.View
-              entering={SlideInRight.duration(300)}
-              style={styles.solutionContainer}
-            >
-              <ThemedText style={styles.solutionTitle}>Çözüm</ThemedText>
-              <ThemedText style={styles.solutionText}>
-                {question.solution}
-              </ThemedText>
-            </Animated.View>
-          ) : null}
         </View>
       </View>
 
-      <View style={[styles.actionsContainer, { bottom: insets.bottom + 100 }]}>
-        <Animated.View entering={SlideInRight.delay(100)}>
-          <ReelsActionButton
-            icon={question.liked ? "heart" : "heart"}
-            label={question.likes}
-            active={question.liked}
-            activeColor={Colors.dark.accent}
-            onPress={onLike}
-          />
-        </Animated.View>
-        <Animated.View entering={SlideInRight.delay(150)}>
-          <ReelsActionButton
-            icon="message-circle"
-            label={question.comments}
-            onPress={onComment}
-          />
-        </Animated.View>
-        <Animated.View entering={SlideInRight.delay(200)}>
-          <ReelsActionButton
-            icon={question.saved ? "bookmark" : "bookmark"}
-            active={question.saved}
-            activeColor={Colors.dark.primary}
-            onPress={onSave}
-          />
-        </Animated.View>
-        <Animated.View entering={SlideInRight.delay(250)}>
-          <ReelsActionButton icon="share" onPress={() => {}} />
-        </Animated.View>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingBottom: contentPaddingBottom },
+        ]}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        <View style={styles.questionTextContainer}>
+          <ThemedText style={styles.questionText}>
+            {question.questionText}
+          </ThemedText>
+        </View>
+
+        <View style={styles.optionsContainer}>
+          {question.options.map((option, index) => (
+            <Animated.View
+              key={option.label}
+              entering={FadeIn.delay(100 + index * 40)}
+            >
+              <OptionButton
+                option={option}
+                selected={selectedOption === option.label}
+                revealed={revealed}
+                onPress={() => handleOptionPress(option.label)}
+              />
+            </Animated.View>
+          ))}
+        </View>
+
+        {revealed && question.solution ? (
+          <Animated.View
+            entering={SlideInUp.duration(300)}
+            style={styles.solutionContainer}
+          >
+            <View style={styles.solutionHeader}>
+              <ThemedText style={styles.solutionTitle}>Çözüm</ThemedText>
+            </View>
+            <ThemedText style={styles.solutionText}>
+              {question.solution}
+            </ThemedText>
+          </Animated.View>
+        ) : null}
+      </ScrollView>
+
+      <View style={[styles.actionsContainer, { bottom: tabBarHeight + 80 }]}>
+        <ReelsActionButton
+          icon="heart"
+          label={question.likes}
+          active={question.liked}
+          activeColor={Colors.dark.accent}
+          onPress={onLike}
+        />
+        <ReelsActionButton
+          icon="message-circle"
+          label={question.comments}
+          onPress={onComment}
+        />
+        <ReelsActionButton
+          icon="bookmark"
+          active={question.saved}
+          activeColor={Colors.dark.primary}
+          onPress={onSave}
+        />
+        <ReelsActionButton icon="share" onPress={() => {}} />
       </View>
 
-      <View style={[styles.bottomContainer, { bottom: insets.bottom + Spacing.xl }]}>
+      <View style={[styles.bottomContainer, { bottom: tabBarHeight + Spacing.lg }]}>
         <View style={styles.authorInfo}>
           <View style={styles.authorAvatar}>
             <ThemedText style={styles.authorInitial}>
@@ -400,6 +439,7 @@ export default function ReelsScreen() {
   const [questions, setQuestions] = useState(MOCK_REELS);
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
+  const tabBarHeight = Platform.select({ ios: 88, android: 70, web: 70 }) || 70;
 
   const onViewableItemsChanged = useCallback(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -437,12 +477,13 @@ export default function ReelsScreen() {
       <ReelCard
         question={item}
         isActive={index === activeIndex}
+        tabBarHeight={tabBarHeight}
         onLike={() => handleLike(item.id)}
         onSave={() => handleSave(item.id)}
         onComment={() => {}}
       />
     ),
-    [activeIndex, handleLike, handleSave]
+    [activeIndex, handleLike, handleSave, tabBarHeight]
   );
 
   return (
@@ -475,96 +516,121 @@ const styles = StyleSheet.create({
   },
   reelCard: {
     width: SCREEN_WIDTH,
-    backgroundColor: Colors.dark.backgroundDefault,
+    backgroundColor: Colors.dark.backgroundRoot,
   },
   gradient: {
     ...StyleSheet.absoluteFillObject,
-    zIndex: 1,
+    zIndex: 0,
   },
-  contentContainer: {
-    flex: 1,
-    paddingHorizontal: Spacing.lg,
-    zIndex: 2,
+  headerContainer: {
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    paddingHorizontal: Spacing.md,
+    zIndex: 10,
   },
-  tagContainer: {
+  tagRow: {
     flexDirection: "row",
-    marginBottom: Spacing.lg,
+    alignItems: "center",
+    gap: Spacing.xs,
   },
-  questionContainer: {
+  questionNumber: {
+    marginLeft: "auto",
+    backgroundColor: Colors.dark.backgroundTertiary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.xs,
+  },
+  questionNumberText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: Colors.dark.textSecondary,
+  },
+  scrollContainer: {
     flex: 1,
-    justifyContent: "flex-start",
-    paddingBottom: 180,
+    marginTop: 80,
+    paddingHorizontal: Spacing.md,
+  },
+  scrollContent: {
+    paddingTop: Spacing.sm,
   },
   questionTextContainer: {
-    backgroundColor: "rgba(26, 26, 46, 0.95)",
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    marginBottom: Spacing.lg,
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.dark.border,
   },
   questionText: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: Colors.dark.text,
-    fontWeight: "500",
-  },
-  optionsContainer: {
-    gap: Spacing.sm,
-  },
-  optionButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: Colors.dark.backgroundSecondary,
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    borderWidth: 1.5,
-    gap: Spacing.md,
-  },
-  optionLabel: {
-    width: 32,
-    height: 32,
-    borderRadius: BorderRadius.sm,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  optionLabelText: {
-    fontSize: 14,
-    fontWeight: "700",
-  },
-  optionText: {
-    fontSize: 14,
-    flex: 1,
-  },
-  solutionContainer: {
-    marginTop: Spacing.lg,
-    backgroundColor: "rgba(0, 229, 255, 0.1)",
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.dark.primary,
-  },
-  solutionTitle: {
-    fontSize: 14,
-    fontWeight: "700",
-    color: Colors.dark.primary,
-    marginBottom: Spacing.xs,
-  },
-  solutionText: {
     fontSize: 14,
     lineHeight: 22,
     color: Colors.dark.text,
   },
+  optionsContainer: {
+    gap: Spacing.xs,
+  },
+  optionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: BorderRadius.sm,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.sm,
+    borderWidth: 1,
+    gap: Spacing.sm,
+    minHeight: 44,
+  },
+  optionLabel: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    borderWidth: 1.5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  optionLabelText: {
+    fontSize: 12,
+    fontWeight: "700",
+  },
+  optionText: {
+    fontSize: 13,
+    flex: 1,
+    lineHeight: 18,
+  },
+  solutionContainer: {
+    marginTop: Spacing.md,
+    backgroundColor: Colors.dark.primary + "15",
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.dark.primary + "50",
+  },
+  solutionHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: Spacing.xs,
+  },
+  solutionTitle: {
+    fontSize: 13,
+    fontWeight: "700",
+    color: Colors.dark.primary,
+  },
+  solutionText: {
+    fontSize: 13,
+    lineHeight: 20,
+    color: Colors.dark.text,
+  },
   actionsContainer: {
     position: "absolute",
-    right: Spacing.md,
-    gap: Spacing.md,
+    right: Spacing.sm,
+    gap: Spacing.sm,
     zIndex: 10,
   },
   bottomContainer: {
     position: "absolute",
-    left: Spacing.lg,
-    right: Spacing.lg,
+    left: Spacing.md,
+    right: 60,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
@@ -573,38 +639,38 @@ const styles = StyleSheet.create({
   authorInfo: {
     flexDirection: "row",
     alignItems: "center",
-    gap: Spacing.md,
+    gap: Spacing.sm,
   },
   authorAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: BorderRadius.full,
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     backgroundColor: Colors.dark.secondary,
     alignItems: "center",
     justifyContent: "center",
   },
   authorInitial: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "700",
     color: Colors.dark.text,
   },
   authorName: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "600",
     color: Colors.dark.text,
   },
   authorUsername: {
-    fontSize: 11,
+    fontSize: 10,
     color: Colors.dark.textSecondary,
   },
   solutionButton: {
     backgroundColor: Colors.dark.primary,
-    paddingHorizontal: Spacing.lg,
-    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs + 2,
     borderRadius: BorderRadius.full,
   },
   solutionButtonText: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "600",
     color: Colors.dark.backgroundRoot,
   },
