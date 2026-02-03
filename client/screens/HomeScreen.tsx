@@ -63,6 +63,10 @@ export default function HomeScreen() {
   const fetchStats = async () => {
     try {
       const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`);
+      if (!response.ok) {
+        console.error("Failed to fetch stats:", response.status);
+        return;
+      }
       const data = await response.json();
       setStats(data);
     } catch (error) {

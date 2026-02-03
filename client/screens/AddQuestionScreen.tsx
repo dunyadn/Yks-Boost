@@ -37,6 +37,13 @@ const SUBJECTS = [
 
 const EXAM_TYPES = ["TYT", "AYT"];
 
+const JSON_EXAMPLE = `{
+  "content": "Soru metni buraya",
+  "options": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
+  "correctAnswer": "A",
+  "category": "Matematik"
+}`;
+
 export default function AddQuestionScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -141,12 +148,13 @@ export default function AddQuestionScreen() {
         } catch (e) {
           Alert.alert(
             "JSON Hatası",
-            "Geçersiz JSON formatı. Lütfen formatınızı kontrol edin.\n\nÖrnek:\n{\n  \"content\": \"Soru metni\",\n  \"options\": [\"A\", \"B\", \"C\", \"D\"],\n  \"correctAnswer\": \"A\",\n  \"category\": \"Matematik\"\n}"
+            `Geçersiz JSON formatı. Lütfen formatınızı kontrol edin.\n\nÖrnek:\n${JSON_EXAMPLE}`
           );
           return;
         }
       } else {
         // Standard Mode - use form fields
+        // Note: In Form mode, options are placeholders. For proper questions with custom options, use JSON mode.
         if (!questionText.trim()) {
           Alert.alert("Hata", "Lütfen bir soru yazın.");
           return;
@@ -220,12 +228,7 @@ export default function AddQuestionScreen() {
             </ThemedText>
             <View style={styles.jsonExample}>
               <ThemedText style={styles.jsonExampleText}>
-                {`{
-  "content": "Soru metni buraya",
-  "options": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
-  "correctAnswer": "A",
-  "category": "Matematik"
-}`}
+                {JSON_EXAMPLE}
               </ThemedText>
             </View>
             <TextInput
