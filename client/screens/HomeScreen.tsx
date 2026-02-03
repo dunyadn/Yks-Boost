@@ -64,7 +64,7 @@ export default function HomeScreen() {
     try {
       const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`);
       if (!response.ok) {
-        console.error("Failed to fetch stats:", response.status);
+        console.error("Failed to fetch stats:", response.status, response.statusText);
         return;
       }
       const data = await response.json();

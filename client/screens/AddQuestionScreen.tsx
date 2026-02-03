@@ -162,7 +162,7 @@ export default function AddQuestionScreen() {
 
         payload = {
           content: questionText,
-          options: ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
+          options: ["A", "B", "C", "D"],
           correctAnswer: "A",
           category: selectedSubject || "general"
         };
