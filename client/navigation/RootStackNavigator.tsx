@@ -1,12 +1,16 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+
 import MainTabNavigator from "@/navigation/MainTabNavigator";
-import ModalScreen from "@/screens/ModalScreen";
+import AddQuestionScreen from "@/screens/AddQuestionScreen";
+import CommunityScreen from "@/screens/CommunityScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
+import { Colors } from "@/constants/theme";
 
 export type RootStackParamList = {
   Main: undefined;
-  Modal: undefined;
+  AddQuestion: undefined;
+  Community: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -15,18 +19,33 @@ export default function RootStackNavigator() {
   const screenOptions = useScreenOptions();
 
   return (
-    <Stack.Navigator screenOptions={screenOptions}>
+    <Stack.Navigator
+      screenOptions={{
+        ...screenOptions,
+        contentStyle: {
+          backgroundColor: Colors.dark.backgroundRoot,
+        },
+      }}
+    >
       <Stack.Screen
         name="Main"
         component={MainTabNavigator}
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Modal"
-        component={ModalScreen}
+        name="AddQuestion"
+        component={AddQuestionScreen}
         options={{
           presentation: "modal",
-          headerTitle: "Modal",
+          headerTitle: "Yeni Soru",
+          headerTintColor: Colors.dark.text,
+        }}
+      />
+      <Stack.Screen
+        name="Community"
+        component={CommunityScreen}
+        options={{
+          headerTitle: "Topluluk",
         }}
       />
     </Stack.Navigator>

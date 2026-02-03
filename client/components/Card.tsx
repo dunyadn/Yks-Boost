@@ -8,8 +8,7 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { Spacing, BorderRadius } from "@/constants/theme";
+import { Colors, Spacing, BorderRadius } from "@/constants/theme";
 
 interface CardProps {
   elevation?: number;
@@ -25,22 +24,18 @@ const springConfig: WithSpringConfig = {
   mass: 0.3,
   stiffness: 150,
   overshootClamping: true,
-  energyThreshold: 0.001,
 };
 
-const getBackgroundColorForElevation = (
-  elevation: number,
-  theme: any,
-): string => {
+const getBackgroundColorForElevation = (elevation: number): string => {
   switch (elevation) {
     case 1:
-      return theme.backgroundDefault;
+      return Colors.dark.backgroundDefault;
     case 2:
-      return theme.backgroundSecondary;
+      return Colors.dark.backgroundSecondary;
     case 3:
-      return theme.backgroundTertiary;
+      return Colors.dark.backgroundTertiary;
     default:
-      return theme.backgroundRoot;
+      return Colors.dark.backgroundRoot;
   }
 };
 
@@ -54,10 +49,9 @@ export function Card({
   onPress,
   style,
 }: CardProps) {
-  const { theme } = useTheme();
   const scale = useSharedValue(1);
 
-  const cardBackgroundColor = getBackgroundColorForElevation(elevation, theme);
+  const cardBackgroundColor = getBackgroundColorForElevation(elevation);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],

@@ -8,14 +8,14 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
-import { useTheme } from "@/hooks/useTheme";
-import { BorderRadius, Spacing } from "@/constants/theme";
+import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
 interface ButtonProps {
   onPress?: () => void;
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
+  variant?: "primary" | "secondary" | "outline";
 }
 
 const springConfig: WithSpringConfig = {
@@ -23,7 +23,6 @@ const springConfig: WithSpringConfig = {
   mass: 0.3,
   stiffness: 150,
   overshootClamping: true,
-  energyThreshold: 0.001,
 };
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
@@ -33,8 +32,8 @@ export function Button({
   children,
   style,
   disabled = false,
+  variant = "primary",
 }: ButtonProps) {
-  const { theme } = useTheme();
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -43,7 +42,7 @@ export function Button({
 
   const handlePressIn = () => {
     if (!disabled) {
-      scale.value = withSpring(0.98, springConfig);
+      scale.value = withSpring(0.97, springConfig);
     }
   };
 
@@ -51,6 +50,22 @@ export function Button({
     if (!disabled) {
       scale.value = withSpring(1, springConfig);
     }
+  };
+
+  const getBackgroundColor = () => {
+    if (variant === "outline") return "transparent";
+    if (variant === "secondary") return Colors.dark.secondary;
+    return Colors.dark.primary;
+  };
+
+  const getBorderColor = () => {
+    if (variant === "outline") return Colors.dark.primary;
+    return "transparent";
+  };
+
+  const getTextColor = () => {
+    if (variant === "outline") return Colors.dark.primary;
+    return Colors.dark.backgroundRoot;
   };
 
   return (
@@ -62,17 +77,16 @@ export function Button({
       style={[
         styles.button,
         {
-          backgroundColor: theme.link,
+          backgroundColor: getBackgroundColor(),
+          borderColor: getBorderColor(),
+          borderWidth: variant === "outline" ? 2 : 0,
           opacity: disabled ? 0.5 : 1,
         },
         style,
         animatedStyle,
       ]}
     >
-      <ThemedText
-        type="body"
-        style={[styles.buttonText, { color: theme.buttonText }]}
-      >
+      <ThemedText style={[styles.buttonText, { color: getTextColor() }]}>
         {children}
       </ThemedText>
     </AnimatedPressable>
@@ -87,6 +101,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   buttonText: {
+    fontSize: 16,
     fontWeight: "600",
   },
 });
