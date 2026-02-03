@@ -1,5 +1,6 @@
-import React, { useCallback } from "react";
-import { StyleSheet, View, ScrollView, FlatList } from "react-native";
+import React, { useCallback, useState, useEffect } from "react";
+import { StyleSheet, View, ScrollView, FlatList, Pressable } from "react-native";
+import { Feather } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -49,6 +50,26 @@ export default function HomeScreen() {
   const tabBarHeight = useBottomTabBarHeight();
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
+  const [stats, setStats] = useState<{
+    totalAnswered: number;
+    correctAnswers: number;
+    lastUpdated: Date;
+  } | null>(null);
+
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`);
+      const data = await response.json();
+      setStats(data);
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
+
   const getGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) return "Günaydın";
@@ -62,6 +83,10 @@ export default function HomeScreen() {
 
   const handleAskPress = useCallback(() => {
     navigation.navigate("AddQuestion");
+  }, [navigation]);
+
+  const handleStatsPress = useCallback(() => {
+    navigation.navigate("Statistics");
   }, [navigation]);
 
   const renderQuestion = useCallback(
@@ -120,18 +145,33 @@ export default function HomeScreen() {
 
       <View style={styles.statsSection}>
         <View style={styles.statCard}>
-          <ThemedText style={styles.statValue}>1,234</ThemedText>
+          <ThemedText style={styles.statValue}>
+            {stats?.totalAnswered || 0}
+          </ThemedText>
           <ThemedText style={styles.statLabel}>Çözülen Soru</ThemedText>
         </View>
         <View style={styles.statCard}>
-          <ThemedText style={styles.statValue}>89%</ThemedText>
+          <ThemedText style={styles.statValue}>
+            {stats && stats.totalAnswered > 0
+              ? `${((stats.correctAnswers / stats.totalAnswered) * 100).toFixed(0)}%`
+              : "0%"}
+          </ThemedText>
           <ThemedText style={styles.statLabel}>Başarı Oranı</ThemedText>
         </View>
         <View style={styles.statCard}>
-          <ThemedText style={styles.statValue}>15</ThemedText>
-          <ThemedText style={styles.statLabel}>Gün Serisi</ThemedText>
+          <ThemedText style={styles.statValue}>
+            {stats?.correctAnswers || 0}
+          </ThemedText>
+          <ThemedText style={styles.statLabel}>Doğru Sayısı</ThemedText>
         </View>
       </View>
+
+      <Pressable onPress={handleStatsPress} style={styles.viewStatsButton}>
+        <ThemedText style={styles.viewStatsButtonText}>
+          Detaylı İstatistikleri Gör
+        </ThemedText>
+        <Feather name="arrow-right" size={18} color={Colors.dark.primary} />
+      </Pressable>
     </ScrollView>
   );
 }
@@ -189,5 +229,23 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: Colors.dark.textSecondary,
     textAlign: "center",
+  },
+  viewStatsButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: 12,
+    padding: Spacing.md,
+    marginHorizontal: Spacing.lg,
+    marginTop: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  viewStatsButtonText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.dark.primary,
   },
 });
