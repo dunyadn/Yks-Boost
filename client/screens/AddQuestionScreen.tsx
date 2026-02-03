@@ -104,20 +104,43 @@ export default function AddQuestionScreen() {
     Haptics.selectionAsync();
   };
 
-  const handleSubmit = () => {
-    if (!questionText.trim() && !selectedImage) {
-      Alert.alert("Hata", "Lütfen bir soru yazın veya görsel ekleyin.");
-      return;
-    }
-    if (!selectedSubject) {
-      Alert.alert("Hata", "Lütfen bir ders seçin.");
+  const handleSubmit = async () => {
+    if (!questionText.trim()) {
+      Alert.alert("Hata", "Lütfen bir soru yazın.");
       return;
     }
 
-    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    Alert.alert("Başarılı", "Sorunuz paylaşıldı!", [
-      { text: "Tamam", onPress: () => navigation.goBack() },
-    ]);
+    try {
+      // Simple parser for JSON-like format or just text
+      // User requested "Json formatında"
+      let payload;
+      try {
+        payload = JSON.parse(questionText);
+      } catch (e) {
+        // Fallback for simple text input
+        payload = {
+          content: questionText,
+          options: ["A", "B", "C", "D"],
+          correctAnswer: "A",
+          category: selectedSubject || "general"
+        };
+      }
+
+      const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/questions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error("Yükleme başarısız");
+
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      Alert.alert("Başarılı", "Sorunuz paylaşıldı!", [
+        { text: "Tamam", onPress: () => navigation.goBack() },
+      ]);
+    } catch (error) {
+      Alert.alert("Hata", "Soru eklenirken bir sorun oluştu.");
+    }
   };
 
   const isValid =

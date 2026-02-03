@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -8,6 +8,7 @@ import {
   Pressable,
   ScrollView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -35,20 +36,14 @@ interface Option {
 
 interface Question {
   id: string;
-  questionNumber: number;
-  questionText: string;
-  options: Option[];
-  subject: string;
-  examType: "TYT" | "AYT";
-  likes: number;
-  comments: number;
-  saved: boolean;
-  liked: boolean;
-  author: {
-    name: string;
-    username: string;
-  };
-  solution?: string;
+  content: string;
+  options: string[];
+  correctAnswer: string;
+  category: string;
+  likes?: number;
+  comments?: number;
+  saved?: boolean;
+  liked?: boolean;
 }
 
 const MOCK_REELS: Question[] = [
@@ -300,9 +295,17 @@ function ReelCard({
     if (revealed) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedOption(label);
+    
+    // Update stats
+    const isCorrect = label === question.correctAnswer;
+    fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ correct: isCorrect }),
+    });
+
     setTimeout(() => {
       setRevealed(true);
-      const isCorrect = question.options.find((o) => o.label === label)?.isCorrect;
       Haptics.notificationAsync(
         isCorrect
           ? Haptics.NotificationFeedbackType.Success
@@ -317,6 +320,7 @@ function ReelCard({
   };
 
   const contentPaddingBottom = tabBarHeight + 70;
+  const labels = ["A", "B", "C", "D", "E"];
 
   return (
     <View style={[styles.reelCard, { height: SCREEN_HEIGHT }]}>
@@ -328,16 +332,7 @@ function ReelCard({
 
       <View style={[styles.headerContainer, { paddingTop: insets.top + Spacing.sm }]}>
         <View style={styles.tagRow}>
-          <Tag
-            label={`#${question.examType}`}
-            variant={question.examType === "TYT" ? "primary" : "secondary"}
-          />
-          <Tag label={`#${question.subject}`} variant="accent" />
-          <View style={styles.questionNumber}>
-            <ThemedText style={styles.questionNumberText}>
-              Soru {question.questionNumber}
-            </ThemedText>
-          </View>
+          <Tag label={`#${question.category}`} variant="accent" />
         </View>
       </View>
 
@@ -352,53 +347,38 @@ function ReelCard({
       >
         <View style={styles.questionTextContainer}>
           <ThemedText style={styles.questionText}>
-            {question.questionText}
+            {question.content}
           </ThemedText>
         </View>
 
         <View style={styles.optionsContainer}>
-          {question.options.map((option, index) => (
-            <Animated.View
-              key={option.label}
-              entering={FadeIn.delay(100 + index * 40)}
-            >
-              <OptionButton
-                option={option}
-                selected={selectedOption === option.label}
-                revealed={revealed}
-                onPress={() => handleOptionPress(option.label)}
-              />
-            </Animated.View>
-          ))}
+          {question.options.map((optionText, index) => {
+            const label = labels[index];
+            const isCorrect = label === question.correctAnswer;
+            return (
+              <Animated.View
+                key={label}
+                entering={FadeIn.delay(100 + index * 40)}
+              >
+                <OptionButton
+                  option={{ label, text: optionText, isCorrect }}
+                  selected={selectedOption === label}
+                  revealed={revealed}
+                  onPress={() => handleOptionPress(label)}
+                />
+              </Animated.View>
+            );
+          })}
         </View>
-
-        {revealed && question.solution ? (
-          <Animated.View
-            entering={SlideInUp.duration(300)}
-            style={styles.solutionContainer}
-          >
-            <View style={styles.solutionHeader}>
-              <ThemedText style={styles.solutionTitle}>Çözüm</ThemedText>
-            </View>
-            <ThemedText style={styles.solutionText}>
-              {question.solution}
-            </ThemedText>
-          </Animated.View>
-        ) : null}
       </ScrollView>
 
       <View style={[styles.actionsContainer, { bottom: tabBarHeight + 80 }]}>
         <ReelsActionButton
           icon="heart"
-          label={question.likes}
+          label={question.likes || 0}
           active={question.liked}
           activeColor={Colors.dark.accent}
           onPress={onLike}
-        />
-        <ReelsActionButton
-          icon="message-circle"
-          label={question.comments}
-          onPress={onComment}
         />
         <ReelsActionButton
           icon="bookmark"
@@ -406,39 +386,32 @@ function ReelCard({
           activeColor={Colors.dark.primary}
           onPress={onSave}
         />
-        <ReelsActionButton icon="share" onPress={() => {}} />
-      </View>
-
-      <View style={[styles.bottomContainer, { bottom: tabBarHeight + Spacing.lg }]}>
-        <View style={styles.authorInfo}>
-          <View style={styles.authorAvatar}>
-            <ThemedText style={styles.authorInitial}>
-              {question.author.name.charAt(0)}
-            </ThemedText>
-          </View>
-          <View>
-            <ThemedText style={styles.authorName}>{question.author.name}</ThemedText>
-            <ThemedText style={styles.authorUsername}>
-              @{question.author.username}
-            </ThemedText>
-          </View>
-        </View>
-
-        {!revealed ? (
-          <Pressable style={styles.solutionButton} onPress={handleShowSolution}>
-            <ThemedText style={styles.solutionButtonText}>Çözümü Gör</ThemedText>
-          </Pressable>
-        ) : null}
       </View>
     </View>
   );
 }
 
 export default function ReelsScreen() {
-  const [questions, setQuestions] = useState(MOCK_REELS);
+  const [questions, setQuestions] = useState<Question[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const tabBarHeight = Platform.select({ ios: 88, android: 70, web: 70 }) || 70;
+
+  useEffect(() => {
+    const fetchQuestions = async () => {
+      try {
+        const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/questions`);
+        const data = await response.json();
+        setQuestions(data);
+      } catch (error) {
+        console.error("Error fetching questions:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchQuestions();
+  }, []);
 
   const onViewableItemsChanged = useCallback(
     ({ viewableItems }: { viewableItems: ViewToken[] }) => {
@@ -485,6 +458,14 @@ export default function ReelsScreen() {
     [activeIndex, handleLike, handleSave, tabBarHeight]
   );
 
+  if (loading) {
+    return (
+      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+        <ActivityIndicator size="large" color={Colors.dark.primary} />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -503,6 +484,11 @@ export default function ReelsScreen() {
           offset: SCREEN_HEIGHT * index,
           index,
         })}
+        ListEmptyComponent={() => (
+          <View style={[styles.reelCard, { height: SCREEN_HEIGHT, justifyContent: "center", alignItems: "center" }]}>
+            <ThemedText>Henüz soru eklenmemiş.</ThemedText>
+          </View>
+        )}
       />
     </View>
   );
