@@ -22,14 +22,20 @@ import Animated, {
 import { ThemedText } from "@/components/ThemedText";
 import { Tag } from "@/components/Tag";
 import { ReelsActionButton } from "@/components/ReelsActionButton";
-import { Button } from "@/components/Button";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
+interface Option {
+  label: string;
+  text: string;
+  isCorrect?: boolean;
+}
+
 interface Question {
   id: string;
-  text?: string;
+  questionText: string;
+  options: Option[];
   imageUrl?: string;
   subject: string;
   examType: "TYT" | "AYT";
@@ -48,7 +54,14 @@ interface Question {
 const MOCK_REELS: Question[] = [
   {
     id: "1",
-    text: "f(x) = x³ - 3x² + 2x fonksiyonunun [0,2] aralığındaki en büyük değeri kaçtır?\n\nA) 0\nB) 1\nC) 2\nD) 3\nE) 4",
+    questionText: "f(x) = x³ - 3x² + 2x fonksiyonunun [0,2] aralığındaki en büyük değeri kaçtır?",
+    options: [
+      { label: "A", text: "0", isCorrect: false },
+      { label: "B", text: "1", isCorrect: false },
+      { label: "C", text: "2", isCorrect: true },
+      { label: "D", text: "3", isCorrect: false },
+      { label: "E", text: "4", isCorrect: false },
+    ],
     subject: "Matematik",
     examType: "AYT",
     likes: 234,
@@ -56,11 +69,18 @@ const MOCK_REELS: Question[] = [
     saved: false,
     liked: false,
     author: { name: "Matematik Pro", username: "mathpro" },
-    solution: "Türev alarak kritik noktaları buluyoruz: f'(x) = 3x² - 6x + 2 = 0",
+    solution: "Türev alarak kritik noktaları buluyoruz: f'(x) = 3x² - 6x + 2 = 0. Cevap C şıkkıdır.",
   },
   {
     id: "2",
-    text: "Bir cisim 20 m/s hızla yukarı doğru atılıyor. Cismin maksimum yüksekliğe ulaşma süresi kaç saniyedir?\n(g = 10 m/s²)\n\nA) 1\nB) 2\nC) 3\nD) 4\nE) 5",
+    questionText: "Bir cisim 20 m/s hızla yukarı doğru atılıyor. Cismin maksimum yüksekliğe ulaşma süresi kaç saniyedir? (g = 10 m/s²)",
+    options: [
+      { label: "A", text: "1", isCorrect: false },
+      { label: "B", text: "2", isCorrect: true },
+      { label: "C", text: "3", isCorrect: false },
+      { label: "D", text: "4", isCorrect: false },
+      { label: "E", text: "5", isCorrect: false },
+    ],
     subject: "Fizik",
     examType: "TYT",
     likes: 189,
@@ -68,11 +88,18 @@ const MOCK_REELS: Question[] = [
     saved: true,
     liked: true,
     author: { name: "Fizik Ustası", username: "fizikusta" },
-    solution: "v = v₀ - gt formülünden t = v₀/g = 20/10 = 2 saniye",
+    solution: "v = v₀ - gt formülünden t = v₀/g = 20/10 = 2 saniye. Cevap B şıkkıdır.",
   },
   {
     id: "3",
-    text: "Aşağıdaki cümlelerin hangisinde bir yazım yanlışı vardır?\n\nA) Herkes kendi işine baksın.\nB) Yarın saat sekizde buluşalım.\nC) Bu kitabı her kes okumalı.\nD) Çocuklar parkta oynuyor.\nE) Hava çok güzel bugün.",
+    questionText: "Aşağıdaki cümlelerin hangisinde bir yazım yanlışı vardır?",
+    options: [
+      { label: "A", text: "Herkes kendi işine baksın.", isCorrect: false },
+      { label: "B", text: "Yarın saat sekizde buluşalım.", isCorrect: false },
+      { label: "C", text: "Bu kitabı her kes okumalı.", isCorrect: true },
+      { label: "D", text: "Çocuklar parkta oynuyor.", isCorrect: false },
+      { label: "E", text: "Hava çok güzel bugün.", isCorrect: false },
+    ],
     subject: "Türkçe",
     examType: "TYT",
     likes: 156,
@@ -84,7 +111,14 @@ const MOCK_REELS: Question[] = [
   },
   {
     id: "4",
-    text: "Osmanlı Devleti'nde Tanzimat Fermanı hangi padişah döneminde ilan edilmiştir?\n\nA) II. Mahmut\nB) Abdülmecit\nC) Abdülaziz\nD) II. Abdülhamit\nE) V. Mehmet",
+    questionText: "Osmanlı Devleti'nde Tanzimat Fermanı hangi padişah döneminde ilan edilmiştir?",
+    options: [
+      { label: "A", text: "II. Mahmut", isCorrect: false },
+      { label: "B", text: "Abdülmecit", isCorrect: true },
+      { label: "C", text: "Abdülaziz", isCorrect: false },
+      { label: "D", text: "II. Abdülhamit", isCorrect: false },
+      { label: "E", text: "V. Mehmet", isCorrect: false },
+    ],
     subject: "Tarih",
     examType: "TYT",
     likes: 98,
@@ -92,11 +126,18 @@ const MOCK_REELS: Question[] = [
     saved: false,
     liked: false,
     author: { name: "Tarih Uzmanı", username: "tarihuzmani" },
-    solution: "Tanzimat Fermanı 1839'da Sultan Abdülmecit döneminde ilan edilmiştir.",
+    solution: "Tanzimat Fermanı 1839'da Sultan Abdülmecit döneminde ilan edilmiştir. Cevap B şıkkıdır.",
   },
   {
     id: "5",
-    text: "NH₃ molekülünün geometrik şekli aşağıdakilerden hangisidir?\n\nA) Doğrusal\nB) Üçgen düzlem\nC) Üçgen piramit\nD) Dörtyüzlü\nE) Kare düzlem",
+    questionText: "NH₃ molekülünün geometrik şekli aşağıdakilerden hangisidir?",
+    options: [
+      { label: "A", text: "Doğrusal", isCorrect: false },
+      { label: "B", text: "Üçgen düzlem", isCorrect: false },
+      { label: "C", text: "Üçgen piramit", isCorrect: true },
+      { label: "D", text: "Dörtyüzlü", isCorrect: false },
+      { label: "E", text: "Kare düzlem", isCorrect: false },
+    ],
     subject: "Kimya",
     examType: "AYT",
     likes: 145,
@@ -104,9 +145,109 @@ const MOCK_REELS: Question[] = [
     saved: false,
     liked: false,
     author: { name: "Kimya Profesörü", username: "kimyaprof" },
-    solution: "NH₃'te N atomu 3 bağ çifti ve 1 ortaklanmamış elektron çiftine sahiptir → Üçgen piramit",
+    solution: "NH₃'te N atomu 3 bağ çifti ve 1 ortaklanmamış elektron çiftine sahiptir → Üçgen piramit. Cevap C şıkkıdır.",
   },
 ];
+
+function OptionButton({
+  option,
+  selected,
+  revealed,
+  onPress,
+}: {
+  option: Option;
+  selected: boolean;
+  revealed: boolean;
+  onPress: () => void;
+}) {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePress = () => {
+    scale.value = withSpring(0.95, { damping: 10, stiffness: 200 });
+    setTimeout(() => {
+      scale.value = withSpring(1, { damping: 15, stiffness: 150 });
+    }, 100);
+    onPress();
+  };
+
+  const getBackgroundColor = () => {
+    if (revealed) {
+      if (option.isCorrect) return Colors.dark.success + "30";
+      if (selected && !option.isCorrect) return Colors.dark.accent + "30";
+      return Colors.dark.backgroundSecondary;
+    }
+    if (selected) return Colors.dark.primary + "30";
+    return Colors.dark.backgroundSecondary;
+  };
+
+  const getBorderColor = () => {
+    if (revealed) {
+      if (option.isCorrect) return Colors.dark.success;
+      if (selected && !option.isCorrect) return Colors.dark.accent;
+      return Colors.dark.border;
+    }
+    if (selected) return Colors.dark.primary;
+    return Colors.dark.border;
+  };
+
+  const getTextColor = () => {
+    if (revealed) {
+      if (option.isCorrect) return Colors.dark.success;
+      if (selected && !option.isCorrect) return Colors.dark.accent;
+    }
+    return Colors.dark.text;
+  };
+
+  return (
+    <Pressable onPress={handlePress} disabled={revealed}>
+      <Animated.View
+        style={[
+          styles.optionButton,
+          {
+            backgroundColor: getBackgroundColor(),
+            borderColor: getBorderColor(),
+          },
+          animatedStyle,
+        ]}
+      >
+        <View
+          style={[
+            styles.optionLabel,
+            {
+              backgroundColor: selected || (revealed && option.isCorrect)
+                ? getBorderColor()
+                : Colors.dark.backgroundTertiary,
+            },
+          ]}
+        >
+          <ThemedText
+            style={[
+              styles.optionLabelText,
+              {
+                color:
+                  selected || (revealed && option.isCorrect)
+                    ? Colors.dark.backgroundRoot
+                    : Colors.dark.text,
+              },
+            ]}
+          >
+            {option.label}
+          </ThemedText>
+        </View>
+        <ThemedText
+          style={[styles.optionText, { color: getTextColor() }]}
+          numberOfLines={2}
+        >
+          {option.text}
+        </ThemedText>
+      </Animated.View>
+    </Pressable>
+  );
+}
 
 function ReelCard({
   question,
@@ -114,32 +255,48 @@ function ReelCard({
   onLike,
   onSave,
   onComment,
-  onShowSolution,
 }: {
   question: Question;
   isActive: boolean;
   onLike: () => void;
   onSave: () => void;
   onComment: () => void;
-  onShowSolution: () => void;
 }) {
   const insets = useSafeAreaInsets();
-  const [showSolution, setShowSolution] = useState(false);
+  const [selectedOption, setSelectedOption] = useState<string | null>(null);
+  const [revealed, setRevealed] = useState(false);
+
+  const handleOptionPress = (label: string) => {
+    if (revealed) return;
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    setSelectedOption(label);
+    setTimeout(() => {
+      setRevealed(true);
+      Haptics.notificationAsync(
+        question.options.find((o) => o.label === label)?.isCorrect
+          ? Haptics.NotificationFeedbackType.Success
+          : Haptics.NotificationFeedbackType.Error
+      );
+    }, 500);
+  };
 
   const handleShowSolution = () => {
-    setShowSolution(!showSolution);
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    onShowSolution();
+    if (!selectedOption) {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      setRevealed(true);
+    }
   };
 
   return (
     <View style={[styles.reelCard, { height: SCREEN_HEIGHT }]}>
       <LinearGradient
-        colors={["transparent", "rgba(0,0,0,0.8)"]}
+        colors={["transparent", "rgba(0,0,0,0.6)"]}
         style={styles.gradient}
       />
 
-      <View style={[styles.contentContainer, { paddingTop: insets.top + Spacing.xl }]}>
+      <View
+        style={[styles.contentContainer, { paddingTop: insets.top + Spacing.xl }]}
+      >
         <Animated.View entering={FadeIn.delay(100)} style={styles.tagContainer}>
           <Tag
             label={`#${question.examType} ${question.subject}`}
@@ -148,25 +305,37 @@ function ReelCard({
         </Animated.View>
 
         <View style={styles.questionContainer}>
-          {question.imageUrl ? (
-            <Image
-              source={{ uri: question.imageUrl }}
-              style={styles.questionImage}
-              contentFit="contain"
-            />
-          ) : (
-            <View style={styles.questionTextContainer}>
-              <ThemedText style={styles.questionText}>{question.text}</ThemedText>
-            </View>
-          )}
+          <View style={styles.questionTextContainer}>
+            <ThemedText style={styles.questionText}>
+              {question.questionText}
+            </ThemedText>
+          </View>
 
-          {showSolution && question.solution ? (
+          <View style={styles.optionsContainer}>
+            {question.options.map((option, index) => (
+              <Animated.View
+                key={option.label}
+                entering={FadeIn.delay(150 + index * 50)}
+              >
+                <OptionButton
+                  option={option}
+                  selected={selectedOption === option.label}
+                  revealed={revealed}
+                  onPress={() => handleOptionPress(option.label)}
+                />
+              </Animated.View>
+            ))}
+          </View>
+
+          {revealed && question.solution ? (
             <Animated.View
               entering={SlideInRight.duration(300)}
               style={styles.solutionContainer}
             >
               <ThemedText style={styles.solutionTitle}>Çözüm</ThemedText>
-              <ThemedText style={styles.solutionText}>{question.solution}</ThemedText>
+              <ThemedText style={styles.solutionText}>
+                {question.solution}
+              </ThemedText>
             </Animated.View>
           ) : null}
         </View>
@@ -217,22 +386,11 @@ function ReelCard({
           </View>
         </View>
 
-        <Pressable
-          style={[
-            styles.solutionButton,
-            showSolution && styles.solutionButtonActive,
-          ]}
-          onPress={handleShowSolution}
-        >
-          <ThemedText
-            style={[
-              styles.solutionButtonText,
-              showSolution && styles.solutionButtonTextActive,
-            ]}
-          >
-            {showSolution ? "Soruya Dön" : "Çözümü Gör"}
-          </ThemedText>
-        </Pressable>
+        {!revealed ? (
+          <Pressable style={styles.solutionButton} onPress={handleShowSolution}>
+            <ThemedText style={styles.solutionButtonText}>Çözümü Gör</ThemedText>
+          </Pressable>
+        ) : null}
       </View>
     </View>
   );
@@ -282,7 +440,6 @@ export default function ReelsScreen() {
         onLike={() => handleLike(item.id)}
         onSave={() => handleSave(item.id)}
         onComment={() => {}}
-        onShowSolution={() => {}}
       />
     ),
     [activeIndex, handleLike, handleSave]
@@ -331,53 +488,77 @@ const styles = StyleSheet.create({
   },
   tagContainer: {
     flexDirection: "row",
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
   },
   questionContainer: {
     flex: 1,
-    justifyContent: "center",
-    paddingBottom: 200,
-  },
-  questionImage: {
-    width: "100%",
-    height: 400,
-    borderRadius: BorderRadius.lg,
+    justifyContent: "flex-start",
+    paddingBottom: 180,
   },
   questionTextContainer: {
-    backgroundColor: "rgba(26, 26, 46, 0.9)",
+    backgroundColor: "rgba(26, 26, 46, 0.95)",
     borderRadius: BorderRadius.lg,
-    padding: Spacing.xl,
+    padding: Spacing.lg,
+    marginBottom: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.dark.border,
   },
   questionText: {
-    fontSize: 18,
-    lineHeight: 28,
+    fontSize: 16,
+    lineHeight: 24,
     color: Colors.dark.text,
+    fontWeight: "500",
+  },
+  optionsContainer: {
+    gap: Spacing.sm,
+  },
+  optionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    borderWidth: 1.5,
+    gap: Spacing.md,
+  },
+  optionLabel: {
+    width: 32,
+    height: 32,
+    borderRadius: BorderRadius.sm,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  optionLabelText: {
+    fontSize: 14,
+    fontWeight: "700",
+  },
+  optionText: {
+    fontSize: 14,
+    flex: 1,
   },
   solutionContainer: {
-    marginTop: Spacing.xl,
+    marginTop: Spacing.lg,
     backgroundColor: "rgba(0, 229, 255, 0.1)",
     borderRadius: BorderRadius.lg,
-    padding: Spacing.xl,
+    padding: Spacing.lg,
     borderWidth: 1,
     borderColor: Colors.dark.primary,
   },
   solutionTitle: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "700",
     color: Colors.dark.primary,
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.xs,
   },
   solutionText: {
-    fontSize: 15,
-    lineHeight: 24,
+    fontSize: 14,
+    lineHeight: 22,
     color: Colors.dark.text,
   },
   actionsContainer: {
     position: "absolute",
-    right: Spacing.lg,
-    gap: Spacing.lg,
+    right: Spacing.md,
+    gap: Spacing.md,
     zIndex: 10,
   },
   bottomContainer: {
@@ -395,44 +576,36 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   authorAvatar: {
-    width: 44,
-    height: 44,
+    width: 40,
+    height: 40,
     borderRadius: BorderRadius.full,
     backgroundColor: Colors.dark.secondary,
     alignItems: "center",
     justifyContent: "center",
   },
   authorInitial: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "700",
     color: Colors.dark.text,
   },
   authorName: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
     color: Colors.dark.text,
   },
   authorUsername: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.dark.textSecondary,
   },
   solutionButton: {
     backgroundColor: Colors.dark.primary,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.sm,
     borderRadius: BorderRadius.full,
   },
-  solutionButtonActive: {
-    backgroundColor: "transparent",
-    borderWidth: 2,
-    borderColor: Colors.dark.primary,
-  },
   solutionButtonText: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: "600",
     color: Colors.dark.backgroundRoot,
-  },
-  solutionButtonTextActive: {
-    color: Colors.dark.primary,
   },
 });
