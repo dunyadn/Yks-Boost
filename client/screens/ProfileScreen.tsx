@@ -1,33 +1,17 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
   ScrollView,
-  Pressable,
-  FlatList,
-  ActivityIndicator,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Image } from "expo-image";
-import { Feather } from "@expo/vector-icons";
 import Animated, { FadeIn } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
-import { Tag } from "@/components/Tag";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-
-interface Badge {
-  id: string;
-  name: string;
-  image: any;
-}
-
-const BADGES: Badge[] = [
-  { id: "1", name: "Aktif Öğrenci", image: require("../../assets/images/badge-active.png") },
-  { id: "2", name: "Derece Adayı", image: require("../../assets/images/badge-top-solver.png") },
-];
 
 const MOCK_USER = {
   name: "Kişisel Kullanıcı",
@@ -42,7 +26,6 @@ export default function ProfileScreen() {
   const tabBarHeight = useBottomTabBarHeight();
 
   const [stats, setStats] = useState({ totalAnswered: 0, correctAnswers: 0 });
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -52,8 +35,6 @@ export default function ProfileScreen() {
         setStats(data);
       } catch (error) {
         console.error("Error fetching stats:", error);
-      } finally {
-        setLoading(false);
       }
     };
     fetchStats();
@@ -201,160 +182,5 @@ const styles = StyleSheet.create({
   statCardText: {
     fontSize: 14,
     color: Colors.dark.text,
-  },
-});
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Colors.dark.backgroundRoot,
-  },
-  profileHeader: {
-    alignItems: "center",
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing["2xl"],
-  },
-  avatarContainer: {
-    marginBottom: Spacing.lg,
-  },
-  avatar: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    borderWidth: 3,
-    borderColor: Colors.dark.primary,
-  },
-  name: {
-    fontSize: 22,
-    fontWeight: "700",
-    color: Colors.dark.text,
-    marginBottom: Spacing.xs,
-  },
-  username: {
-    fontSize: 14,
-    color: Colors.dark.textSecondary,
-    marginBottom: Spacing.sm,
-  },
-  bio: {
-    fontSize: 14,
-    color: Colors.dark.textSecondary,
-    textAlign: "center",
-    marginBottom: Spacing.xl,
-  },
-  statsRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: Spacing.xl,
-  },
-  statItem: {
-    alignItems: "center",
-    paddingHorizontal: Spacing.xl,
-  },
-  statValue: {
-    fontSize: 20,
-    fontWeight: "700",
-    color: Colors.dark.text,
-  },
-  statLabel: {
-    fontSize: 13,
-    color: Colors.dark.textSecondary,
-  },
-  statDivider: {
-    width: 1,
-    height: 30,
-    backgroundColor: Colors.dark.border,
-  },
-  editButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
-    paddingHorizontal: Spacing.xl,
-    borderRadius: BorderRadius.full,
-    borderWidth: 1,
-    borderColor: Colors.dark.primary,
-  },
-  editButtonText: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: Colors.dark.primary,
-  },
-  badgesSection: {
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing["2xl"],
-  },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: "600",
-    color: Colors.dark.text,
-    marginBottom: Spacing.md,
-  },
-  badgesRow: {
-    flexDirection: "row",
-    gap: Spacing.lg,
-  },
-  badgeItem: {
-    alignItems: "center",
-    gap: Spacing.xs,
-  },
-  badgeImage: {
-    width: 60,
-    height: 60,
-  },
-  badgeName: {
-    fontSize: 12,
-    color: Colors.dark.textSecondary,
-  },
-  tabsContainer: {
-    flexDirection: "row",
-    paddingHorizontal: Spacing.lg,
-    marginBottom: Spacing.lg,
-    gap: Spacing.md,
-  },
-  tab: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: Spacing.sm,
-    paddingVertical: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    backgroundColor: Colors.dark.backgroundDefault,
-  },
-  tabActive: {
-    backgroundColor: Colors.dark.backgroundSecondary,
-    borderWidth: 1,
-    borderColor: Colors.dark.primary,
-  },
-  tabText: {
-    fontSize: 14,
-    fontWeight: "500",
-    color: Colors.dark.textSecondary,
-  },
-  tabTextActive: {
-    color: Colors.dark.primary,
-  },
-  questionsGrid: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-    paddingHorizontal: Spacing.lg,
-    gap: Spacing.md,
-  },
-  questionGridItem: {
-    width: "48%",
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.md,
-    gap: Spacing.xs,
-  },
-  questionGridSubject: {
-    fontSize: 14,
-    fontWeight: "600",
-    color: Colors.dark.text,
-  },
-  questionGridText: {
-    fontSize: 12,
-    color: Colors.dark.textSecondary,
-    lineHeight: 18,
   },
 });
