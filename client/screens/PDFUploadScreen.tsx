@@ -18,7 +18,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
+import { savePackage, saveQuestions } from "@/lib/localStorage";
+import type { InsertQuestion } from "@shared/schema";
 
 // Örnek JSON formatı
 const EXAMPLE_JSON = `{
@@ -99,42 +100,58 @@ export default function PDFUploadScreen() {
       return;
     }
 
-    let apiUrl: string;
-    try {
-      apiUrl = getApiUrl();
-    } catch (error) {
-      console.error("API URL configuration error:", error);
-      Alert.alert(
-        "Hata",
-        error instanceof Error && error.message.includes("not set")
-          ? "API domain ayarlanmamış."
-          : "API bağlantı hatası oluştu.",
-      );
-      return;
-    }
-
     setUploading(true);
 
     try {
-      const response = await fetch(`${apiUrl}/api/import-questions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: jsonInput,
+      // Create the package
+      const pkg = await savePackage({
+        name: parsedData.packageName,
+        examType: parsedData.examType,
+        year: parsedData.year || null,
+        description: parsedData.description || null,
       });
 
-      const data = await response.json();
-
-      if (!response.ok || !data.success) {
-        throw new Error(data.error || "Sorular eklenirken hata oluştu");
+      // Define type for parsed question data
+      interface ParsedQuestion {
+        content?: string;
+        soru?: string;
+        question?: string;
+        options?: string[];
+        secenekler?: string[];
+        siklar?: string[];
+        correctAnswer?: string;
+        dogruCevap?: string;
+        cevap?: string;
+        category?: string;
+        ders?: string;
+        konu?: string;
+        subject?: string;
+        altKonu?: string;
       }
+
+      // Add questions with package reference
+      const insertQuestions: InsertQuestion[] = parsedData.questions.map(
+        (q: ParsedQuestion) => ({
+          content: q.content || q.soru || q.question || "",
+          options: q.options || q.secenekler || q.siklar || [],
+          correctAnswer: q.correctAnswer || q.dogruCevap || q.cevap || "A",
+          category: q.category || q.ders || q.konu || "Genel",
+          subject: q.subject || q.altKonu || null,
+          packageId: pkg.id,
+          examType: parsedData.examType,
+        }),
+      );
+
+      const createdQuestions = await saveQuestions(insertQuestions);
+
+      console.log(
+        `✅ Imported ${createdQuestions.length} questions to package: ${parsedData.packageName}`,
+      );
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
         "Başarılı! 🎉",
-        `"${data.packageName}" paketine ${data.questionsAdded} soru eklendi!\n\nReels sekmesinden soruları görebilirsiniz.`,
+        `"${pkg.name}" paketine ${createdQuestions.length} soru eklendi!\n\nReels sekmesinden soruları görebilirsiniz.`,
         [
           {
             text: "Tamam",
@@ -145,12 +162,13 @@ export default function PDFUploadScreen() {
         ],
       );
     } catch (error) {
+      console.error("Error importing questions:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
       Alert.alert(
         "Hata",
         error instanceof Error
           ? error.message
-          : "Sorular eklenirken hata oluştu",
+          : "Sorular eklenirken hata oluştu. Lütfen JSON formatını kontrol edin.",
       );
     } finally {
       setUploading(false);

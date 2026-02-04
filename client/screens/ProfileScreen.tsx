@@ -8,7 +8,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
+import { getStats } from "@/lib/localStorage";
 
 const MOCK_USER = {
   name: "Kişisel Kullanıcı",
@@ -27,9 +27,7 @@ export default function ProfileScreen() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const apiUrl = getApiUrl();
-        const response = await fetch(`${apiUrl}/api/stats`);
-        const data = await response.json();
+        const data = await getStats();
         setStats(data);
       } catch (error) {
         console.error("Error fetching stats:", error);
