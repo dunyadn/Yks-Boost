@@ -237,8 +237,13 @@ function setupErrorHandler(app: express.Application) {
   // Initialize file storage
   log("Initializing file storage...");
   try {
-    await (storage as any).init();
-    log("✅ File storage initialized successfully");
+    // Type guard to check if storage has init method
+    if ('init' in storage && typeof storage.init === 'function') {
+      await storage.init();
+      log("✅ File storage initialized successfully");
+    } else {
+      log("✅ Storage ready (no initialization needed)");
+    }
   } catch (error) {
     log("❌ Failed to initialize file storage:", error);
     process.exit(1);

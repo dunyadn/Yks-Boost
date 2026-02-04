@@ -74,12 +74,22 @@ export async function saveQuestions(insertQuestions: InsertQuestion[]): Promise<
   const allQuestions = [...questions, ...newQuestions];
   await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(allQuestions));
   
-  // Update package question counts
-  if (newQuestions.length > 0 && newQuestions[0].packageId) {
+  // Update package question counts for each unique package
+  const packageIds = new Set(newQuestions.map((q) => q.packageId).filter(Boolean));
+  if (packageIds.size > 0) {
     const packages = await getPackages();
-    const pkg = packages.find((p) => p.id === newQuestions[0].packageId);
-    if (pkg) {
-      pkg.totalQuestions = (pkg.totalQuestions || 0) + newQuestions.length;
+    let packagesUpdated = false;
+    
+    for (const packageId of packageIds) {
+      const pkg = packages.find((p) => p.id === packageId);
+      if (pkg) {
+        const questionsInPackage = newQuestions.filter((q) => q.packageId === packageId).length;
+        pkg.totalQuestions = (pkg.totalQuestions || 0) + questionsInPackage;
+        packagesUpdated = true;
+      }
+    }
+    
+    if (packagesUpdated) {
       await AsyncStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(packages));
     }
   }
@@ -217,7 +227,8 @@ async function updateTopicStats(
     topicStats.push(stat);
   }
   
-  stat.totalAnswered = (stat.totalAnswered || 0) + 1;
+  const oldTotalAnswered = stat.totalAnswered || 0;
+  stat.totalAnswered = oldTotalAnswered + 1;
   if (correct) {
     stat.correctAnswers = (stat.correctAnswers || 0) + 1;
   } else {
@@ -225,7 +236,7 @@ async function updateTopicStats(
   }
   
   if (solvingTimeMs) {
-    const oldTotal = (stat.avgSolvingTimeMs || 0) * (stat.totalAnswered - 1);
+    const oldTotal = (stat.avgSolvingTimeMs || 0) * oldTotalAnswered;
     stat.avgSolvingTimeMs = (oldTotal + solvingTimeMs) / stat.totalAnswered;
   }
   

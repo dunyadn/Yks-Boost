@@ -197,9 +197,7 @@ export class FileStorage implements IStorage {
     const question = this.data.questions[id];
     if (question?.packageId && this.data.packages[question.packageId]) {
       const pkg = this.data.packages[question.packageId];
-      if (pkg.totalQuestions) {
-        pkg.totalQuestions = Math.max(0, pkg.totalQuestions - 1);
-      }
+      pkg.totalQuestions = Math.max(0, (pkg.totalQuestions || 0) - 1);
     }
     delete this.data.questions[id];
     await this.save();
@@ -299,7 +297,8 @@ export class FileStorage implements IStorage {
       };
     }
 
-    topicStat.totalAnswered = (topicStat.totalAnswered || 0) + 1;
+    const oldTotalAnswered = topicStat.totalAnswered || 0;
+    topicStat.totalAnswered = oldTotalAnswered + 1;
     if (correct) {
       topicStat.correctAnswers = (topicStat.correctAnswers || 0) + 1;
     } else {
@@ -307,10 +306,8 @@ export class FileStorage implements IStorage {
     }
 
     if (solvingTimeMs) {
-      const oldTotal =
-        (topicStat.avgSolvingTimeMs || 0) * (topicStat.totalAnswered - 1);
-      topicStat.avgSolvingTimeMs =
-        (oldTotal + solvingTimeMs) / topicStat.totalAnswered;
+      const oldTotal = (topicStat.avgSolvingTimeMs || 0) * oldTotalAnswered;
+      topicStat.avgSolvingTimeMs = (oldTotal + solvingTimeMs) / topicStat.totalAnswered;
     }
 
     topicStat.lastUpdated = new Date();
