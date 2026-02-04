@@ -120,12 +120,13 @@ export default function PDFUploadScreen() {
       // Create FormData - React Native specific format
       const formData = new FormData();
       
-      // @ts-ignore - React Native FormData typing issue
+      // React Native FormData accepts a file object with uri, type, and name
+      // Using type assertion as the RN FormData typing differs from web
       formData.append("pdf", {
         uri: selectedFile.uri,
         type: "application/pdf",
         name: selectedFile.name,
-      });
+      } as any);
 
       console.log("📦 FormData prepared");
 
@@ -163,7 +164,7 @@ export default function PDFUploadScreen() {
         data = JSON.parse(responseText);
       } catch (e) {
         console.error("❌ Failed to parse response as JSON:", responseText);
-        throw new Error("Sunucu geçersiz yanıt döndürdü. Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.");
+        throw new Error("Sunucu geçersiz yanıt döndürdü. Lütfen tekrar deneyin.");
       }
 
       if (!response.ok || !data.success) {

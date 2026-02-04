@@ -194,13 +194,14 @@ function parsePatternsWithFallback(text: string): ParsedQuestion[] {
     if (/^\d+\./.test(trimmed)) {
       // Save previous question if exists
       if (currentQuestion.content && options.length > 0) {
+        const questionContent = currentQuestion.content;
         questions.push({
-          content: currentQuestion.content,
+          content: questionContent,
           options: options,
           correctAnswer: currentQuestion.correctAnswer || "A",
           category: currentQuestion.category || "Genel",
         });
-        console.log(`✅ Found question ${questions.length}: ${currentQuestion.content.substring(0, 50)}...`);
+        console.log(`✅ Found question ${questions.length}: ${questionContent.substring(0, 50)}...`);
       }
       
       // Start new question
@@ -226,13 +227,14 @@ function parsePatternsWithFallback(text: string): ParsedQuestion[] {
   
   // Save last question
   if (currentQuestion.content && options.length > 0) {
+    const questionContent = currentQuestion.content;
     questions.push({
-      content: currentQuestion.content,
+      content: questionContent,
       options: options,
       correctAnswer: currentQuestion.correctAnswer || "A",
       category: currentQuestion.category || "Genel",
     });
-    console.log(`✅ Found question ${questions.length}: ${currentQuestion.content.substring(0, 50)}...`);
+    console.log(`✅ Found question ${questions.length}: ${questionContent.substring(0, 50)}...`);
   }
   
   console.log(`✅ Fallback parser found ${questions.length} questions`);
