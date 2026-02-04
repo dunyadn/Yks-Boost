@@ -233,9 +233,12 @@ function ReelCard({
           subject: question.subject || null,
           packageId: question.packageId || null,
         }),
+      }).catch((error) => {
+        console.error("Error updating stats:", error);
       });
-    } catch {
-      // Silently fail if API URL is not configured
+    } catch (error) {
+      // Log configuration errors but don't interrupt the user experience
+      console.error("API URL configuration error:", error);
     }
 
     setTimeout(() => {

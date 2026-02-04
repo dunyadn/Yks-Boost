@@ -16,9 +16,16 @@ export function getApiUrl(): string {
     return host.endsWith("/") ? host.slice(0, -1) : host;
   }
 
-  // For localhost/127.0.0.1, use HTTP; for other domains, use HTTPS
+  // Extract hostname (without port) for localhost detection
+  const hostname = host.split(":")[0].toLowerCase();
+
+  // Check if hostname is localhost or a loopback IP address
   const isLocalhost =
-    host.startsWith("localhost") || host.startsWith("127.0.0.1");
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname.startsWith("192.168.") ||
+    hostname.startsWith("10.");
+
   const protocol = isLocalhost ? "http" : "https";
   const url = new URL(`${protocol}://${host}`);
 

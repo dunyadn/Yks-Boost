@@ -102,8 +102,14 @@ export default function PDFUploadScreen() {
     let apiUrl: string;
     try {
       apiUrl = getApiUrl();
-    } catch {
-      Alert.alert("Hata", "API domain ayarlanmamış.");
+    } catch (error) {
+      console.error("API URL configuration error:", error);
+      Alert.alert(
+        "Hata",
+        error instanceof Error && error.message.includes("not set")
+          ? "API domain ayarlanmamış."
+          : "API bağlantı hatası oluştu.",
+      );
       return;
     }
 
