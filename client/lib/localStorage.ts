@@ -1,0 +1,290 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import type {
+  Question,
+  QuestionPackage,
+  InsertQuestion,
+  InsertQuestionPackage,
+  Statistic,
+  PackageStatistic,
+  TopicStatistic,
+} from "@shared/schema";
+
+const STORAGE_KEYS = {
+  QUESTIONS: "@yks_boost:questions",
+  PACKAGES: "@yks_boost:packages",
+  STATS: "@yks_boost:stats",
+  PACKAGE_STATS: "@yks_boost:package_stats",
+  TOPIC_STATS: "@yks_boost:topic_stats",
+};
+
+function generateId(): string {
+  return `${Date.now()}-${Math.random().toString(36).substring(2, 9)}`;
+}
+
+// Question Storage
+export async function getQuestions(): Promise<Question[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.QUESTIONS);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error loading questions:", error);
+    return [];
+  }
+}
+
+export async function saveQuestion(question: InsertQuestion): Promise<Question> {
+  const questions = await getQuestions();
+  const newQuestion: Question = {
+    ...question,
+    id: generateId(),
+    createdAt: new Date(),
+    category: question.category || "general",
+    subject: question.subject || null,
+    packageId: question.packageId || null,
+    examType: question.examType || "TYT",
+  };
+  questions.push(newQuestion);
+  await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(questions));
+  
+  // Update package question count
+  if (newQuestion.packageId) {
+    const packages = await getPackages();
+    const pkg = packages.find((p) => p.id === newQuestion.packageId);
+    if (pkg) {
+      pkg.totalQuestions = (pkg.totalQuestions || 0) + 1;
+      await AsyncStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(packages));
+    }
+  }
+  
+  return newQuestion;
+}
+
+export async function saveQuestions(insertQuestions: InsertQuestion[]): Promise<Question[]> {
+  const questions = await getQuestions();
+  const newQuestions: Question[] = insertQuestions.map((q) => ({
+    ...q,
+    id: generateId(),
+    createdAt: new Date(),
+    category: q.category || "general",
+    subject: q.subject || null,
+    packageId: q.packageId || null,
+    examType: q.examType || "TYT",
+  }));
+  
+  const allQuestions = [...questions, ...newQuestions];
+  await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(allQuestions));
+  
+  // Update package question counts
+  if (newQuestions.length > 0 && newQuestions[0].packageId) {
+    const packages = await getPackages();
+    const pkg = packages.find((p) => p.id === newQuestions[0].packageId);
+    if (pkg) {
+      pkg.totalQuestions = (pkg.totalQuestions || 0) + newQuestions.length;
+      await AsyncStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(packages));
+    }
+  }
+  
+  return newQuestions;
+}
+
+export async function deleteQuestion(id: string): Promise<void> {
+  const questions = await getQuestions();
+  const filtered = questions.filter((q) => q.id !== id);
+  await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(filtered));
+}
+
+// Package Storage
+export async function getPackages(): Promise<QuestionPackage[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.PACKAGES);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error loading packages:", error);
+    return [];
+  }
+}
+
+export async function savePackage(pkg: InsertQuestionPackage): Promise<QuestionPackage> {
+  const packages = await getPackages();
+  const newPackage: QuestionPackage = {
+    ...pkg,
+    id: generateId(),
+    totalQuestions: 0,
+    createdAt: new Date(),
+    year: pkg.year || null,
+    description: pkg.description || null,
+  };
+  packages.push(newPackage);
+  await AsyncStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(packages));
+  return newPackage;
+}
+
+export async function deletePackage(id: string): Promise<void> {
+  const packages = await getPackages();
+  const filtered = packages.filter((p) => p.id !== id);
+  await AsyncStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(filtered));
+  
+  // Delete all questions in this package
+  const questions = await getQuestions();
+  const filteredQuestions = questions.filter((q) => q.packageId !== id);
+  await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(filteredQuestions));
+}
+
+// Statistics
+export async function getStats(): Promise<Statistic> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.STATS);
+    return data
+      ? JSON.parse(data)
+      : {
+          id: "global",
+          totalAnswered: 0,
+          correctAnswers: 0,
+          totalSolvingTimeMs: 0,
+          lastUpdated: new Date(),
+        };
+  } catch (error) {
+    console.error("Error loading stats:", error);
+    return {
+      id: "global",
+      totalAnswered: 0,
+      correctAnswers: 0,
+      totalSolvingTimeMs: 0,
+      lastUpdated: new Date(),
+    };
+  }
+}
+
+export async function updateStats(
+  correct: boolean,
+  solvingTimeMs?: number,
+  category?: string,
+  subject?: string,
+): Promise<Statistic> {
+  const stats = await getStats();
+  stats.totalAnswered = (stats.totalAnswered || 0) + 1;
+  if (correct) {
+    stats.correctAnswers = (stats.correctAnswers || 0) + 1;
+  }
+  if (solvingTimeMs) {
+    stats.totalSolvingTimeMs = (stats.totalSolvingTimeMs || 0) + solvingTimeMs;
+  }
+  stats.lastUpdated = new Date();
+  await AsyncStorage.setItem(STORAGE_KEYS.STATS, JSON.stringify(stats));
+  
+  // Update topic stats if category provided
+  if (category) {
+    await updateTopicStats(category, subject, correct, solvingTimeMs);
+  }
+  
+  return stats;
+}
+
+// Topic Stats
+export async function getTopicStats(): Promise<TopicStatistic[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.TOPIC_STATS);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error loading topic stats:", error);
+    return [];
+  }
+}
+
+async function updateTopicStats(
+  category: string,
+  subject: string | undefined,
+  correct: boolean,
+  solvingTimeMs?: number,
+): Promise<void> {
+  const topicStats = await getTopicStats();
+  const key = subject ? `${category}:${subject}` : category;
+  let stat = topicStats.find((s) => 
+    s.category === category && s.subject === (subject || null)
+  );
+  
+  if (!stat) {
+    stat = {
+      id: generateId(),
+      category,
+      subject: subject || null,
+      totalAnswered: 0,
+      correctAnswers: 0,
+      wrongAnswers: 0,
+      avgSolvingTimeMs: 0,
+      lastUpdated: new Date(),
+    };
+    topicStats.push(stat);
+  }
+  
+  stat.totalAnswered = (stat.totalAnswered || 0) + 1;
+  if (correct) {
+    stat.correctAnswers = (stat.correctAnswers || 0) + 1;
+  } else {
+    stat.wrongAnswers = (stat.wrongAnswers || 0) + 1;
+  }
+  
+  if (solvingTimeMs) {
+    const oldTotal = (stat.avgSolvingTimeMs || 0) * (stat.totalAnswered - 1);
+    stat.avgSolvingTimeMs = (oldTotal + solvingTimeMs) / stat.totalAnswered;
+  }
+  
+  stat.lastUpdated = new Date();
+  await AsyncStorage.setItem(STORAGE_KEYS.TOPIC_STATS, JSON.stringify(topicStats));
+}
+
+export async function getWorstTopics(limit: number = 5): Promise<TopicStatistic[]> {
+  const stats = await getTopicStats();
+  return stats
+    .filter((s) => (s.totalAnswered || 0) > 0)
+    .sort((a, b) => {
+      const ratioA = (a.wrongAnswers || 0) / (a.totalAnswered || 1);
+      const ratioB = (b.wrongAnswers || 0) / (b.totalAnswered || 1);
+      return ratioB - ratioA;
+    })
+    .slice(0, limit);
+}
+
+// Package Stats
+export async function getPackageStats(): Promise<PackageStatistic[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.PACKAGE_STATS);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error loading package stats:", error);
+    return [];
+  }
+}
+
+export async function updatePackageStats(
+  packageId: string,
+  correct: boolean,
+  solvingTimeMs?: number,
+): Promise<PackageStatistic> {
+  const packageStats = await getPackageStats();
+  let stat = packageStats.find((s) => s.packageId === packageId);
+  
+  if (!stat) {
+    stat = {
+      id: generateId(),
+      packageId,
+      totalAnswered: 0,
+      correctAnswers: 0,
+      totalSolvingTimeMs: 0,
+      lastUpdated: new Date(),
+    };
+    packageStats.push(stat);
+  }
+  
+  stat.totalAnswered = (stat.totalAnswered || 0) + 1;
+  if (correct) {
+    stat.correctAnswers = (stat.correctAnswers || 0) + 1;
+  }
+  if (solvingTimeMs) {
+    stat.totalSolvingTimeMs = (stat.totalSolvingTimeMs || 0) + solvingTimeMs;
+  }
+  stat.lastUpdated = new Date();
+  
+  await AsyncStorage.setItem(STORAGE_KEYS.PACKAGE_STATS, JSON.stringify(packageStats));
+  return stat;
+}

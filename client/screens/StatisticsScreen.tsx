@@ -14,7 +14,7 @@ import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
+import { getStats, getWorstTopics, getPackages, getPackageStats } from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -143,22 +143,49 @@ export default function StatisticsScreen() {
 
   const fetchStats = async () => {
     try {
-      const apiUrl = getApiUrl();
-
-      const [statsRes, packageStatsRes] = await Promise.all([
-        fetch(`${apiUrl}/api/stats`),
-        fetch(`${apiUrl}/api/package-stats`),
+      const [statsData, worstTopicsData, packagesData, packageStatsData] = await Promise.all([
+        getStats(),
+        getWorstTopics(5),
+        getPackages(),
+        getPackageStats(),
       ]);
 
-      if (statsRes.ok) {
-        const data = await statsRes.json();
-        setStats(data);
-      }
+      // Calculate average solving time
+      const avgSolvingTime =
+        statsData.totalAnswered && statsData.totalSolvingTimeMs
+          ? Math.round(statsData.totalSolvingTimeMs / statsData.totalAnswered)
+          : 0;
 
-      if (packageStatsRes.ok) {
-        const data = await packageStatsRes.json();
-        setPackageStats(data);
-      }
+      setStats({
+        ...statsData,
+        avgSolvingTimeMs: avgSolvingTime,
+        worstTopics: worstTopicsData,
+      });
+
+      // Combine package info with stats
+      const packagesWithStats = packagesData.map((pkg) => {
+        const pkgStats = packageStatsData.find((s) => s.packageId === pkg.id);
+        const totalAnswered = pkgStats?.totalAnswered || 0;
+        const correctAnswers = pkgStats?.correctAnswers || 0;
+        const successRate =
+          totalAnswered > 0 ? (correctAnswers / totalAnswered) * 100 : 0;
+        const avgTime =
+          totalAnswered > 0 && pkgStats?.totalSolvingTimeMs
+            ? Math.round(pkgStats.totalSolvingTimeMs / totalAnswered)
+            : 0;
+
+        return {
+          ...pkg,
+          stats: {
+            totalAnswered,
+            correctAnswers,
+            successRate: Math.round(successRate * 10) / 10,
+            avgSolvingTimeMs: avgTime,
+          },
+        };
+      });
+
+      setPackageStats(packagesWithStats);
     } catch (error) {
       console.error("Error fetching stats:", error);
     } finally {

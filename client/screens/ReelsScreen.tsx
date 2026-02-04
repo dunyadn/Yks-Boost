@@ -25,7 +25,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Tag } from "@/components/Tag";
 import { ReelsActionButton } from "@/components/ReelsActionButton";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getApiUrl } from "@/lib/query-client";
+import { getQuestions, updateStats, updatePackageStats } from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -222,23 +222,19 @@ function ReelCard({
     // Update stats with solving time and category info
     const isCorrect = label === question.correctAnswer;
     try {
-      const apiUrl = getApiUrl();
-      fetch(`${apiUrl}/api/stats`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          correct: isCorrect,
-          solvingTimeMs,
-          category: question.category,
-          subject: question.subject || null,
-          packageId: question.packageId || null,
-        }),
-      }).catch((error) => {
-        console.error("Error updating stats:", error);
-      });
+      await updateStats(
+        isCorrect,
+        solvingTimeMs,
+        question.category,
+        question.subject || undefined,
+      );
+      
+      // Update package stats if packageId exists
+      if (question.packageId) {
+        await updatePackageStats(question.packageId, isCorrect, solvingTimeMs);
+      }
     } catch (error) {
-      // Log configuration errors but don't interrupt the user experience
-      console.error("API URL configuration error:", error);
+      console.error("Error updating stats:", error);
     }
 
     setTimeout(() => {
@@ -347,9 +343,7 @@ export default function ReelsScreen() {
 
   const fetchQuestions = useCallback(async () => {
     try {
-      const apiUrl = getApiUrl();
-      const response = await fetch(`${apiUrl}/api/questions`);
-      const data = await response.json();
+      const data = await getQuestions();
       setQuestions(data);
     } catch (error) {
       console.error("Error fetching questions:", error);
