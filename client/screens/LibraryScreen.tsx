@@ -284,6 +284,7 @@ export default function LibraryScreen() {
       {/* Content */}
       {viewMode === "saved" ? (
         <FlatList
+          key="saved-questions-grid"
           data={filteredQuestions}
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
@@ -300,6 +301,7 @@ export default function LibraryScreen() {
         />
       ) : (
         <FlatList
+          key="packages-list"
           data={packages}
           renderItem={renderPackageItem}
           keyExtractor={(item) => item.id}
