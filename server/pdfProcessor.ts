@@ -19,13 +19,16 @@ const genAI = process.env.GEMINI_API_KEY
  * Extract text from PDF buffer
  */
 export async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
+  console.log("📄 Step 1: Extracting text from PDF...");
   try {
     const parser = new PDFParse({ data: pdfBuffer });
     const result = await parser.getText();
     await parser.destroy();
+    console.log(`✅ Text extracted: ${result.text.length} characters`);
+    console.log(`Preview: ${result.text.substring(0, 200)}...`);
     return result.text;
   } catch (error) {
-    console.error("Error extracting text from PDF:", error);
+    console.error("❌ Error extracting text from PDF:", error);
     throw new Error("PDF dosyası okunamadı. Lütfen geçerli bir PDF dosyası yükleyin.");
   }
 }
@@ -34,12 +37,15 @@ export async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
  * Parse questions from text using Gemini AI
  */
 export async function parseQuestionsWithAI(text: string): Promise<ParsedQuestion[]> {
+  console.log("🤖 Step 2: Parsing questions with AI...");
+  
   if (!genAI) {
-    console.warn("Gemini API key not configured, using fallback parser");
+    console.warn("⚠️ Gemini API key not configured, using fallback parser");
     return parsePatternsWithFallback(text);
   }
 
   try {
+    console.log("🤖 Calling Gemini API...");
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
     const prompt = `Sen bir Türk sınav sorusu ayıklama asistanısın. Aşağıdaki metinden tüm çoktan seçmeli soruları çıkar ve JSON formatında döndür.
@@ -71,9 +77,19 @@ JSON çıktı formatı:
   }
 ]`;
 
-    const result = await model.generateContent(prompt);
+    // Timeout koruması ile API çağrısı
+    const timeoutPromise = new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error("Gemini API timeout (30s)")), 30000)
+    );
+    
+    const apiPromise = model.generateContent(prompt);
+    
+    const result = await Promise.race([apiPromise, timeoutPromise]);
+    console.log("✅ Gemini API responded");
+    
     const response = await result.response;
     const content = response.text();
+    console.log(`Response length: ${content.length} characters`);
     
     if (!content) {
       throw new Error("AI yanıt vermedi");
@@ -94,7 +110,7 @@ JSON çıktı formatı:
     }
 
     // Validate and clean questions
-    return questions
+    const validQuestions = questions
       .filter((q: any) => {
         return (
           q.content &&
@@ -109,9 +125,12 @@ JSON çıktı formatı:
         correctAnswer: String(q.correctAnswer).trim().toUpperCase(),
         category: q.category ? String(q.category).trim() : "Genel",
       }));
+    
+    console.log(`✅ Found ${validQuestions.length} valid questions`);
+    return validQuestions;
   } catch (error) {
-    console.error("Error parsing questions with AI:", error);
-    // Fallback to pattern-based parsing
+    console.error("❌ Error in Gemini API:", error);
+    console.log("⚠️ Falling back to pattern-based parser");
     return parsePatternsWithFallback(text);
   }
 }
@@ -215,6 +234,7 @@ function detectCategory(text: string): string {
 export async function saveQuestionsToDatabase(
   questions: ParsedQuestion[]
 ): Promise<number> {
+  console.log("💾 Step 3: Saving questions to database...");
   let savedCount = 0;
   
   for (const question of questions) {
@@ -234,6 +254,7 @@ export async function saveQuestionsToDatabase(
     }
   }
   
+  console.log(`✅ Saved ${savedCount} out of ${questions.length} questions to database`);
   return savedCount;
 }
 
@@ -246,10 +267,13 @@ export async function processPDF(pdfBuffer: Buffer): Promise<{
   error?: string;
 }> {
   try {
+    console.log("🔄 Starting PDF processing...");
+    
     // Step 1: Extract text
     const text = await extractTextFromPDF(pdfBuffer);
     
     if (!text || text.trim().length === 0) {
+      console.error("❌ No text extracted from PDF");
       return {
         success: false,
         questionsAdded: 0,
@@ -261,6 +285,7 @@ export async function processPDF(pdfBuffer: Buffer): Promise<{
     const questions = await parseQuestionsWithAI(text);
     
     if (questions.length === 0) {
+      console.error("❌ No questions found in PDF");
       return {
         success: false,
         questionsAdded: 0,
@@ -271,12 +296,14 @@ export async function processPDF(pdfBuffer: Buffer): Promise<{
     // Step 3: Save to database
     const savedCount = await saveQuestionsToDatabase(questions);
     
+    console.log(`✅ PDF processing completed successfully: ${savedCount} questions added`);
+    
     return {
       success: true,
       questionsAdded: savedCount,
     };
   } catch (error) {
-    console.error("Error processing PDF:", error);
+    console.error("❌ Error processing PDF:", error);
     return {
       success: false,
       questionsAdded: 0,
