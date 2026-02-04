@@ -1,0 +1,78 @@
+{
+  "packageName": "TYT 2026 Matematik - Örnek",
+  "examType": "TYT",
+  "year": 2026,
+  "description": "TYT Matematik soruları - Çözüm açıklamalı örnek paket",
+  "questions": [
+    {
+      "content": "3x - 5 = 16 denkleminin çözüm kümesi aşağıdakilerden hangisidir?",
+      "options": [
+        "{5}",
+        "{6}",
+        "{7}",
+        "{8}",
+        "{9}"
+      ],
+      "correctAnswer": "C",
+      "solution": "3x - 5 = 16 denkleminde 5'i sağa atarsak: 3x = 16 + 5 → 3x = 21 → x = 21/3 → x = 7 bulunur.",
+      "category": "Matematik",
+      "subject": "Denklemler"
+    },
+    {
+      "content": "Bir dikdörtgenin uzun kenarı kısa kenarının 3 katıdır. Çevresi 96 cm ise, alanı kaç cm² dir?",
+      "options": [
+        "432",
+        "486",
+        "512",
+        "576",
+        "648"
+      ],
+      "correctAnswer": "A",
+      "solution": "Kısa kenar = x, uzun kenar = 3x olsun. Çevre = 2(x + 3x) = 8x = 96 → x = 12 cm. Alan = 12 × 36 = 432 cm²",
+      "category": "Matematik",
+      "subject": "Geometri"
+    },
+    {
+      "content": "f(x) = 2x + 3 fonksiyonu için f(5) değeri kaçtır?",
+      "options": [
+        "10",
+        "11",
+        "12",
+        "13",
+        "14"
+      ],
+      "correctAnswer": "D",
+      "solution": "f(5) = 2(5) + 3 = 10 + 3 = 13",
+      "category": "Matematik",
+      "subject": "Fonksiyonlar"
+    },
+    {
+      "content": "√144 + √81 işleminin sonucu kaçtır?",
+      "options": [
+        "15",
+        "18",
+        "21",
+        "24",
+        "27"
+      ],
+      "correctAnswer": "C",
+      "solution": "√144 = 12 ve √81 = 9 olduğundan, 12 + 9 = 21 bulunur.",
+      "category": "Matematik",
+      "subject": "Kökler"
+    },
+    {
+      "content": "Bir sepette 5 elma ve 3 armut vardır. Rastgele bir meyve seçme olasılığı için toplam kaç farklı durum vardır?",
+      "options": [
+        "5",
+        "6",
+        "8",
+        "10",
+        "15"
+      ],
+      "correctAnswer": "C",
+      "solution": "Toplam meyve sayısı = 5 + 3 = 8. Bir meyve seçerken 8 farklı durum vardır.",
+      "category": "Matematik",
+      "subject": "Olasılık"
+    }
+  ]
+}

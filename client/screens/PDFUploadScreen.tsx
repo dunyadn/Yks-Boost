@@ -23,10 +23,10 @@ import type { InsertQuestion } from "@shared/schema";
 
 // Örnek JSON formatı
 const EXAMPLE_JSON = `{
-  "packageName": "TYT 2025 Türkçe",
+  "packageName": "TYT 2026 Türkçe",
   "examType": "TYT",
-  "year": 2025,
-  "description": "2025 TYT Türkçe Soruları",
+  "year": 2026,
+  "description": "2026 TYT Türkçe Soruları",
   "questions": [
     {
       "content": "Aşağıdaki cümlelerin hangisinde yazım yanlışı vardır?",
@@ -38,6 +38,7 @@ const EXAMPLE_JSON = `{
         "Hava bugün çok güzel."
       ],
       "correctAnswer": "B",
+      "solution": "Doğru yazımı 'hiçbir şey' şeklindedir. 'Hiçbir' sözcüğü bitişik yazılmalıdır.",
       "category": "Türkçe",
       "subject": "Yazım Kuralları"
     },
@@ -51,6 +52,7 @@ const EXAMPLE_JSON = `{
         "Yıkıcı"
       ],
       "correctAnswer": "A",
+      "solution": "'Sağaltıcı' sözcüğü, hastalıkları iyileştiren, tedavi eden anlamına gelir. Kökü 'sağ' olan bu kelime, sağlıklı hale getirme işlevini ifade eder.",
       "category": "Türkçe",
       "subject": "Sözcük Anlamı"
     }
@@ -122,6 +124,9 @@ export default function PDFUploadScreen() {
         correctAnswer?: string;
         dogruCevap?: string;
         cevap?: string;
+        solution?: string;
+        cozum?: string;
+        aciklama?: string;
         category?: string;
         ders?: string;
         konu?: string;
@@ -135,6 +140,7 @@ export default function PDFUploadScreen() {
           content: q.content || q.soru || q.question || "",
           options: q.options || q.secenekler || q.siklar || [],
           correctAnswer: q.correctAnswer || q.dogruCevap || q.cevap || "A",
+          solution: q.solution || q.cozum || q.aciklama || null,
           category: q.category || q.ders || q.konu || "Genel",
           subject: q.subject || q.altKonu || null,
           packageId: pkg.id,
@@ -218,7 +224,7 @@ export default function PDFUploadScreen() {
         <View style={styles.infoRow}>
           <Feather name="package" size={20} color={Colors.dark.primary} />
           <ThemedText style={styles.infoText}>
-            Soru paketleri oluşturun (örn: TYT 2025)
+            Soru paketleri oluşturun (örn: TYT 2026)
           </ThemedText>
         </View>
         <View style={styles.infoRow}>
@@ -349,6 +355,12 @@ export default function PDFUploadScreen() {
           <ThemedText style={styles.helpField}>correctAnswer</ThemedText>
           <ThemedText style={styles.helpDesc}>
             Doğru cevap (A/B/C/D/E)
+          </ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>solution</ThemedText>
+          <ThemedText style={styles.helpDesc}>
+            Çözüm açıklaması (opsiyonel)
           </ThemedText>
         </View>
         <View style={styles.helpItem}>
