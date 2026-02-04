@@ -63,8 +63,17 @@ export default function PDFUploadScreen() {
       throw new Error("EXPO_PUBLIC_DOMAIN is not set");
     }
     
-    // Add https:// if not present
-    const url = domain.startsWith('http') ? domain : `https://${domain}`;
+    // Preserve http:// for localhost, otherwise add https://
+    let url = domain;
+    if (!domain.startsWith('http://') && !domain.startsWith('https://')) {
+      // Check if localhost or 127.0.0.1 - keep HTTP for local development
+      if (domain.includes('localhost') || domain.includes('127.0.0.1')) {
+        url = `http://${domain}`;
+      } else {
+        url = `https://${domain}`;
+      }
+    }
+    
     console.log("🌐 API URL:", url);
     return url;
   };
@@ -154,7 +163,7 @@ export default function PDFUploadScreen() {
         data = JSON.parse(responseText);
       } catch (e) {
         console.error("❌ Failed to parse response as JSON:", responseText);
-        throw new Error("Sunucu geçersiz yanıt döndürdü");
+        throw new Error("Sunucu geçersiz yanıt döndürdü. Lütfen internet bağlantınızı kontrol edin ve tekrar deneyin.");
       }
 
       if (!response.ok || !data.success) {

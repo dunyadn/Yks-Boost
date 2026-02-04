@@ -21,17 +21,21 @@ const upload = multer({
     const validMimeTypes = [
       "application/pdf",
       "application/x-pdf",
-      "application/octet-stream", // iOS sometimes sends this
     ];
     
     const isPdfByMimeType = validMimeTypes.includes(file.mimetype);
     const isPdfByExtension = file.originalname.toLowerCase().endsWith('.pdf');
     
-    if (isPdfByMimeType || isPdfByExtension) {
+    // Accept if valid MIME type OR (octet-stream AND .pdf extension)
+    // This handles iOS which sometimes sends octet-stream for PDF files
+    const isAcceptable = isPdfByMimeType || 
+      (file.mimetype === "application/octet-stream" && isPdfByExtension);
+    
+    if (isAcceptable) {
       console.log("✅ File accepted as PDF");
       cb(null, true);
     } else {
-      console.error("❌ Invalid file type:", file.mimetype);
+      console.error("❌ Invalid file type:", file.mimetype, "with extension:", file.originalname);
       cb(new Error("Only PDF files are allowed"));
     }
   },

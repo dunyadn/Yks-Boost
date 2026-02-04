@@ -10,6 +10,9 @@ interface ParsedQuestion {
   category: string;
 }
 
+// Constants
+const MAX_STACK_TRACE_LENGTH = 500;
+
 // Initialize Gemini client (will be null if no API key)
 const genAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
@@ -160,7 +163,7 @@ JSON çıktı formatı:
       console.error("Error details:", {
         name: error.name,
         message: error.message,
-        stack: error.stack?.substring(0, 500),
+        stack: error.stack?.substring(0, MAX_STACK_TRACE_LENGTH),
       });
     }
     
