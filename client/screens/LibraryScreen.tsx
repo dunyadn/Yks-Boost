@@ -11,7 +11,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Tag } from "@/components/Tag";
 import { EmptyState } from "@/components/EmptyState";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getQuestions, getSavedQuestions, getPackages, toggleSavedQuestion } from "@/lib/localStorage";
+import { getQuestions, getSavedQuestions, getPackages, toggleSavedQuestion, getSavedQuestionsWithMeta } from "@/lib/localStorage";
 import type { Question, QuestionPackage } from "@shared/schema";
 
 interface SavedQuestion {
@@ -25,7 +25,7 @@ interface SavedQuestion {
 }
 
 type ViewMode = "saved" | "packages";
-const FILTERS = ["Tümü", "Matematik", "Fizik", "Türkçe", "Kimya", "Tarih"];
+const FILTERS = ["Tümü", "Genel", "Matematik", "Fizik", "Türkçe", "Kimya", "Biyoloji", "Tarih", "Coğrafya"];
 
 export default function LibraryScreen() {
   const insets = useSafeAreaInsets();
@@ -42,18 +42,24 @@ export default function LibraryScreen() {
     try {
       setLoading(true);
       
-      // Load saved questions
-      const savedIds = await getSavedQuestions();
+      // Load saved questions with metadata
+      const savedMeta = await getSavedQuestionsWithMeta();
       const allQuestions = await getQuestions();
+      
+      // Create a map of questionId -> savedAt for quick lookup
+      const savedMetaMap = new Map(
+        savedMeta.map(item => [item.questionId, item.savedAt])
+      );
+      
       const saved = allQuestions
-        .filter(q => savedIds.includes(q.id))
+        .filter(q => savedMetaMap.has(q.id))
         .map(q => ({
           id: q.id,
           text: q.content,
           subject: q.subject || "Genel",
           category: q.category || "Genel",
           examType: (q.examType || "TYT") as "TYT" | "AYT",
-          savedAt: new Date().toLocaleDateString('tr-TR'),
+          savedAt: new Date(savedMetaMap.get(q.id)!).toLocaleDateString('tr-TR'),
           packageId: q.packageId,
         }));
       setSavedQuestions(saved);

@@ -349,6 +349,7 @@ export default function ReelsScreen() {
       const questionsWithSavedStatus = data.map(q => ({
         ...q,
         saved: savedQuestionIds.includes(q.id),
+        // TODO: Implement like/comment functionality in future
         liked: false,
         likes: 0,
         comments: 0,
