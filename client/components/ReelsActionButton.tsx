@@ -57,7 +57,7 @@ export function ReelsActionButton({
       >
         <Feather
           name={icon}
-          size={28}
+          size={22}
           color={active ? activeColor : Colors.dark.text}
         />
       </View>
@@ -74,15 +74,15 @@ const styles = StyleSheet.create({
     gap: Spacing.xs,
   },
   iconContainer: {
-    width: 52,
-    height: 52,
+    width: 44,
+    height: 44,
     borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
     justifyContent: "center",
   },
   label: {
-    fontSize: 12,
+    fontSize: 11,
     color: Colors.dark.text,
     fontWeight: "500",
   },
