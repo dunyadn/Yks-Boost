@@ -612,17 +612,17 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
   },
   optionsContainer: {
-    gap: 6,
+    gap: Spacing.xs + 2, // 6px - compact spacing between options
   },
   optionButton: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: BorderRadius.sm,
-    paddingVertical: 6,
+    paddingVertical: Spacing.xs + 2, // 6px - compact vertical padding
     paddingHorizontal: Spacing.sm,
     borderWidth: 1,
     gap: Spacing.sm,
-    minHeight: 40,
+    minHeight: 44, // Maintain accessibility standard
   },
   optionLabel: {
     width: 26,
