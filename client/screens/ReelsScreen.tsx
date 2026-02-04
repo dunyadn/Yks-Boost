@@ -449,8 +449,8 @@ export default function ReelsScreen() {
         
         // Auto-save when liking
         if (isLiking) {
-          toggleSavedQuestion(id).then((saved) => {
-            // Question is now saved
+          toggleSavedQuestion(id).catch((error) => {
+            console.error("Error auto-saving question:", error);
           });
         }
         

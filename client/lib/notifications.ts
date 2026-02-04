@@ -58,14 +58,21 @@ export async function scheduleDailyNotification(): Promise<void> {
     await cancelDailyNotification();
 
     // Schedule notification for 10:00 AM daily
+    const notificationContent: Notifications.NotificationContentInput = {
+      title: "YKS Boost 📚",
+      body: "Bugün soru çözmeye ne dersin?",
+      sound: "default",
+      data: { type: "daily-reminder" },
+    };
+
+    // Add Android-specific priority
+    if (Platform.OS === "android") {
+      notificationContent.priority =
+        Notifications.AndroidNotificationPriority.HIGH;
+    }
+
     await Notifications.scheduleNotificationAsync({
-      content: {
-        title: "YKS Boost 📚",
-        body: "Bugün soru çözmeye ne dersin?",
-        sound: "default",
-        priority: Notifications.AndroidNotificationPriority.HIGH,
-        data: { type: "daily-reminder" },
-      },
+      content: notificationContent,
       trigger: {
         type: Notifications.SchedulableTriggerInputTypes.DAILY,
         hour: 10,
