@@ -354,7 +354,7 @@ export default function ReelsScreen() {
     setQuestions((prev) =>
       prev.map((q) =>
         q.id === id
-          ? { ...q, liked: !q.liked, likes: q.liked ? q.likes - 1 : q.likes + 1 }
+          ? { ...q, liked: !q.liked, likes: q.liked ? (q.likes ?? 0) - 1 : (q.likes ?? 0) + 1 }
           : q
       )
     );

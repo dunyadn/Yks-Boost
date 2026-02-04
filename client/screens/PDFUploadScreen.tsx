@@ -266,7 +266,7 @@ export default function PDFUploadScreen() {
 
       <Animated.View entering={FadeIn.delay(350)} style={styles.section}>
         <View style={styles.tipCard}>
-          <Feather name="lightbulb" size={20} color={Colors.dark.accent} />
+          <Feather name="alert-circle" size={20} color={Colors.dark.accent} />
           <View style={styles.infoTextContainer}>
             <ThemedText style={styles.tipTitle}>İpucu</ThemedText>
             <ThemedText style={styles.tipText}>

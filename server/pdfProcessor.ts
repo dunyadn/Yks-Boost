@@ -1,4 +1,4 @@
-import pdfParse from "pdf-parse";
+import { PDFParse } from "pdf-parse";
 import OpenAI from "openai";
 import { storage } from "./storage";
 import type { InsertQuestion } from "@shared/schema";
@@ -20,8 +20,10 @@ const openai = process.env.OPENAI_API_KEY
  */
 export async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
   try {
-    const data = await pdfParse(pdfBuffer);
-    return data.text;
+    const parser = new PDFParse({ data: pdfBuffer });
+    const result = await parser.getText();
+    await parser.destroy();
+    return result.text;
   } catch (error) {
     console.error("Error extracting text from PDF:", error);
     throw new Error("PDF dosyası okunamadı. Lütfen geçerli bir PDF dosyası yükleyin.");
@@ -34,8 +36,7 @@ export async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
 export async function parseQuestionsWithAI(text: string): Promise<ParsedQuestion[]> {
   if (!openai) {
     console.warn("OpenAI API key not configured, using fallback parser");
-    return parsePat
-ternsWithFallback(text);
+    return parsePatternsWithFallback(text);
   }
 
   try {
