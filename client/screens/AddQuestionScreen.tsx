@@ -37,6 +37,13 @@ const SUBJECTS = [
 
 const EXAM_TYPES = ["TYT", "AYT"];
 
+const JSON_EXAMPLE = `{
+  "content": "Soru metni buraya",
+  "options": ["A şıkkı", "B şıkkı", "C şıkkı", "D şıkkı"],
+  "correctAnswer": "A",
+  "category": "Matematik"
+}`;
+
 export default function AddQuestionScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
@@ -46,6 +53,8 @@ export default function AddQuestionScreen() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
   const [selectedExamType, setSelectedExamType] = useState<string>("TYT");
+  const [isJsonMode, setIsJsonMode] = useState(false);
+  const [jsonInput, setJsonInput] = useState("");
 
   const handlePickImage = async () => {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -104,20 +113,53 @@ export default function AddQuestionScreen() {
     Haptics.selectionAsync();
   };
 
-  const handleSubmit = async () => {
-    if (!questionText.trim()) {
-      Alert.alert("Hata", "Lütfen bir soru yazın.");
-      return;
-    }
+  const toggleJsonMode = () => {
+    setIsJsonMode(!isJsonMode);
+    Haptics.selectionAsync();
+  };
 
+  const handleSubmit = async () => {
     try {
-      // Simple parser for JSON-like format or just text
-      // User requested "Json formatında"
       let payload;
-      try {
-        payload = JSON.parse(questionText);
-      } catch (e) {
-        // Fallback for simple text input
+
+      if (isJsonMode) {
+        // JSON Mode - validate and parse JSON
+        if (!jsonInput.trim()) {
+          Alert.alert("Hata", "Lütfen JSON formatında soru girin.");
+          return;
+        }
+
+        try {
+          payload = JSON.parse(jsonInput);
+          
+          // Validate required fields
+          if (!payload.content || !payload.options || !payload.correctAnswer || !payload.category) {
+            Alert.alert(
+              "Geçersiz JSON",
+              "JSON'da 'content', 'options', 'correctAnswer' ve 'category' alanları zorunludur."
+            );
+            return;
+          }
+
+          if (!Array.isArray(payload.options) || payload.options.length === 0) {
+            Alert.alert("Geçersiz JSON", "'options' bir dizi olmalı ve en az bir seçenek içermelidir.");
+            return;
+          }
+        } catch (e) {
+          Alert.alert(
+            "JSON Hatası",
+            `Geçersiz JSON formatı. Lütfen formatınızı kontrol edin.\n\nÖrnek:\n${JSON_EXAMPLE}`
+          );
+          return;
+        }
+      } else {
+        // Standard Mode - use form fields
+        // Note: In Form mode, options are placeholders. For proper questions with custom options, use JSON mode.
+        if (!questionText.trim()) {
+          Alert.alert("Hata", "Lütfen bir soru yazın.");
+          return;
+        }
+
         payload = {
           content: questionText,
           options: ["A", "B", "C", "D"],
@@ -144,7 +186,9 @@ export default function AddQuestionScreen() {
   };
 
   const isValid =
-    (questionText.trim().length > 0 || selectedImage) && selectedSubject;
+    isJsonMode 
+      ? jsonInput.trim().length > 0
+      : (questionText.trim().length > 0 || selectedImage) && selectedSubject;
 
   return (
     <ScrollView
@@ -156,6 +200,51 @@ export default function AddQuestionScreen() {
       }}
       keyboardShouldPersistTaps="handled"
     >
+      <View style={styles.section}>
+        <View style={styles.modeToggleContainer}>
+          <ThemedText style={styles.sectionTitle}>Giriş Modu</ThemedText>
+          <Pressable style={styles.modeToggle} onPress={toggleJsonMode}>
+            <ThemedText style={[styles.modeToggleText, !isJsonMode && styles.modeToggleTextActive]}>
+              Form
+            </ThemedText>
+            <View style={[styles.modeToggleIndicator, isJsonMode && styles.modeToggleIndicatorRight]}>
+              <ThemedText style={styles.modeToggleIndicatorText}>
+                {isJsonMode ? "JSON" : "Form"}
+              </ThemedText>
+            </View>
+            <ThemedText style={[styles.modeToggleText, isJsonMode && styles.modeToggleTextActive]}>
+              JSON
+            </ThemedText>
+          </Pressable>
+        </View>
+      </View>
+
+      {isJsonMode ? (
+        <>
+          <View style={styles.section}>
+            <ThemedText style={styles.sectionTitle}>JSON Formatında Soru</ThemedText>
+            <ThemedText style={styles.helperText}>
+              Aşağıdaki formatta JSON girin:
+            </ThemedText>
+            <View style={styles.jsonExample}>
+              <ThemedText style={styles.jsonExampleText}>
+                {JSON_EXAMPLE}
+              </ThemedText>
+            </View>
+            <TextInput
+              style={styles.jsonInput}
+              placeholder="JSON formatında soru girin..."
+              placeholderTextColor={Colors.dark.textSecondary}
+              value={jsonInput}
+              onChangeText={setJsonInput}
+              multiline
+              numberOfLines={12}
+              textAlignVertical="top"
+            />
+          </View>
+        </>
+      ) : (
+        <>
       <View style={styles.section}>
         <ThemedText style={styles.sectionTitle}>Soru</ThemedText>
         <TextInput
@@ -227,6 +316,8 @@ export default function AddQuestionScreen() {
           ))}
         </View>
       </View>
+        </>
+      )}
 
       <Button
         onPress={handleSubmit}
@@ -310,5 +401,76 @@ const styles = StyleSheet.create({
   },
   submitButton: {
     marginTop: Spacing.lg,
+  },
+  modeToggleContainer: {
+    marginBottom: Spacing.md,
+  },
+  modeToggle: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.full,
+    padding: Spacing.xs,
+    gap: Spacing.xs,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  modeToggleText: {
+    flex: 1,
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.dark.textSecondary,
+    textAlign: "center",
+  },
+  modeToggleTextActive: {
+    color: Colors.dark.text,
+  },
+  modeToggleIndicator: {
+    position: "absolute",
+    left: Spacing.xs,
+    width: "48%",
+    backgroundColor: Colors.dark.primary,
+    borderRadius: BorderRadius.full,
+    paddingVertical: Spacing.sm,
+    paddingHorizontal: Spacing.md,
+  },
+  modeToggleIndicatorRight: {
+    left: "auto",
+    right: Spacing.xs,
+  },
+  modeToggleIndicatorText: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: Colors.dark.backgroundRoot,
+    textAlign: "center",
+  },
+  helperText: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    marginBottom: Spacing.sm,
+  },
+  jsonExample: {
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  jsonExampleText: {
+    fontSize: 12,
+    color: Colors.dark.primary,
+    fontFamily: Platform.select({ ios: "Courier", android: "monospace" }),
+  },
+  jsonInput: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    color: Colors.dark.text,
+    fontSize: 14,
+    minHeight: 250,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+    fontFamily: Platform.select({ ios: "Courier", android: "monospace" }),
   },
 });

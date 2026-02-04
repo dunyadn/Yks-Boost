@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import MainTabNavigator from "@/navigation/MainTabNavigator";
 import AddQuestionScreen from "@/screens/AddQuestionScreen";
 import CommunityScreen from "@/screens/CommunityScreen";
+import StatisticsScreen from "@/screens/StatisticsScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
@@ -11,6 +12,7 @@ export type RootStackParamList = {
   Main: undefined;
   AddQuestion: undefined;
   Community: undefined;
+  Statistics: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -46,6 +48,14 @@ export default function RootStackNavigator() {
         component={CommunityScreen}
         options={{
           headerTitle: "Topluluk",
+        }}
+      />
+      <Stack.Screen
+        name="Statistics"
+        component={StatisticsScreen}
+        options={{
+          headerTitle: "İstatistikler",
+          headerTintColor: Colors.dark.text,
         }}
       />
     </Stack.Navigator>
