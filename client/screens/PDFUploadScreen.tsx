@@ -18,6 +18,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
+import { getApiUrl } from "@/lib/query-client";
 
 // Örnek JSON formatı
 const EXAMPLE_JSON = `{
@@ -98,13 +99,14 @@ export default function PDFUploadScreen() {
       return;
     }
 
-    const domain = process.env.EXPO_PUBLIC_DOMAIN;
-    if (!domain) {
+    let apiUrl: string;
+    try {
+      apiUrl = getApiUrl();
+    } catch {
       Alert.alert("Hata", "API domain ayarlanmamış.");
       return;
     }
 
-    const apiUrl = domain.startsWith("http") ? domain : `https://${domain}`;
     setUploading(true);
 
     try {

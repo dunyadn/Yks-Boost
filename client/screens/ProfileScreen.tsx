@@ -8,6 +8,7 @@ import Animated, { FadeIn } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
+import { getApiUrl } from "@/lib/query-client";
 
 const MOCK_USER = {
   name: "Kişisel Kullanıcı",
@@ -26,9 +27,8 @@ export default function ProfileScreen() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch(
-          `${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`,
-        );
+        const apiUrl = getApiUrl();
+        const response = await fetch(`${apiUrl}/api/stats`);
         const data = await response.json();
         setStats(data);
       } catch (error) {

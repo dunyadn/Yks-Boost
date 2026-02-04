@@ -25,6 +25,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Tag } from "@/components/Tag";
 import { ReelsActionButton } from "@/components/ReelsActionButton";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
+import { getApiUrl } from "@/lib/query-client";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -220,9 +221,8 @@ function ReelCard({
 
     // Update stats with solving time and category info
     const isCorrect = label === question.correctAnswer;
-    const domain = process.env.EXPO_PUBLIC_DOMAIN;
-    if (domain) {
-      const apiUrl = domain.startsWith("http") ? domain : `https://${domain}`;
+    try {
+      const apiUrl = getApiUrl();
       fetch(`${apiUrl}/api/stats`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -234,6 +234,8 @@ function ReelCard({
           packageId: question.packageId || null,
         }),
       });
+    } catch {
+      // Silently fail if API URL is not configured
     }
 
     setTimeout(() => {
@@ -342,12 +344,7 @@ export default function ReelsScreen() {
 
   const fetchQuestions = useCallback(async () => {
     try {
-      const domain = process.env.EXPO_PUBLIC_DOMAIN;
-      if (!domain) {
-        console.error("EXPO_PUBLIC_DOMAIN not set");
-        return;
-      }
-      const apiUrl = domain.startsWith("http") ? domain : `https://${domain}`;
+      const apiUrl = getApiUrl();
       const response = await fetch(`${apiUrl}/api/questions`);
       const data = await response.json();
       setQuestions(data);

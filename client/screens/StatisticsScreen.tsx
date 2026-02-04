@@ -14,6 +14,7 @@ import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
+import { getApiUrl } from "@/lib/query-client";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -142,10 +143,7 @@ export default function StatisticsScreen() {
 
   const fetchStats = async () => {
     try {
-      const domain = process.env.EXPO_PUBLIC_DOMAIN;
-      if (!domain) return;
-
-      const apiUrl = domain.startsWith("http") ? domain : `https://${domain}`;
+      const apiUrl = getApiUrl();
 
       const [statsRes, packageStatsRes] = await Promise.all([
         fetch(`${apiUrl}/api/stats`),
