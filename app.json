@@ -45,6 +45,14 @@
           "photosPermission": "Uygulama soru paylaşımı için fotoğraflarınıza erişmek istiyor.",
           "cameraPermission": "Uygulama soru fotoğrafı çekmek için kameranıza erişmek istiyor."
         }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#6366F1",
+          "sounds": []
+        }
       ]
     ],
     "experiments": {

@@ -19,6 +19,7 @@ import { queryClient } from "@/lib/query-client";
 
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { initializeNotifications } from "@/lib/notifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -35,6 +36,11 @@ export default function App() {
       SplashScreen.hideAsync();
     }
   }, [fontsLoaded, fontError]);
+
+  // Initialize notifications on app startup
+  useEffect(() => {
+    initializeNotifications();
+  }, []);
 
   if (!fontsLoaded && !fontError) {
     return null;
