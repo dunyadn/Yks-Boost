@@ -108,7 +108,21 @@ export async function deleteQuestion(id: string): Promise<void> {
 export async function getPackages(): Promise<QuestionPackage[]> {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEYS.PACKAGES);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed)) {
+      return parsed.filter((pkg) => pkg && typeof pkg === "object");
+    }
+    if (
+      parsed &&
+      typeof parsed === "object" &&
+      Array.isArray((parsed as { packages?: QuestionPackage[] }).packages)
+    ) {
+      return (parsed as { packages: QuestionPackage[] }).packages.filter(
+        (pkg) => pkg && typeof pkg === "object",
+      );
+    }
+    return [];
   } catch (error) {
     console.error("Error loading packages:", error);
     return [];
