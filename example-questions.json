@@ -1,0 +1,57 @@
+[
+  {
+    "content": "Aşağıdaki cümlelerin hangisinde yazım yanlışı vardır?",
+    "options": [
+      "Dün akşam sinemaya gittik.",
+      "Kahvaltıda peynir ve zeytin yedim.",
+      "Bugün hava çok güzel.",
+      "Yarın sınav olacağını biliyordum."
+    ],
+    "correctAnswer": "A",
+    "category": "Türkçe"
+  },
+  {
+    "content": "2x + 3 = 11 denkleminde x kaçtır?",
+    "options": [
+      "3",
+      "4",
+      "5",
+      "6"
+    ],
+    "correctAnswer": "B",
+    "category": "Matematik"
+  },
+  {
+    "content": "Newton'un hareket yasalarından hangisi 'Etki-Tepki' yasası olarak bilinir?",
+    "options": [
+      "Birinci yasa",
+      "İkinci yasa",
+      "Üçüncü yasa",
+      "Dördüncü yasa"
+    ],
+    "correctAnswer": "C",
+    "category": "Fizik"
+  },
+  {
+    "content": "H₂O molekülünde kaç tane hidrojen atomu vardır?",
+    "options": [
+      "1",
+      "2",
+      "3",
+      "4"
+    ],
+    "correctAnswer": "B",
+    "category": "Kimya"
+  },
+  {
+    "content": "Osmanlı İmparatorluğu hangi yüzyılda kurulmuştur?",
+    "options": [
+      "12. yüzyıl",
+      "13. yüzyıl",
+      "14. yüzyıl",
+      "15. yüzyıl"
+    ],
+    "correctAnswer": "B",
+    "category": "Tarih"
+  }
+]
