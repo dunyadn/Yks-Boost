@@ -11,7 +11,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
 interface ButtonProps {
-  onPress?: () => void;
+  onPress?: () => void | Promise<void>;
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
@@ -52,7 +52,7 @@ export function Button({
 
   const handlePress = useCallback(() => {
     if (!disabled && onPress) {
-      onPress();
+      void onPress();
     }
   }, [disabled, onPress]);
 
