@@ -129,6 +129,96 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // JSON upload endpoint
+  app.post("/api/upload-json", async (req, res) => {
+    const startTime = Date.now();
+    
+    console.log("📨 Received JSON upload request");
+    console.log("Headers:", JSON.stringify({
+      'content-type': req.headers['content-type'],
+      'content-length': req.headers['content-length'],
+    }));
+    
+    try {
+      const questions = req.body;
+      
+      // Validate that we have an array
+      if (!Array.isArray(questions)) {
+        console.error("❌ JSON is not an array");
+        return res.status(400).json({
+          success: false,
+          questionsAdded: 0,
+          error: "JSON dosyası bir soru dizisi içermelidir.",
+        });
+      }
+      
+      console.log(`📄 Received ${questions.length} questions in JSON`);
+      
+      // Validate and save each question
+      let savedCount = 0;
+      const errors: string[] = [];
+      
+      for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        
+        // Validate question structure
+        if (!q.content || !Array.isArray(q.options) || !q.correctAnswer) {
+          errors.push(`Question ${i + 1}: Missing required fields (content, options, or correctAnswer)`);
+          continue;
+        }
+        
+        if (q.options.length < 2) {
+          errors.push(`Question ${i + 1}: Must have at least 2 options`);
+          continue;
+        }
+        
+        try {
+          await storage.createQuestion({
+            content: q.content,
+            options: q.options,
+            correctAnswer: q.correctAnswer,
+            category: q.category || "Genel",
+          });
+          savedCount++;
+          console.log(`✅ Saved question ${i + 1}: ${q.content.substring(0, 50)}...`);
+        } catch (error) {
+          console.error(`❌ Error saving question ${i + 1}:`, error);
+          errors.push(`Question ${i + 1}: Failed to save - ${error instanceof Error ? error.message : 'Unknown error'}`);
+        }
+      }
+      
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.log(`⏱️  Processing completed in ${duration}s`);
+      console.log(`✅ Saved ${savedCount} out of ${questions.length} questions`);
+      
+      if (errors.length > 0) {
+        console.warn("⚠️ Errors occurred:", errors);
+      }
+      
+      return res.json({
+        success: savedCount > 0,
+        questionsAdded: savedCount,
+        totalQuestions: questions.length,
+        errors: errors.length > 0 ? errors : undefined,
+      });
+    } catch (error) {
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.error(`❌ JSON upload error after ${duration}s:`, error);
+      
+      if (error instanceof Error) {
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+      
+      return res.status(500).json({
+        success: false,
+        questionsAdded: 0,
+        error: error instanceof Error ? error.message : "Sunucu hatası",
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

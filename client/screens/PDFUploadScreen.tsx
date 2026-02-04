@@ -26,6 +26,7 @@ export default function PDFUploadScreen() {
   const [selectedFile, setSelectedFile] = useState<{
     name: string;
     uri: string;
+    type: 'pdf' | 'json';
   } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
@@ -42,12 +43,34 @@ export default function PDFUploadScreen() {
         setSelectedFile({
           name: result.assets[0].name,
           uri: result.assets[0].uri,
+          type: 'pdf',
         });
         Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       }
     } catch (error) {
       console.error("Error picking PDF:", error);
       Alert.alert("Hata", "PDF seçilirken bir sorun oluştu.");
+    }
+  };
+
+  const handlePickJSON = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: "application/json",
+        copyToCacheDirectory: true,
+      });
+
+      if (!result.canceled && result.assets[0]) {
+        setSelectedFile({
+          name: result.assets[0].name,
+          uri: result.assets[0].uri,
+          type: 'json',
+        });
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      }
+    } catch (error) {
+      console.error("Error picking JSON:", error);
+      Alert.alert("Hata", "JSON dosyası seçilirken bir sorun oluştu.");
     }
   };
 
@@ -80,13 +103,15 @@ export default function PDFUploadScreen() {
 
   const handleUpload = async () => {
     if (!selectedFile) {
-      Alert.alert("Hata", "Lütfen bir PDF dosyası seçin.");
+      Alert.alert("Hata", "Lütfen bir dosya seçin.");
       return;
     }
 
     setUploading(true);
     setUploadProgress(0);
-    setProcessingState("📄 PDF dosyası hazırlanıyor...");
+    
+    const isJSON = selectedFile.type === 'json';
+    setProcessingState(isJSON ? "📄 JSON dosyası hazırlanıyor..." : "📄 PDF dosyası hazırlanıyor...");
 
     // Progress simulation interval
     let progressInterval: NodeJS.Timeout | null = null;
@@ -99,17 +124,52 @@ export default function PDFUploadScreen() {
     }, 60000); // 60 seconds timeout
 
     try {
-      console.log("📤 Starting upload:", selectedFile.name);
+      console.log("📤 Starting upload:", selectedFile.name, "Type:", selectedFile.type);
       console.log("📄 File URI:", selectedFile.uri);
       
       // Validate API URL
       const apiUrl = getApiUrl();
-      const uploadUrl = `${apiUrl}/api/upload-pdf`;
+      
+      let uploadUrl: string;
+      let requestBody: FormData | string;
+      let headers: Record<string, string> = {
+        "Accept": "application/json",
+      };
+
+      if (isJSON) {
+        // Handle JSON file upload
+        uploadUrl = `${apiUrl}/api/upload-json`;
+        
+        // Read JSON file content
+        const fileResponse = await fetch(selectedFile.uri);
+        const jsonContent = await fileResponse.text();
+        
+        console.log("📄 JSON content length:", jsonContent.length);
+        
+        requestBody = jsonContent;
+        headers["Content-Type"] = "application/json";
+      } else {
+        // Handle PDF upload
+        uploadUrl = `${apiUrl}/api/upload-pdf`;
+        
+        // Create FormData - React Native specific format
+        const formData = new FormData();
+        
+        // React Native FormData accepts a file object with uri, type, and name
+        // Using type assertion as the RN FormData typing differs from web
+        formData.append("pdf", {
+          uri: selectedFile.uri,
+          type: "application/pdf",
+          name: selectedFile.name,
+        } as any);
+        
+        requestBody = formData;
+      }
       
       console.log("📡 Upload URL:", uploadUrl);
 
       // Start simulated progress
-      setProcessingState("📄 PDF dosyası yükleniyor...");
+      setProcessingState(isJSON ? "📄 JSON yükleniyor..." : "📄 PDF yükleniyor...");
       progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
           if (prev >= 95) return prev;
@@ -117,31 +177,17 @@ export default function PDFUploadScreen() {
         });
       }, 500);
 
-      // Create FormData - React Native specific format
-      const formData = new FormData();
-      
-      // React Native FormData accepts a file object with uri, type, and name
-      // Using type assertion as the RN FormData typing differs from web
-      formData.append("pdf", {
-        uri: selectedFile.uri,
-        type: "application/pdf",
-        name: selectedFile.name,
-      } as any);
-
-      console.log("📦 FormData prepared");
+      console.log("📦 Request prepared");
 
       // Update processing state after delays
-      setTimeout(() => setProcessingState("🤖 AI soruları algılıyor..."), 2000);
+      setTimeout(() => setProcessingState(isJSON ? "📝 Sorular işleniyor..." : "🤖 AI soruları algılıyor..."), 2000);
       setTimeout(() => setProcessingState("💾 Sorular kaydediliyor..."), 4000);
 
       console.log("🚀 Sending POST request...");
       const response = await fetch(uploadUrl, {
         method: "POST",
-        body: formData,
-        headers: {
-          "Accept": "application/json",
-          // DON'T set Content-Type for FormData - fetch will set it with boundary
-        },
+        body: requestBody,
+        headers: headers,
         signal: controller.signal,
       });
 
@@ -153,7 +199,6 @@ export default function PDFUploadScreen() {
       setUploadProgress(100);
 
       console.log("📥 Response status:", response.status);
-      console.log("📥 Response headers:", JSON.stringify([...response.headers.entries()]));
 
       // Parse response
       const responseText = await response.text();
@@ -262,10 +307,9 @@ export default function PDFUploadScreen() {
         >
           <Feather name="upload-cloud" size={48} color={Colors.dark.text} />
         </LinearGradient>
-        <ThemedText style={styles.title}>PDF&apos;ten Soru Ekle</ThemedText>
+        <ThemedText style={styles.title}>Soru Ekle</ThemedText>
         <ThemedText style={styles.subtitle}>
-          YKS soru PDF&apos;i yükleyin, sorular otomatik olarak sisteme
-          eklensin!
+          PDF veya JSON dosyası yükleyin, sorular otomatik olarak sisteme eklensin!
         </ThemedText>
       </Animated.View>
 
@@ -273,13 +317,13 @@ export default function PDFUploadScreen() {
         <View style={styles.infoRow}>
           <Feather name="check-circle" size={20} color={Colors.dark.primary} />
           <ThemedText style={styles.infoText}>
-            Farklı formatlardaki soruları otomatik tanır
+            PDF: AI ile akıllı soru ayrıştırma
           </ThemedText>
         </View>
         <View style={styles.infoRow}>
           <Feather name="check-circle" size={20} color={Colors.dark.primary} />
           <ThemedText style={styles.infoText}>
-            AI ile akıllı soru ayrıştırma
+            JSON: Hızlı toplu soru ekleme
           </ThemedText>
         </View>
         <View style={styles.infoRow}>
@@ -291,18 +335,30 @@ export default function PDFUploadScreen() {
       </Animated.View>
 
       {!selectedFile ? (
-        <Animated.View entering={SlideInUp.delay(200)}>
+        <Animated.View entering={SlideInUp.delay(200)} style={styles.uploadOptionsContainer}>
           <Pressable style={styles.uploadArea} onPress={handlePickPDF}>
             <Feather
-              name="file-plus"
-              size={64}
+              name="file-text"
+              size={48}
               color={Colors.dark.textSecondary}
             />
             <ThemedText style={styles.uploadText}>PDF Seç</ThemedText>
             <ThemedText style={styles.uploadSubtext}>
-              Dokunarak PDF dosyası seçin
+              AI ile soru çıkarma
             </ThemedText>
           </Pressable>
+          <Pressable style={styles.uploadArea} onPress={handlePickJSON}>
+            <Feather
+              name="code"
+              size={48}
+              color={Colors.dark.textSecondary}
+            />
+            <ThemedText style={styles.uploadText}>JSON Seç</ThemedText>
+            <ThemedText style={styles.uploadSubtext}>
+              Toplu soru ekleme
+            </ThemedText>
+          </Pressable>
+        </Animated.View>
         </Animated.View>
       ) : (
         <Animated.View entering={FadeIn} style={styles.fileCard}>
@@ -407,27 +463,33 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
     flex: 1,
   },
+  uploadOptionsContainer: {
+    flexDirection: "row",
+    gap: Spacing.md,
+    marginBottom: Spacing.xl,
+  },
   uploadArea: {
+    flex: 1,
     backgroundColor: Colors.dark.backgroundDefault,
     borderRadius: BorderRadius.lg,
     borderWidth: 2,
     borderStyle: "dashed",
     borderColor: Colors.dark.textSecondary,
-    padding: Spacing.xl * 2,
+    padding: Spacing.xl,
     alignItems: "center",
     justifyContent: "center",
-    marginBottom: Spacing.xl,
   },
   uploadText: {
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: "600",
     color: Colors.dark.text,
-    marginTop: Spacing.lg,
+    marginTop: Spacing.md,
   },
   uploadSubtext: {
-    fontSize: 14,
+    fontSize: 12,
     color: Colors.dark.textSecondary,
-    marginTop: Spacing.sm,
+    marginTop: Spacing.xs,
+    textAlign: "center",
   },
   fileCard: {
     backgroundColor: Colors.dark.backgroundDefault,

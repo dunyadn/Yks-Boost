@@ -193,6 +193,7 @@ function ReelCard({
   onLike,
   onSave,
   onComment,
+  onDelete,
 }: {
   question: Question;
   isActive: boolean;
@@ -200,6 +201,7 @@ function ReelCard({
   onLike: () => void;
   onSave: () => void;
   onComment: () => void;
+  onDelete: () => void;
 }) {
   const insets = useSafeAreaInsets();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -300,6 +302,11 @@ function ReelCard({
           activeColor={Colors.dark.primary}
           onPress={onSave}
         />
+        <ReelsActionButton
+          icon="trash-2"
+          activeColor={Colors.dark.accent}
+          onPress={onDelete}
+        />
       </View>
     </View>
   );
@@ -371,6 +378,53 @@ export default function ReelsScreen() {
     );
   }, []);
 
+  const handleDelete = useCallback(async (id: string) => {
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
+    // Show confirmation dialog
+    const confirmed = await new Promise<boolean>((resolve) => {
+      const alertModule = require('react-native').Alert;
+      alertModule.alert(
+        "Soruyu Sil",
+        "Bu soruyu kalıcı olarak silmek istediğinize emin misiniz?",
+        [
+          {
+            text: "İptal",
+            style: "cancel",
+            onPress: () => resolve(false),
+          },
+          {
+            text: "Sil",
+            style: "destructive",
+            onPress: () => resolve(true),
+          },
+        ]
+      );
+    });
+
+    if (!confirmed) return;
+
+    try {
+      const apiUrl = process.env.EXPO_PUBLIC_DOMAIN;
+      const response = await fetch(`${apiUrl}/api/questions/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Remove from local state
+        setQuestions((prev) => prev.filter((q) => q.id !== id));
+        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      } else {
+        throw new Error('Failed to delete question');
+      }
+    } catch (error) {
+      console.error('Error deleting question:', error);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
+      const alertModule = require('react-native').Alert;
+      alertModule.alert('Hata', 'Soru silinirken bir hata oluştu.');
+    }
+  }, []);
+
   const renderItem = useCallback(
     ({ item, index }: { item: Question; index: number }) => (
       <ReelCard
@@ -380,9 +434,10 @@ export default function ReelsScreen() {
         onLike={() => handleLike(item.id)}
         onSave={() => handleSave(item.id)}
         onComment={() => {}}
+        onDelete={() => handleDelete(item.id)}
       />
     ),
-    [activeIndex, handleLike, handleSave, tabBarHeight]
+    [activeIndex, handleLike, handleSave, handleDelete, tabBarHeight]
   );
 
   if (loading) {
