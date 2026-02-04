@@ -9,6 +9,7 @@ import {
   ScrollView,
   Platform,
   ActivityIndicator,
+  Share,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
@@ -204,6 +205,7 @@ function ReelCard({
   onLike,
   onSave,
   onComment,
+  onShare,
 }: {
   question: Question;
   isActive: boolean;
@@ -211,6 +213,7 @@ function ReelCard({
   onLike: () => void;
   onSave: () => void;
   onComment: () => void;
+  onShare: () => void;
 }) {
   const insets = useSafeAreaInsets();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
@@ -334,6 +337,11 @@ function ReelCard({
           activeColor={Colors.dark.primary}
           onPress={onSave}
         />
+        <ReelsActionButton
+          icon="share-2"
+          activeColor={Colors.dark.primary}
+          onPress={onShare}
+        />
       </View>
     </View>
   );
@@ -415,6 +423,27 @@ export default function ReelsScreen() {
     );
   }, []);
 
+  const handleShare = useCallback(async (question: Question) => {
+    try {
+      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+      
+      // Format the question text with options
+      const labels = ["A", "B", "C", "D", "E"];
+      const optionsText = question.options
+        .map((opt, idx) => `${labels[idx]}) ${opt}`)
+        .join("\n");
+      
+      const shareText = `📚 YKS Boost Sorusu\n\n${question.content}\n\n${optionsText}\n\n#${question.category} #YKS #${question.examType || "TYT"}`;
+
+      await Share.share({
+        message: shareText,
+        title: "YKS Sorusu",
+      });
+    } catch (error) {
+      console.error("Error sharing question:", error);
+    }
+  }, []);
+
   const renderItem = useCallback(
     ({ item, index }: { item: Question; index: number }) => (
       <ReelCard
@@ -424,9 +453,10 @@ export default function ReelsScreen() {
         onLike={() => handleLike(item.id)}
         onSave={() => handleSave(item.id)}
         onComment={() => {}}
+        onShare={() => handleShare(item)}
       />
     ),
-    [activeIndex, handleLike, handleSave, tabBarHeight],
+    [activeIndex, handleLike, handleSave, handleShare, tabBarHeight],
   );
 
   if (loading) {

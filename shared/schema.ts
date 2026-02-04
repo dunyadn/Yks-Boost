@@ -39,6 +39,7 @@ export const questions = pgTable("questions", {
   content: text("content").notNull(),
   options: jsonb("options").notNull(), // ["A", "B", "C", "D", "E"]
   correctAnswer: text("correctAnswer").notNull(),
+  solution: text("solution"), // Soru çözümü/açıklaması
   category: text("category").default("general"), // "Matematik", "Fizik", "Türkçe" etc.
   subject: text("subject"), // Alt konu: "Türev", "Integral", "Paragraf"
   packageId: varchar("packageId"), // Soru paketi referansı

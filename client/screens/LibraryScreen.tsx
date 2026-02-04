@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, FlatList, Pressable } from "react-native";
+import { StyleSheet, View, FlatList, Pressable, Alert } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -16,6 +16,7 @@ import {
   getPackages,
   toggleSavedQuestion,
   getSavedQuestionsWithMeta,
+  deletePackage,
 } from "@/lib/localStorage";
 import type { QuestionPackage } from "@shared/schema";
 
@@ -118,6 +119,34 @@ export default function LibraryScreen() {
     }
   };
 
+  const handleDeletePackage = useCallback(
+    async (pkg: QuestionPackage) => {
+      Alert.alert(
+        "Paketi Sil",
+        `"${pkg.name}" paketini silmek istediğinize emin misiniz? Bu paketteki ${pkg.totalQuestions || 0} soru da silinecek.`,
+        [
+          {
+            text: "İptal",
+            style: "cancel",
+          },
+          {
+            text: "Sil",
+            style: "destructive",
+            onPress: async () => {
+              try {
+                await deletePackage(pkg.id);
+                setPackages((prev) => prev.filter((p) => p.id !== pkg.id));
+              } catch (error) {
+                console.error("Error deleting package:", error);
+              }
+            },
+          },
+        ],
+      );
+    },
+    [],
+  );
+
   const renderPackageItem = useCallback(
     ({ item, index }: { item: QuestionPackage; index: number }) => (
       <Animated.View
@@ -136,6 +165,13 @@ export default function LibraryScreen() {
               </ThemedText>
             )}
           </View>
+          <Pressable
+            onPress={() => handleDeletePackage(item)}
+            hitSlop={8}
+            style={styles.deleteButton}
+          >
+            <Feather name="trash-2" size={20} color={Colors.dark.accent} />
+          </Pressable>
         </View>
         <View style={styles.packageStats}>
           <View style={styles.packageStat}>
@@ -158,7 +194,7 @@ export default function LibraryScreen() {
         )}
       </Animated.View>
     ),
-    [],
+    [handleDeletePackage],
   );
 
   const renderItem = useCallback(
@@ -437,5 +473,8 @@ const styles = StyleSheet.create({
   packageYear: {
     fontSize: 12,
     color: Colors.dark.textSecondary,
+  },
+  deleteButton: {
+    padding: Spacing.xs,
   },
 });

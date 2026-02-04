@@ -14,6 +14,9 @@ interface ImportQuestionData {
   correctAnswer?: string;
   dogruCevap?: string;
   cevap?: string;
+  solution?: string;
+  cozum?: string;
+  aciklama?: string;
   category?: string;
   ders?: string;
   konu?: string;
@@ -99,6 +102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
           content: q.content || q.soru || q.question || "",
           options: q.options || q.secenekler || q.siklar || [],
           correctAnswer: q.correctAnswer || q.dogruCevap || q.cevap || "A",
+          solution: q.solution || q.cozum || q.aciklama || null,
           category: q.category || q.ders || q.konu || "Genel",
           subject: q.subject || q.altKonu || null,
           packageId: pkg.id,
