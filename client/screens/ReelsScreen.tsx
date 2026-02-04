@@ -352,11 +352,15 @@ export default function ReelsScreen() {
   const handleLike = useCallback((id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     setQuestions((prev) =>
-      prev.map((q) =>
-        q.id === id
-          ? { ...q, liked: !q.liked, likes: q.liked ? (q.likes ?? 0) - 1 : (q.likes ?? 0) + 1 }
-          : q
-      )
+      prev.map((q) => {
+        if (q.id !== id) return q;
+        const currentLikes = q.likes ?? 0;
+        return {
+          ...q,
+          liked: !q.liked,
+          likes: q.liked ? currentLikes - 1 : currentLikes + 1,
+        };
+      })
     );
   }, []);
 

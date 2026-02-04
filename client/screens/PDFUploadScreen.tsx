@@ -66,13 +66,19 @@ export default function PDFUploadScreen() {
       const formData = new FormData();
       
       // Create file object for upload
-      const fileToUpload: any = {
+      interface FileUpload {
+        uri: string;
+        type: string;
+        name: string;
+      }
+      
+      const fileToUpload: FileUpload = {
         uri: selectedFile.uri,
         type: selectedFile.mimeType || "application/pdf",
         name: selectedFile.name,
       };
       
-      formData.append("pdf", fileToUpload);
+      formData.append("pdf", fileToUpload as any);
 
       // Simulate progress
       const progressInterval = setInterval(() => {

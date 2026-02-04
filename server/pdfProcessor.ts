@@ -136,8 +136,8 @@ function parsePatternsWithFallback(text: string): ParsedQuestion[] {
   // Simple pattern matching for basic question formats
   // This is a simplified version - in production, you'd want more sophisticated parsing
   
-  // Pattern 1: Numbered questions with options
-  const pattern1 = /(\d+)\.\s*(.+?)\s*[AaBbCcDdEe]\s*\)/g;
+  // Pattern for numbered questions with options (e.g., "1. Question text A) option...")
+  const numberedQuestionPattern = /(\d+)\.\s*(.+?)\s*[AaBbCcDdEe]\s*\)/g;
   
   // Split text into potential question blocks
   const lines = text.split("\n");
