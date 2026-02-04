@@ -15,6 +15,7 @@ const STORAGE_KEYS = {
   STATS: "@yks_boost:stats",
   PACKAGE_STATS: "@yks_boost:package_stats",
   TOPIC_STATS: "@yks_boost:topic_stats",
+  SAVED_QUESTIONS: "@yks_boost:saved_questions",
 };
 
 function generateId(): string {
@@ -299,4 +300,81 @@ export async function updatePackageStats(
   
   await AsyncStorage.setItem(STORAGE_KEYS.PACKAGE_STATS, JSON.stringify(packageStats));
   return stat;
+}
+
+// Saved Questions (Bookmarked/Favorited Questions)
+interface SavedQuestionMeta {
+  questionId: string;
+  savedAt: string; // ISO timestamp
+}
+
+export async function getSavedQuestions(): Promise<string[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.SAVED_QUESTIONS);
+    if (!data) return [];
+    
+    const parsed = JSON.parse(data);
+    // Support legacy format (array of strings) and new format (array of objects)
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      if (typeof parsed[0] === 'string') {
+        // Legacy format - return as is
+        return parsed;
+      } else {
+        // New format - extract IDs
+        return parsed.map((item: SavedQuestionMeta) => item.questionId);
+      }
+    }
+    return [];
+  } catch (error) {
+    console.error("Error loading saved questions:", error);
+    return [];
+  }
+}
+
+export async function getSavedQuestionsWithMeta(): Promise<SavedQuestionMeta[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.SAVED_QUESTIONS);
+    if (!data) return [];
+    
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      if (typeof parsed[0] === 'string') {
+        // Legacy format - convert to new format
+        return parsed.map((id: string) => ({
+          questionId: id,
+          savedAt: new Date().toISOString(),
+        }));
+      }
+      return parsed;
+    }
+    return [];
+  } catch (error) {
+    console.error("Error loading saved questions metadata:", error);
+    return [];
+  }
+}
+
+export async function toggleSavedQuestion(questionId: string): Promise<boolean> {
+  const savedMeta = await getSavedQuestionsWithMeta();
+  const index = savedMeta.findIndex(item => item.questionId === questionId);
+  
+  if (index > -1) {
+    // Already saved, remove it
+    savedMeta.splice(index, 1);
+    await AsyncStorage.setItem(STORAGE_KEYS.SAVED_QUESTIONS, JSON.stringify(savedMeta));
+    return false; // Not saved anymore
+  } else {
+    // Not saved, add it with timestamp
+    savedMeta.push({
+      questionId,
+      savedAt: new Date().toISOString(),
+    });
+    await AsyncStorage.setItem(STORAGE_KEYS.SAVED_QUESTIONS, JSON.stringify(savedMeta));
+    return true; // Now saved
+  }
+}
+
+export async function isQuestionSaved(questionId: string): Promise<boolean> {
+  const savedQuestions = await getSavedQuestions();
+  return savedQuestions.includes(questionId);
 }
