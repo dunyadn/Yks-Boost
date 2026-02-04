@@ -35,7 +35,7 @@ function StatCard({
   value: string | number;
   subtitle?: string;
   icon: keyof typeof Feather.glyphMap;
-  gradientColors: string[];
+  gradientColors: [string, string, ...string[]];
   delay?: number;
 }) {
   return (

@@ -1,6 +1,23 @@
 import type { Express } from "express";
 import { createServer, type Server } from "node:http";
+import multer from "multer";
 import { storage } from "./storage";
+import { processPDF } from "./pdfProcessor";
+
+// Configure multer for file uploads
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: 10 * 1024 * 1024, // 10MB max file size
+  },
+  fileFilter: (_req, file, cb) => {
+    if (file.mimetype === "application/pdf") {
+      cb(null, true);
+    } else {
+      cb(new Error("Only PDF files are allowed"));
+    }
+  },
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/questions", async (_req, res) => {
@@ -27,6 +44,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
     const { correct } = req.body;
     const stats = await storage.updateStats(correct);
     res.json(stats);
+  });
+
+  // PDF upload endpoint
+  app.post("/api/upload-pdf", upload.single("pdf"), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          success: false,
+          error: "PDF dosyası bulunamadı",
+        });
+      }
+
+      console.log("Processing PDF:", req.file.originalname);
+      
+      const result = await processPDF(req.file.buffer);
+      
+      if (!result.success) {
+        return res.status(400).json(result);
+      }
+      
+      return res.json(result);
+    } catch (error) {
+      console.error("Error in PDF upload endpoint:", error);
+      return res.status(500).json({
+        success: false,
+        questionsAdded: 0,
+        error: error instanceof Error ? error.message : "Sunucu hatası",
+      });
+    }
   });
 
   const httpServer = createServer(app);

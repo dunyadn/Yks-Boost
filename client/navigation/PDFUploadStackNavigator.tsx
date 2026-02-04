@@ -1,17 +1,17 @@
 import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import TasksScreen from "@/screens/TasksScreen";
+import PDFUploadScreen from "@/screens/PDFUploadScreen";
 import { useScreenOptions } from "@/hooks/useScreenOptions";
 import { Colors } from "@/constants/theme";
 
-export type TasksStackParamList = {
-  Tasks: undefined;
+export type PDFUploadStackParamList = {
+  PDFUpload: undefined;
 };
 
-const Stack = createNativeStackNavigator<TasksStackParamList>();
+const Stack = createNativeStackNavigator<PDFUploadStackParamList>();
 
-export default function TasksStackNavigator() {
+export default function PDFUploadStackNavigator() {
   const screenOptions = useScreenOptions();
 
   return (
@@ -24,10 +24,10 @@ export default function TasksStackNavigator() {
       }}
     >
       <Stack.Screen
-        name="Tasks"
-        component={TasksScreen}
+        name="PDFUpload"
+        component={PDFUploadScreen}
         options={{
-          headerTitle: "Görevlerim",
+          headerTitle: "PDF Yükle",
           headerTintColor: Colors.dark.text,
         }}
       />
