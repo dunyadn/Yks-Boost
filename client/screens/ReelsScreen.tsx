@@ -211,7 +211,7 @@ function ReelCard({
   const [revealed, setRevealed] = useState(false);
   const [startTime] = useState<number>(Date.now());
 
-  const handleOptionPress = (label: string) => {
+  const handleOptionPress = async (label: string) => {
     if (revealed) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedOption(label);
