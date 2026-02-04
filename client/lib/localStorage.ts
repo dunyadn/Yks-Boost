@@ -59,6 +59,7 @@ export async function saveQuestion(
     subject: question.subject || null,
     packageId: question.packageId || null,
     examType: question.examType || "TYT",
+    solution: question.solution || null,
   };
   questions.push(newQuestion);
   await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(questions));
@@ -91,6 +92,7 @@ export async function saveQuestions(
     subject: q.subject || null,
     packageId: q.packageId || null,
     examType: q.examType || "TYT",
+    solution: q.solution || null,
   }));
 
   const allQuestions = [...questions, ...newQuestions];

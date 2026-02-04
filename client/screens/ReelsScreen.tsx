@@ -49,10 +49,10 @@ interface Question {
   options: string[];
   correctAnswer: string;
   solution?: string | null;
-  category: string;
-  subject?: string;
-  packageId?: string;
-  examType?: string;
+  category: string | null;
+  subject?: string | null;
+  packageId?: string | null;
+  examType?: string | null;
   likes?: number;
   comments?: number;
   saved?: boolean;
@@ -235,7 +235,7 @@ function ReelCard({
       await updateStats(
         isCorrect,
         solvingTimeMs,
-        question.category,
+        question.category || undefined,
         question.subject || undefined,
       );
 
@@ -284,7 +284,7 @@ function ReelCard({
         ]}
       >
         <View style={styles.tagRow}>
-          <Tag label={`#${question.category}`} variant="accent" />
+          <Tag label={`#${question.category || "Genel"}`} variant="accent" />
         </View>
       </View>
 
@@ -399,6 +399,7 @@ export default function ReelsScreen() {
       // Mark questions as saved if they're in the saved list
       const questionsWithSavedStatus = data.map((q) => ({
         ...q,
+        options: Array.isArray(q.options) ? (q.options as string[]) : [],
         saved: savedQuestionIds.includes(q.id),
         // TODO: Implement like/comment functionality in future
         liked: false,
@@ -473,7 +474,7 @@ export default function ReelsScreen() {
         .map((opt, idx) => `${labels[idx]}) ${opt}`)
         .join("\n");
       
-      const shareText = `📚 YKS Boost Sorusu\n\n${question.content}\n\n${optionsText}\n\n#${question.category} #YKS #${question.examType || "TYT"}`;
+      const shareText = `📚 YKS Boost Sorusu\n\n${question.content}\n\n${optionsText}\n\n#${question.category || "Genel"} #YKS #${question.examType || "TYT"}`;
 
       await Share.share({
         message: shareText,

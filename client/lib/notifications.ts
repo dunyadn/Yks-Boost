@@ -7,6 +7,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: false,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -65,9 +67,9 @@ export async function scheduleDailyNotification(): Promise<void> {
         data: { type: "daily-reminder" },
       },
       trigger: {
+        type: Notifications.SchedulableTriggerInputTypes.DAILY,
         hour: 10,
         minute: 0,
-        repeats: true,
       },
     });
 
