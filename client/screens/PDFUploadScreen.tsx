@@ -340,7 +340,5 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: Spacing.lg,
-    paddingHorizontal: Spacing.sm,
-    width: "100%",
   },
 });

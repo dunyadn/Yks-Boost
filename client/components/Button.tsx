@@ -100,7 +100,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: Spacing.lg,
-    width: "100%",
   },
   buttonText: {
     fontSize: 16,
