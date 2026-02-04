@@ -39,7 +39,7 @@ export function ReelsActionButton({
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     scale.value = withSequence(
       withSpring(1.3, { damping: 8, stiffness: 250 }),
-      withSpring(1, { damping: 12, stiffness: 150 })
+      withSpring(1, { damping: 12, stiffness: 150 }),
     );
     onPress?.();
   };

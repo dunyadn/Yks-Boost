@@ -50,7 +50,7 @@ export function TaskCard({ task, onToggle, onPress }: TaskCardProps) {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     checkScale.value = withSequence(
       withSpring(1.2, { damping: 10, stiffness: 200 }),
-      withSpring(1, { damping: 15, stiffness: 150 })
+      withSpring(1, { damping: 15, stiffness: 150 }),
     );
     onToggle?.();
   };
@@ -71,7 +71,11 @@ export function TaskCard({ task, onToggle, onPress }: TaskCardProps) {
           ]}
         >
           {task.completed ? (
-            <Feather name="check" size={16} color={Colors.dark.backgroundRoot} />
+            <Feather
+              name="check"
+              size={16}
+              color={Colors.dark.backgroundRoot}
+            />
           ) : null}
         </Animated.View>
       </Pressable>
@@ -87,10 +91,7 @@ export function TaskCard({ task, onToggle, onPress }: TaskCardProps) {
         <View style={styles.progressContainer}>
           <View style={styles.progressBar}>
             <View
-              style={[
-                styles.progressFill,
-                { width: `${task.progress}%` },
-              ]}
+              style={[styles.progressFill, { width: `${task.progress}%` }]}
             />
           </View>
           <ThemedText style={styles.progressText}>{task.progress}%</ThemedText>

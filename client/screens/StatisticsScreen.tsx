@@ -17,10 +17,37 @@ import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
+interface TopicStat {
+  id: string;
+  category: string;
+  subject: string | null;
+  totalAnswered: number;
+  correctAnswers: number;
+  wrongAnswers: number;
+  avgSolvingTimeMs: number;
+}
+
 interface Stats {
   totalAnswered: number;
   correctAnswers: number;
+  totalSolvingTimeMs: number;
+  avgSolvingTimeMs: number;
   lastUpdated: Date;
+  worstTopics: TopicStat[];
+}
+
+interface PackageWithStats {
+  id: string;
+  name: string;
+  examType: string;
+  year: number | null;
+  totalQuestions: number;
+  stats: {
+    totalAnswered: number;
+    correctAnswers: number;
+    successRate: number;
+    avgSolvingTimeMs: number;
+  };
 }
 
 function StatCard({
@@ -71,7 +98,10 @@ function ProgressBar({
   delay?: number;
 }) {
   return (
-    <Animated.View entering={FadeIn.delay(delay)} style={styles.progressBarContainer}>
+    <Animated.View
+      entering={FadeIn.delay(delay)}
+      style={styles.progressBarContainer}
+    >
       <View style={styles.progressBarBackground}>
         <Animated.View
           entering={SlideInRight.delay(delay + 100).springify()}
@@ -81,15 +111,29 @@ function ProgressBar({
           ]}
         />
       </View>
-      <ThemedText style={styles.progressBarText}>{percentage.toFixed(1)}%</ThemedText>
+      <ThemedText style={styles.progressBarText}>
+        {percentage.toFixed(1)}%
+      </ThemedText>
     </Animated.View>
   );
+}
+
+function formatTime(ms: number): string {
+  if (!ms || ms === 0) return "-";
+  const seconds = Math.floor(ms / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  if (minutes > 0) {
+    return `${minutes}dk ${remainingSeconds}sn`;
+  }
+  return `${seconds}sn`;
 }
 
 export default function StatisticsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const [stats, setStats] = useState<Stats | null>(null);
+  const [packageStats, setPackageStats] = useState<PackageWithStats[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -98,13 +142,25 @@ export default function StatisticsScreen() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`);
-      if (!response.ok) {
-        console.error("Failed to fetch stats:", response.status, response.statusText);
-        return;
+      const domain = process.env.EXPO_PUBLIC_DOMAIN;
+      if (!domain) return;
+
+      const apiUrl = domain.startsWith("http") ? domain : `https://${domain}`;
+
+      const [statsRes, packageStatsRes] = await Promise.all([
+        fetch(`${apiUrl}/api/stats`),
+        fetch(`${apiUrl}/api/package-stats`),
+      ]);
+
+      if (statsRes.ok) {
+        const data = await statsRes.json();
+        setStats(data);
       }
-      const data = await response.json();
-      setStats(data);
+
+      if (packageStatsRes.ok) {
+        const data = await packageStatsRes.json();
+        setPackageStats(data);
+      }
     } catch (error) {
       console.error("Error fetching stats:", error);
     } finally {
@@ -122,9 +178,12 @@ export default function StatisticsScreen() {
 
   const totalAnswered = stats?.totalAnswered || 0;
   const correctAnswers = stats?.correctAnswers || 0;
-  const successRate = totalAnswered > 0 ? (correctAnswers / totalAnswered) * 100 : 0;
+  const successRate =
+    totalAnswered > 0 ? (correctAnswers / totalAnswered) * 100 : 0;
   const incorrectAnswers = totalAnswered - correctAnswers;
-  const incorrectRate = totalAnswered > 0 ? (incorrectAnswers / totalAnswered) * 100 : 0;
+  const incorrectRate =
+    totalAnswered > 0 ? (incorrectAnswers / totalAnswered) * 100 : 0;
+  const avgTime = stats?.avgSolvingTimeMs || 0;
 
   const formatDate = (date: Date | string | undefined) => {
     if (!date) return "Henüz veri yok";
@@ -155,13 +214,14 @@ export default function StatisticsScreen() {
         </ThemedText>
       </Animated.View>
 
+      {/* Ana İstatistikler */}
       <View style={styles.section}>
         <StatCard
           title="Toplam Soru"
           value={totalAnswered}
           subtitle={`${totalAnswered} soru cevaplandı`}
           icon="check-circle"
-          gradientColors={[Colors.dark.primary, "#0099CC"]}
+          gradientColors={[Colors.dark.primary, "#5855E0"]}
           delay={150}
         />
       </View>
@@ -172,7 +232,7 @@ export default function StatisticsScreen() {
           value={correctAnswers}
           subtitle={`${correctAnswers} doğru yanıt`}
           icon="award"
-          gradientColors={[Colors.dark.success, "#00CC88"]}
+          gradientColors={[Colors.dark.success, "#388E3C"]}
           delay={200}
         />
       </View>
@@ -181,49 +241,234 @@ export default function StatisticsScreen() {
         <StatCard
           title="Başarı Oranı"
           value={`${successRate.toFixed(1)}%`}
-          subtitle={totalAnswered > 0 ? "Harika gidiyorsun!" : "Henüz soru çözmeye başla!"}
+          subtitle={
+            totalAnswered > 0
+              ? "Harika gidiyorsun!"
+              : "Henüz soru çözmeye başla!"
+          }
           icon="trending-up"
-          gradientColors={[Colors.dark.accent, "#FF6B9D"]}
+          gradientColors={[Colors.dark.secondary, "#E91E63"]}
           delay={250}
         />
       </View>
 
-      <Animated.View entering={FadeIn.delay(300)} style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>Detaylı Analiz</ThemedText>
-        
+      {/* Çözüm Süresi */}
+      <View style={styles.section}>
+        <StatCard
+          title="Ort. Çözüm Süresi"
+          value={formatTime(avgTime)}
+          subtitle="Soru başına ortalama süre"
+          icon="clock"
+          gradientColors={[Colors.dark.warning, "#FF9800"]}
+          delay={300}
+        />
+      </View>
+
+      {/* Detaylı Analiz */}
+      <Animated.View entering={FadeIn.delay(350)} style={styles.section}>
+        <ThemedText style={styles.sectionTitle}>📊 Detaylı Analiz</ThemedText>
+
         <View style={styles.progressCard}>
           <View style={styles.progressItem}>
             <View style={styles.progressHeader}>
               <Feather name="check" size={18} color={Colors.dark.success} />
-              <ThemedText style={styles.progressLabel}>Doğru Cevaplar</ThemedText>
+              <ThemedText style={styles.progressLabel}>
+                Doğru Cevaplar
+              </ThemedText>
             </View>
             <ProgressBar
               percentage={successRate}
               color={Colors.dark.success}
-              delay={350}
+              delay={400}
             />
           </View>
 
           <View style={styles.progressItem}>
             <View style={styles.progressHeader}>
               <Feather name="x" size={18} color={Colors.dark.accent} />
-              <ThemedText style={styles.progressLabel}>Yanlış Cevaplar</ThemedText>
+              <ThemedText style={styles.progressLabel}>
+                Yanlış Cevaplar
+              </ThemedText>
             </View>
             <ProgressBar
               percentage={incorrectRate}
               color={Colors.dark.accent}
-              delay={400}
+              delay={450}
             />
           </View>
         </View>
       </Animated.View>
 
-      <Animated.View entering={FadeIn.delay(450)} style={styles.section}>
+      {/* En Çok Yanlış Yapılan Konular */}
+      {stats?.worstTopics && stats.worstTopics.length > 0 && (
+        <Animated.View entering={FadeIn.delay(500)} style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>
+            ⚠️ Geliştirilmesi Gereken Konular
+          </ThemedText>
+
+          <View style={styles.worstTopicsCard}>
+            {stats.worstTopics.map((topic, index) => {
+              const wrongRate =
+                topic.totalAnswered > 0
+                  ? ((topic.wrongAnswers || 0) / topic.totalAnswered) * 100
+                  : 0;
+              return (
+                <View key={topic.id} style={styles.topicItem}>
+                  <View style={styles.topicInfo}>
+                    <View style={styles.topicRank}>
+                      <ThemedText style={styles.topicRankText}>
+                        {index + 1}
+                      </ThemedText>
+                    </View>
+                    <View>
+                      <ThemedText style={styles.topicCategory}>
+                        {topic.category}
+                      </ThemedText>
+                      {topic.subject && (
+                        <ThemedText style={styles.topicSubject}>
+                          {topic.subject}
+                        </ThemedText>
+                      )}
+                    </View>
+                  </View>
+                  <View style={styles.topicStats}>
+                    <ThemedText style={styles.topicWrongRate}>
+                      %{wrongRate.toFixed(0)} yanlış
+                    </ThemedText>
+                    <ThemedText style={styles.topicCount}>
+                      {topic.wrongAnswers}/{topic.totalAnswered}
+                    </ThemedText>
+                  </View>
+                </View>
+              );
+            })}
+          </View>
+        </Animated.View>
+      )}
+
+      {/* Soru Paketi İstatistikleri */}
+      {packageStats.length > 0 && (
+        <Animated.View entering={FadeIn.delay(550)} style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>
+            📦 Soru Paketi İstatistikleri
+          </ThemedText>
+
+          {packageStats.map((pkg, index) => (
+            <View key={pkg.id} style={styles.packageCard}>
+              <View style={styles.packageHeader}>
+                <View style={styles.packageInfo}>
+                  <ThemedText style={styles.packageName}>{pkg.name}</ThemedText>
+                  <View style={styles.packageMeta}>
+                    <View
+                      style={[
+                        styles.examBadge,
+                        {
+                          backgroundColor:
+                            pkg.examType === "TYT"
+                              ? Colors.dark.primary + "20"
+                              : Colors.dark.secondary + "20",
+                        },
+                      ]}
+                    >
+                      <ThemedText
+                        style={[
+                          styles.examBadgeText,
+                          {
+                            color:
+                              pkg.examType === "TYT"
+                                ? Colors.dark.primary
+                                : Colors.dark.secondary,
+                          },
+                        ]}
+                      >
+                        {pkg.examType}
+                      </ThemedText>
+                    </View>
+                    {pkg.year && (
+                      <ThemedText style={styles.packageYear}>
+                        {pkg.year}
+                      </ThemedText>
+                    )}
+                  </View>
+                </View>
+                <View style={styles.packageSuccessRate}>
+                  <ThemedText
+                    style={[
+                      styles.packageSuccessValue,
+                      {
+                        color:
+                          pkg.stats.successRate >= 70
+                            ? Colors.dark.success
+                            : pkg.stats.successRate >= 40
+                              ? Colors.dark.warning
+                              : Colors.dark.accent,
+                      },
+                    ]}
+                  >
+                    %{pkg.stats.successRate}
+                  </ThemedText>
+                  <ThemedText style={styles.packageSuccessLabel}>
+                    başarı
+                  </ThemedText>
+                </View>
+              </View>
+
+              <View style={styles.packageStatsRow}>
+                <View style={styles.packageStatItem}>
+                  <Feather
+                    name="book-open"
+                    size={14}
+                    color={Colors.dark.textSecondary}
+                  />
+                  <ThemedText style={styles.packageStatText}>
+                    {pkg.stats.totalAnswered}/{pkg.totalQuestions} çözüldü
+                  </ThemedText>
+                </View>
+                <View style={styles.packageStatItem}>
+                  <Feather
+                    name="check-circle"
+                    size={14}
+                    color={Colors.dark.success}
+                  />
+                  <ThemedText style={styles.packageStatText}>
+                    {pkg.stats.correctAnswers} doğru
+                  </ThemedText>
+                </View>
+                <View style={styles.packageStatItem}>
+                  <Feather name="clock" size={14} color={Colors.dark.warning} />
+                  <ThemedText style={styles.packageStatText}>
+                    {formatTime(pkg.stats.avgSolvingTimeMs)}
+                  </ThemedText>
+                </View>
+              </View>
+
+              <View style={styles.packageProgressBar}>
+                <View
+                  style={[
+                    styles.packageProgressFill,
+                    {
+                      width: `${pkg.stats.successRate}%`,
+                      backgroundColor:
+                        pkg.stats.successRate >= 70
+                          ? Colors.dark.success
+                          : pkg.stats.successRate >= 40
+                            ? Colors.dark.warning
+                            : Colors.dark.accent,
+                    },
+                  ]}
+                />
+              </View>
+            </View>
+          ))}
+        </Animated.View>
+      )}
+
+      <Animated.View entering={FadeIn.delay(600)} style={styles.section}>
         <View style={styles.infoCard}>
           <Feather name="info" size={20} color={Colors.dark.primary} />
           <ThemedText style={styles.infoText}>
             İstatistikleriniz her soru çözümünde otomatik olarak güncellenir.
-            Devam edin ve başarınızı artırın!
+            Zayıf olduğunuz konulara odaklanarak başarınızı artırın!
           </ThemedText>
         </View>
       </Animated.View>
@@ -338,6 +583,136 @@ const styles = StyleSheet.create({
     color: Colors.dark.text,
     minWidth: 50,
     textAlign: "right",
+  },
+  worstTopicsCard: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  topicItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: Spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.dark.border,
+  },
+  topicInfo: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.md,
+  },
+  topicRank: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: Colors.dark.accent + "20",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  topicRankText: {
+    fontSize: 12,
+    fontWeight: "700",
+    color: Colors.dark.accent,
+  },
+  topicCategory: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.dark.text,
+  },
+  topicSubject: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+  },
+  topicStats: {
+    alignItems: "flex-end",
+  },
+  topicWrongRate: {
+    fontSize: 14,
+    fontWeight: "700",
+    color: Colors.dark.accent,
+  },
+  topicCount: {
+    fontSize: 11,
+    color: Colors.dark.textSecondary,
+  },
+  packageCard: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  packageHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: Spacing.md,
+  },
+  packageInfo: {
+    flex: 1,
+  },
+  packageName: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: Colors.dark.text,
+    marginBottom: Spacing.xs,
+  },
+  packageMeta: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  examBadge: {
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.xs,
+  },
+  examBadgeText: {
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  packageYear: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+  },
+  packageSuccessRate: {
+    alignItems: "flex-end",
+  },
+  packageSuccessValue: {
+    fontSize: 24,
+    fontWeight: "700",
+  },
+  packageSuccessLabel: {
+    fontSize: 11,
+    color: Colors.dark.textSecondary,
+  },
+  packageStatsRow: {
+    flexDirection: "row",
+    gap: Spacing.lg,
+    marginBottom: Spacing.md,
+  },
+  packageStatItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  packageStatText: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+  },
+  packageProgressBar: {
+    height: 4,
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+  packageProgressFill: {
+    height: "100%",
+    borderRadius: 2,
   },
   infoCard: {
     flexDirection: "row",

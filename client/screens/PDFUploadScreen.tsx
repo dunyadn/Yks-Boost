@@ -6,10 +6,10 @@ import {
   Pressable,
   Alert,
   ActivityIndicator,
+  TextInput,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
-import * as DocumentPicker from "expo-document-picker";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, { FadeIn, SlideInUp } from "react-native-reanimated";
@@ -19,198 +19,145 @@ import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
+// Örnek JSON formatı
+const EXAMPLE_JSON = `{
+  "packageName": "TYT 2025 Türkçe",
+  "examType": "TYT",
+  "year": 2025,
+  "description": "2025 TYT Türkçe Soruları",
+  "questions": [
+    {
+      "content": "Aşağıdaki cümlelerin hangisinde yazım yanlışı vardır?",
+      "options": [
+        "Kitabı okumak için sabırsızlanıyordum.",
+        "Bu konuda hiç bir şey bilmiyorum.",
+        "Öğretmenimiz bugün gelmedi.",
+        "Yarın erken kalkmalıyız.",
+        "Hava bugün çok güzel."
+      ],
+      "correctAnswer": "B",
+      "category": "Türkçe",
+      "subject": "Yazım Kuralları"
+    },
+    {
+      "content": "Paragrafta geçen 'sağaltıcı' sözcüğünün anlamı nedir?",
+      "options": [
+        "Tedavi edici",
+        "Koruyucu",
+        "Geliştirici",
+        "Eğitici",
+        "Yıkıcı"
+      ],
+      "correctAnswer": "A",
+      "category": "Türkçe",
+      "subject": "Sözcük Anlamı"
+    }
+  ]
+}`;
+
 export default function PDFUploadScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
 
-  const [selectedFile, setSelectedFile] = useState<{
-    name: string;
-    uri: string;
-  } | null>(null);
+  const [jsonInput, setJsonInput] = useState("");
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [processingState, setProcessingState] = useState<string>("");
+  const [showExample, setShowExample] = useState(true);
 
-  const handlePickPDF = async () => {
-    try {
-      const result = await DocumentPicker.getDocumentAsync({
-        type: "application/pdf",
-        copyToCacheDirectory: true,
-      });
-
-      if (!result.canceled && result.assets[0]) {
-        setSelectedFile({
-          name: result.assets[0].name,
-          uri: result.assets[0].uri,
-        });
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      }
-    } catch (error) {
-      console.error("Error picking PDF:", error);
-      Alert.alert("Hata", "PDF seçilirken bir sorun oluştu.");
-    }
-  };
-
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      Alert.alert("Hata", "Lütfen bir PDF dosyası seçin.");
+  const handleImport = async () => {
+    if (!jsonInput.trim()) {
+      Alert.alert("Hata", "Lütfen JSON formatında soru verisi girin.");
       return;
     }
 
-    // Check if EXPO_PUBLIC_DOMAIN is set
-    const domain = process.env.EXPO_PUBLIC_DOMAIN;
-    if (!domain) {
-      console.error("❌ EXPO_PUBLIC_DOMAIN environment variable is not set!");
+    // Validate JSON
+    let parsedData;
+    try {
+      parsedData = JSON.parse(jsonInput);
+    } catch {
+      Alert.alert("Hata", "Geçersiz JSON formatı. Lütfen kontrol edin.");
+      return;
+    }
+
+    if (
+      !parsedData.packageName ||
+      !parsedData.examType ||
+      !parsedData.questions
+    ) {
       Alert.alert(
-        "Konfigürasyon Hatası",
-        "API domain ayarlanmamış. Lütfen EXPO_PUBLIC_DOMAIN environment variable'ını ayarlayın."
+        "Hata",
+        "JSON formatında packageName, examType ve questions alanları gereklidir.",
       );
       return;
     }
 
-    // Construct API URL with proper protocol
-    const apiUrl = domain.startsWith('http') ? domain : `https://${domain}`;
-    const uploadUrl = `${apiUrl}/api/upload-pdf`;
-    
-    console.log("🌐 API Domain:", domain);
-    console.log("📡 Upload URL:", uploadUrl);
+    if (
+      !Array.isArray(parsedData.questions) ||
+      parsedData.questions.length === 0
+    ) {
+      Alert.alert("Hata", "En az bir soru eklemelisiniz.");
+      return;
+    }
 
+    const domain = process.env.EXPO_PUBLIC_DOMAIN;
+    if (!domain) {
+      Alert.alert("Hata", "API domain ayarlanmamış.");
+      return;
+    }
+
+    const apiUrl = domain.startsWith("http") ? domain : `https://${domain}`;
     setUploading(true);
-    setUploadProgress(0);
-    setProcessingState("");
-
-    // Progress simulation interval
-    let progressInterval: NodeJS.Timeout | null = null;
-
-    // Timeout controller
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => {
-      console.log("⏰ Upload timeout triggered (60s)");
-      controller.abort();
-    }, 60000); // 60 seconds timeout
 
     try {
-      console.log(`📤 Starting upload: ${selectedFile.name}`);
-      console.log(`📄 File URI: ${selectedFile.uri}`);
-
-      // Start simulated progress
-      setProcessingState("📄 PDF yükleniyor...");
-      progressInterval = setInterval(() => {
-        setUploadProgress((prev) => {
-          if (prev >= 95) return prev;
-          return Math.min(prev + Math.random() * 10, 95);
-        });
-      }, 500);
-
-      const formData = new FormData();
-      
-      // @ts-ignore - React Native FormData typing
-      formData.append("pdf", {
-        uri: selectedFile.uri,
-        type: "application/pdf",
-        name: selectedFile.name,
-      });
-
-      console.log("📨 Sending request to server...");
-
-      // Update processing state after delays
-      setTimeout(() => setProcessingState("🤖 AI soruları algılıyor..."), 2000);
-      setTimeout(() => setProcessingState("💾 Sorular kaydediliyor..."), 4000);
-
-      const response = await fetch(uploadUrl, {
+      const response = await fetch(`${apiUrl}/api/import-questions`, {
         method: "POST",
-        body: formData,
         headers: {
-          "Accept": "application/json",
+          "Content-Type": "application/json",
+          Accept: "application/json",
         },
-        signal: controller.signal,
+        body: jsonInput,
       });
 
-      console.log(`📥 Server responded with status: ${response.status}`);
-      
-      // Clear progress interval and set to 100%
-      if (progressInterval) {
-        clearInterval(progressInterval);
-        progressInterval = null;
-      }
-      setUploadProgress(100);
-
-      // Parse response
-      const responseText = await response.text();
-      console.log("📥 Response body:", responseText);
-      
-      let data;
-      try {
-        data = JSON.parse(responseText);
-      } catch (parseError) {
-        console.error("❌ Failed to parse JSON response:", parseError);
-        throw new Error(`Server returned invalid response: ${responseText.substring(0, 100)}`);
-      }
+      const data = await response.json();
 
       if (!response.ok || !data.success) {
-        console.error("❌ Upload failed:", data.error);
-        throw new Error(data.error || `Server error: ${response.status} ${response.statusText}`);
+        throw new Error(data.error || "Sorular eklenirken hata oluştu");
       }
 
-      console.log(`✅ Success! ${data.questionsAdded} questions added`);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
         "Başarılı! 🎉",
-        `${data.questionsAdded} soru başarıyla eklendi!\n\nReels sekmesinden soruları görebilirsiniz.`,
+        `"${data.packageName}" paketine ${data.questionsAdded} soru eklendi!\n\nReels sekmesinden soruları görebilirsiniz.`,
         [
           {
             text: "Tamam",
             onPress: () => {
-              setSelectedFile(null);
-              setUploadProgress(0);
-              setProcessingState("");
+              setJsonInput("");
             },
           },
         ],
       );
     } catch (error) {
-      console.error("❌ Upload error:", error);
-
-      // Clear progress interval
-      if (progressInterval) {
-        clearInterval(progressInterval);
-        progressInterval = null;
-      }
-
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-
-      let errorMessage =
-        "PDF yüklenirken bir sorun oluştu. Lütfen tekrar deneyin.";
-
-      if (error instanceof Error) {
-        if (error.name === "AbortError") {
-          errorMessage =
-            "İşlem zaman aşımına uğradı (60 saniye). PDF çok büyük veya sunucu yanıt vermiyor. Lütfen daha küçük bir PDF deneyin.";
-        } else if (error.message.includes("Network request failed")) {
-          errorMessage = "Ağ hatası. İnternet bağlantınızı kontrol edin ve tekrar deneyin.";
-        } else if (error.message.includes("EXPO_PUBLIC_DOMAIN")) {
-          errorMessage = error.message;
-        } else {
-          errorMessage = error.message;
-        }
-      }
-
-      Alert.alert("Hata", errorMessage);
+      Alert.alert(
+        "Hata",
+        error instanceof Error
+          ? error.message
+          : "Sorular eklenirken hata oluştu",
+      );
     } finally {
-      clearTimeout(timeoutId);
       setUploading(false);
-
-      // Final cleanup for progress interval
-      if (progressInterval) {
-        clearInterval(progressInterval);
-      }
     }
   };
 
-  const handleRemoveFile = () => {
-    setSelectedFile(null);
-    setUploadProgress(0);
-    setProcessingState("");
+  const handleUseExample = () => {
+    setJsonInput(EXAMPLE_JSON);
+    setShowExample(false);
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  const handleClearInput = () => {
+    setJsonInput("");
+    setShowExample(true);
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
@@ -223,6 +170,7 @@ export default function PDFUploadScreen() {
         paddingHorizontal: Spacing.lg,
       }}
       scrollIndicatorInsets={{ bottom: tabBarHeight }}
+      keyboardShouldPersistTaps="handled"
     >
       <Animated.View entering={FadeIn} style={styles.header}>
         <LinearGradient
@@ -231,103 +179,165 @@ export default function PDFUploadScreen() {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
         >
-          <Feather name="upload-cloud" size={48} color={Colors.dark.text} />
+          <Feather name="file-text" size={48} color={Colors.dark.text} />
         </LinearGradient>
-        <ThemedText style={styles.title}>PDF&apos;ten Soru Ekle</ThemedText>
+        <ThemedText style={styles.title}>JSON ile Soru Ekle</ThemedText>
         <ThemedText style={styles.subtitle}>
-          YKS soru PDF&apos;i yükleyin, sorular otomatik olarak sisteme
-          eklensin!
+          Soru paketlerini JSON formatında ekleyin ve istatistiklerini takip
+          edin!
         </ThemedText>
       </Animated.View>
 
       <Animated.View entering={SlideInUp.delay(100)} style={styles.infoCard}>
         <View style={styles.infoRow}>
-          <Feather name="check-circle" size={20} color={Colors.dark.primary} />
+          <Feather name="package" size={20} color={Colors.dark.primary} />
           <ThemedText style={styles.infoText}>
-            Farklı formatlardaki soruları otomatik tanır
+            Soru paketleri oluşturun (örn: TYT 2025)
           </ThemedText>
         </View>
         <View style={styles.infoRow}>
-          <Feather name="check-circle" size={20} color={Colors.dark.primary} />
+          <Feather name="bar-chart-2" size={20} color={Colors.dark.primary} />
           <ThemedText style={styles.infoText}>
-            AI ile akıllı soru ayrıştırma
+            Paket bazlı başarı istatistikleri
           </ThemedText>
         </View>
         <View style={styles.infoRow}>
-          <Feather name="check-circle" size={20} color={Colors.dark.primary} />
+          <Feather name="clock" size={20} color={Colors.dark.primary} />
+          <ThemedText style={styles.infoText}>Çözüm süresi takibi</ThemedText>
+        </View>
+        <View style={styles.infoRow}>
+          <Feather name="target" size={20} color={Colors.dark.primary} />
           <ThemedText style={styles.infoText}>
-            Maksimum dosya boyutu: 10 MB
+            Konu bazlı yanlış analizi
           </ThemedText>
         </View>
       </Animated.View>
 
-      {!selectedFile ? (
-        <Animated.View entering={SlideInUp.delay(200)}>
-          <Pressable style={styles.uploadArea} onPress={handlePickPDF}>
-            <Feather
-              name="file-plus"
-              size={64}
-              color={Colors.dark.textSecondary}
-            />
-            <ThemedText style={styles.uploadText}>PDF Seç</ThemedText>
-            <ThemedText style={styles.uploadSubtext}>
-              Dokunarak PDF dosyası seçin
+      {showExample && (
+        <Animated.View
+          entering={SlideInUp.delay(200)}
+          style={styles.exampleSection}
+        >
+          <View style={styles.exampleHeader}>
+            <ThemedText style={styles.exampleTitle}>
+              📋 Örnek JSON Formatı
             </ThemedText>
-          </Pressable>
-        </Animated.View>
-      ) : (
-        <Animated.View entering={FadeIn} style={styles.fileCard}>
-          <View style={styles.fileInfo}>
-            <Feather name="file-text" size={32} color={Colors.dark.primary} />
-            <View style={styles.fileDetails}>
-              <ThemedText style={styles.fileName} numberOfLines={1}>
-                {selectedFile.name}
-              </ThemedText>
-              <ThemedText style={styles.fileStatus}>Hazır</ThemedText>
-            </View>
+            <Pressable onPress={handleUseExample} style={styles.useExampleBtn}>
+              <ThemedText style={styles.useExampleText}>Kullan</ThemedText>
+            </Pressable>
           </View>
-          <Pressable onPress={handleRemoveFile} hitSlop={8}>
-            <Feather
-              name="x-circle"
-              size={24}
-              color={Colors.dark.textSecondary}
-            />
-          </Pressable>
+          <ScrollView
+            style={styles.exampleBox}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+          >
+            <ThemedText style={styles.exampleCode}>{EXAMPLE_JSON}</ThemedText>
+          </ScrollView>
         </Animated.View>
       )}
 
+      <Animated.View
+        entering={SlideInUp.delay(300)}
+        style={styles.inputSection}
+      >
+        <View style={styles.inputHeader}>
+          <ThemedText style={styles.inputLabel}>JSON Verisi</ThemedText>
+          {jsonInput.length > 0 && (
+            <Pressable onPress={handleClearInput}>
+              <Feather
+                name="x-circle"
+                size={20}
+                color={Colors.dark.textSecondary}
+              />
+            </Pressable>
+          )}
+        </View>
+        <TextInput
+          style={styles.textInput}
+          multiline
+          placeholder="JSON formatında soru verisi yapıştırın..."
+          placeholderTextColor={Colors.dark.textSecondary}
+          value={jsonInput}
+          onChangeText={setJsonInput}
+          textAlignVertical="top"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+      </Animated.View>
+
       {uploading && (
         <Animated.View entering={FadeIn} style={styles.progressContainer}>
-          {processingState && (
-            <ThemedText style={styles.processingStateText}>
-              {processingState}
-            </ThemedText>
-          )}
+          <ActivityIndicator size="large" color={Colors.dark.primary} />
           <ThemedText style={styles.progressText}>
-            PDF işleniyor... {Math.round(uploadProgress)}%
+            Sorular ekleniyor...
           </ThemedText>
-          <View style={styles.progressBar}>
-            <View
-              style={[styles.progressFill, { width: `${uploadProgress}%` }]}
-            />
-          </View>
-          <ActivityIndicator
-            size="large"
-            color={Colors.dark.primary}
-            style={styles.loader}
-          />
         </Animated.View>
       )}
 
       <View style={styles.buttonContainer}>
         <Button
-          onPress={handleUpload}
-          disabled={!selectedFile || uploading}
+          onPress={handleImport}
+          disabled={!jsonInput.trim() || uploading}
           variant="primary"
         >
-          {uploading ? "Yükleniyor..." : "Soruları Ekle"}
+          {uploading ? "Ekleniyor..." : "Soruları Ekle"}
         </Button>
       </View>
+
+      <Animated.View entering={FadeIn.delay(400)} style={styles.helpSection}>
+        <ThemedText style={styles.helpTitle}>📌 JSON Alanları</ThemedText>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>packageName</ThemedText>
+          <ThemedText style={styles.helpDesc}>Paket adı (zorunlu)</ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>examType</ThemedText>
+          <ThemedText style={styles.helpDesc}>
+            TYT veya AYT (zorunlu)
+          </ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>year</ThemedText>
+          <ThemedText style={styles.helpDesc}>
+            Sınav yılı (opsiyonel)
+          </ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>description</ThemedText>
+          <ThemedText style={styles.helpDesc}>Açıklama (opsiyonel)</ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>questions</ThemedText>
+          <ThemedText style={styles.helpDesc}>Soru dizisi (zorunlu)</ThemedText>
+        </View>
+        <ThemedText style={styles.helpSubtitle}>Her Soru İçin:</ThemedText>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>content</ThemedText>
+          <ThemedText style={styles.helpDesc}>Soru metni</ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>options</ThemedText>
+          <ThemedText style={styles.helpDesc}>Şıklar dizisi (A-E)</ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>correctAnswer</ThemedText>
+          <ThemedText style={styles.helpDesc}>
+            Doğru cevap (A/B/C/D/E)
+          </ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>category</ThemedText>
+          <ThemedText style={styles.helpDesc}>
+            Ders (Matematik, Fizik...)
+          </ThemedText>
+        </View>
+        <View style={styles.helpItem}>
+          <ThemedText style={styles.helpField}>subject</ThemedText>
+          <ThemedText style={styles.helpDesc}>
+            Alt konu (Türev, Paragraf...)
+          </ThemedText>
+        </View>
+      </Animated.View>
     </ScrollView>
   );
 }
@@ -367,6 +377,8 @@ const styles = StyleSheet.create({
     padding: Spacing.lg,
     gap: Spacing.md,
     marginBottom: Spacing.xl,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
   },
   infoRow: {
     flexDirection: "row",
@@ -378,87 +390,122 @@ const styles = StyleSheet.create({
     color: Colors.dark.textSecondary,
     flex: 1,
   },
-  uploadArea: {
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.lg,
-    borderWidth: 2,
-    borderStyle: "dashed",
-    borderColor: Colors.dark.textSecondary,
-    padding: Spacing.xl * 2,
-    alignItems: "center",
-    justifyContent: "center",
+  exampleSection: {
     marginBottom: Spacing.xl,
   },
-  uploadText: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: Colors.dark.text,
-    marginTop: Spacing.lg,
-  },
-  uploadSubtext: {
-    fontSize: 14,
-    color: Colors.dark.textSecondary,
-    marginTop: Spacing.sm,
-  },
-  fileCard: {
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
+  exampleHeader: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.md,
   },
-  fileInfo: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: Spacing.md,
-    flex: 1,
-  },
-  fileDetails: {
-    flex: 1,
-  },
-  fileName: {
+  exampleTitle: {
     fontSize: 16,
     fontWeight: "600",
     color: Colors.dark.text,
-    marginBottom: 4,
   },
-  fileStatus: {
-    fontSize: 14,
+  useExampleBtn: {
+    backgroundColor: Colors.dark.primary,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.xs,
+    borderRadius: BorderRadius.sm,
+  },
+  useExampleText: {
+    fontSize: 13,
+    fontWeight: "600",
+    color: Colors.dark.backgroundRoot,
+  },
+  exampleBox: {
+    backgroundColor: Colors.dark.backgroundSecondary,
+    borderRadius: BorderRadius.md,
+    padding: Spacing.md,
+    maxHeight: 200,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  exampleCode: {
+    fontSize: 11,
+    fontFamily: "monospace",
     color: Colors.dark.primary,
+    lineHeight: 16,
+  },
+  inputSection: {
+    marginBottom: Spacing.lg,
+  },
+  inputHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: Spacing.sm,
+  },
+  inputLabel: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.dark.text,
+  },
+  textInput: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.md,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+    padding: Spacing.md,
+    fontSize: 13,
+    fontFamily: "monospace",
+    color: Colors.dark.text,
+    minHeight: 200,
   },
   progressContainer: {
     alignItems: "center",
     marginBottom: Spacing.xl,
-  },
-  processingStateText: {
-    fontSize: 18,
-    fontWeight: "600",
-    color: Colors.dark.primary,
-    marginBottom: Spacing.sm,
-    textAlign: "center",
+    gap: Spacing.md,
   },
   progressText: {
     fontSize: 16,
     color: Colors.dark.text,
-    marginBottom: Spacing.md,
-  },
-  progressBar: {
-    width: "100%",
-    height: 8,
-    backgroundColor: Colors.dark.backgroundDefault,
-    borderRadius: BorderRadius.sm,
-    overflow: "hidden",
-  },
-  progressFill: {
-    height: "100%",
-    backgroundColor: Colors.dark.primary,
-  },
-  loader: {
-    marginTop: Spacing.lg,
   },
   buttonContainer: {
     marginTop: Spacing.lg,
+    marginBottom: Spacing.xl,
+  },
+  helpSection: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  helpTitle: {
+    fontSize: 16,
+    fontWeight: "700",
+    color: Colors.dark.text,
+    marginBottom: Spacing.md,
+  },
+  helpSubtitle: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.dark.primary,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.sm,
+  },
+  helpItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.xs,
+  },
+  helpField: {
+    fontSize: 12,
+    fontFamily: "monospace",
+    color: Colors.dark.secondary,
+    backgroundColor: Colors.dark.backgroundSecondary,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: 2,
+    borderRadius: BorderRadius.xs,
+    minWidth: 100,
+  },
+  helpDesc: {
+    fontSize: 12,
+    color: Colors.dark.textSecondary,
+    flex: 1,
   },
 });

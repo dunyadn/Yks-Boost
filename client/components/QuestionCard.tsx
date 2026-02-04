@@ -29,7 +29,11 @@ interface QuestionCardProps {
 
 const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
-export function QuestionCard({ question, onPress, compact = false }: QuestionCardProps) {
+export function QuestionCard({
+  question,
+  onPress,
+  compact = false,
+}: QuestionCardProps) {
   const scale = useSharedValue(1);
 
   const animatedStyle = useAnimatedStyle(() => ({
@@ -52,7 +56,10 @@ export function QuestionCard({ question, onPress, compact = false }: QuestionCar
       style={[styles.card, compact && styles.cardCompact, animatedStyle]}
     >
       <View style={styles.header}>
-        <Tag label={`#${question.examType} ${question.subject}`} variant="primary" />
+        <Tag
+          label={`#${question.examType} ${question.subject}`}
+          variant="primary"
+        />
         <ThemedText style={styles.author}>@{question.author}</ThemedText>
       </View>
 
@@ -63,8 +70,13 @@ export function QuestionCard({ question, onPress, compact = false }: QuestionCar
           contentFit="cover"
         />
       ) : question.text ? (
-        <View style={[styles.textContainer, compact && styles.textContainerCompact]}>
-          <ThemedText style={styles.questionText} numberOfLines={compact ? 3 : 6}>
+        <View
+          style={[styles.textContainer, compact && styles.textContainerCompact]}
+        >
+          <ThemedText
+            style={styles.questionText}
+            numberOfLines={compact ? 3 : 6}
+          >
             {question.text}
           </ThemedText>
         </View>
@@ -83,7 +95,11 @@ export function QuestionCard({ question, onPress, compact = false }: QuestionCar
             <ThemedText style={styles.statText}>{question.likes}</ThemedText>
           </View>
           <View style={styles.stat}>
-            <Feather name="message-circle" size={16} color={Colors.dark.textSecondary} />
+            <Feather
+              name="message-circle"
+              size={16}
+              color={Colors.dark.textSecondary}
+            />
             <ThemedText style={styles.statText}>{question.comments}</ThemedText>
           </View>
         </View>

@@ -57,7 +57,8 @@ export default function LibraryScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
 
-  const [savedQuestions, setSavedQuestions] = useState<SavedQuestion[]>(MOCK_SAVED);
+  const [savedQuestions, setSavedQuestions] =
+    useState<SavedQuestion[]>(MOCK_SAVED);
   const [selectedFilter, setSelectedFilter] = useState("Tümü");
 
   const filteredQuestions =
@@ -90,7 +91,7 @@ export default function LibraryScreen() {
         <ThemedText style={styles.savedAt}>{item.savedAt}</ThemedText>
       </Animated.View>
     ),
-    []
+    [],
   );
 
   const renderEmpty = useCallback(
@@ -101,13 +102,16 @@ export default function LibraryScreen() {
         message="Kaydettiğin sorular burada görünecek. YKS Reels'te beğendiğin soruları kaydet!"
       />
     ),
-    []
+    [],
   );
 
   return (
     <View style={styles.container}>
       <View
-        style={[styles.filtersContainer, { paddingTop: headerHeight + Spacing.lg }]}
+        style={[
+          styles.filtersContainer,
+          { paddingTop: headerHeight + Spacing.lg },
+        ]}
       >
         <FlatList
           horizontal

@@ -48,7 +48,9 @@ export function SubjectCard({
       onPressOut={handlePressOut}
       style={[styles.card, animatedStyle]}
     >
-      <Animated.View style={[styles.iconContainer, { backgroundColor: color + "20" }]}>
+      <Animated.View
+        style={[styles.iconContainer, { backgroundColor: color + "20" }]}
+      >
         <Feather name={icon} size={24} color={color} />
       </Animated.View>
       <ThemedText style={styles.name}>{name}</ThemedText>

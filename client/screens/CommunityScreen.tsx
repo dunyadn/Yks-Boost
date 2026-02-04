@@ -76,7 +76,7 @@ export default function CommunityScreen() {
 
   const filteredChats = searchQuery
     ? chats.filter((c) =>
-        c.name.toLowerCase().includes(searchQuery.toLowerCase())
+        c.name.toLowerCase().includes(searchQuery.toLowerCase()),
       )
     : chats;
 
@@ -86,12 +86,17 @@ export default function CommunityScreen() {
         <CommunityItem item={item} onPress={() => {}} />
       </Animated.View>
     ),
-    []
+    [],
   );
 
   return (
     <View style={styles.container}>
-      <View style={[styles.searchContainer, { paddingTop: headerHeight + Spacing.lg }]}>
+      <View
+        style={[
+          styles.searchContainer,
+          { paddingTop: headerHeight + Spacing.lg },
+        ]}
+      >
         <View style={styles.searchInputContainer}>
           <Feather name="search" size={20} color={Colors.dark.textSecondary} />
           <TextInput

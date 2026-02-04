@@ -27,7 +27,7 @@ export default function PDFUploadStackNavigator() {
         name="PDFUpload"
         component={PDFUploadScreen}
         options={{
-          headerTitle: "PDF Yükle",
+          headerTitle: "Soru Ekle",
           headerTintColor: Colors.dark.text,
         }}
       />

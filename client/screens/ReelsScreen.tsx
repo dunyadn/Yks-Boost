@@ -49,7 +49,8 @@ interface Question {
 const MOCK_REELS: Question[] = [
   {
     id: "1",
-    content: "İnsanın gelişiminde edebiyatın etkisinin dolaylı ve kısıtlı olduğunu düşünmeye yatkınız maalesef. Edebiyatın sağaltıcı, kurtarıcı veya dönüştürücü yanını giderek daha az dile getiriyoruz.\n\nBu parçada altı çizili sözcüğü anlamca karşılayabilecek bir kullanım aşağıdakilerden hangisinde vardır?",
+    content:
+      "İnsanın gelişiminde edebiyatın etkisinin dolaylı ve kısıtlı olduğunu düşünmeye yatkınız maalesef. Edebiyatın sağaltıcı, kurtarıcı veya dönüştürücü yanını giderek daha az dile getiriyoruz.\n\nBu parçada altı çizili sözcüğü anlamca karşılayabilecek bir kullanım aşağıdakilerden hangisinde vardır?",
     options: [
       "Hapsolduğu dar çevre içerisinden çıkarmak",
       "Sanatın tedavi edici bir gücü olduğunu ispatlıyor",
@@ -66,7 +67,8 @@ const MOCK_REELS: Question[] = [
   },
   {
     id: "2",
-    content: "Yönetmenin son filmi, olacakların tahmin edilememesiyle önceki eserlerinden ayrılıyor. Bu filmi izlerken kavuşturduğumuz kolları çözmemiz gerekiyor.\n\nBu parçada altı çizili sözle anlatılmak istenen aşağıdakilerden hangisidir?",
+    content:
+      "Yönetmenin son filmi, olacakların tahmin edilememesiyle önceki eserlerinden ayrılıyor. Bu filmi izlerken kavuşturduğumuz kolları çözmemiz gerekiyor.\n\nBu parçada altı çizili sözle anlatılmak istenen aşağıdakilerden hangisidir?",
     options: [
       "Örtük anlamları ortaya çıkarmak için ön hazırlık yapma",
       "Filmde verilmek isteneni anlamak için çaba harcama",
@@ -152,17 +154,15 @@ function OptionButton({
             styles.optionLabel,
             {
               borderColor: getLabelColor(),
-              backgroundColor: (selected || (revealed && option.isCorrect)) 
-                ? getLabelColor() + "20" 
-                : "transparent",
+              backgroundColor:
+                selected || (revealed && option.isCorrect)
+                  ? getLabelColor() + "20"
+                  : "transparent",
             },
           ]}
         >
           <ThemedText
-            style={[
-              styles.optionLabelText,
-              { color: getLabelColor() },
-            ]}
+            style={[styles.optionLabelText, { color: getLabelColor() }]}
           >
             {option.label}
           </ThemedText>
@@ -171,11 +171,12 @@ function OptionButton({
           style={[
             styles.optionText,
             {
-              color: revealed && option.isCorrect
-                ? Colors.dark.success
-                : revealed && selected && !option.isCorrect
-                ? Colors.dark.accent
-                : Colors.dark.text,
+              color:
+                revealed && option.isCorrect
+                  ? Colors.dark.success
+                  : revealed && selected && !option.isCorrect
+                    ? Colors.dark.accent
+                    : Colors.dark.text,
             },
           ]}
         >
@@ -204,26 +205,40 @@ function ReelCard({
   const insets = useSafeAreaInsets();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [startTime] = useState<number>(Date.now());
 
   const handleOptionPress = (label: string) => {
     if (revealed) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setSelectedOption(label);
-    
-    // Update stats
+
+    // Calculate solving time
+    const solvingTimeMs = Date.now() - startTime;
+
+    // Update stats with solving time and category info
     const isCorrect = label === question.correctAnswer;
-    fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ correct: isCorrect }),
-    });
+    const domain = process.env.EXPO_PUBLIC_DOMAIN;
+    if (domain) {
+      const apiUrl = domain.startsWith("http") ? domain : `https://${domain}`;
+      fetch(`${apiUrl}/api/stats`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          correct: isCorrect,
+          solvingTimeMs,
+          category: question.category,
+          subject: (question as any).subject || null,
+          packageId: (question as any).packageId || null,
+        }),
+      });
+    }
 
     setTimeout(() => {
       setRevealed(true);
       Haptics.notificationAsync(
         isCorrect
           ? Haptics.NotificationFeedbackType.Success
-          : Haptics.NotificationFeedbackType.Error
+          : Haptics.NotificationFeedbackType.Error,
       );
     }, 400);
   };
@@ -239,12 +254,21 @@ function ReelCard({
   return (
     <View style={[styles.reelCard, { height: SCREEN_HEIGHT }]}>
       <LinearGradient
-        colors={["rgba(10,10,15,0.95)", "rgba(10,10,15,0.7)", "rgba(10,10,15,0.95)"]}
+        colors={[
+          "rgba(10,10,15,0.95)",
+          "rgba(10,10,15,0.7)",
+          "rgba(10,10,15,0.95)",
+        ]}
         locations={[0, 0.5, 1]}
         style={styles.gradient}
       />
 
-      <View style={[styles.headerContainer, { paddingTop: insets.top + Spacing.sm }]}>
+      <View
+        style={[
+          styles.headerContainer,
+          { paddingTop: insets.top + Spacing.sm },
+        ]}
+      >
         <View style={styles.tagRow}>
           <Tag label={`#${question.category}`} variant="accent" />
         </View>
@@ -315,7 +339,13 @@ export default function ReelsScreen() {
 
   const fetchQuestions = useCallback(async () => {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/questions`);
+      const domain = process.env.EXPO_PUBLIC_DOMAIN;
+      if (!domain) {
+        console.error("EXPO_PUBLIC_DOMAIN not set");
+        return;
+      }
+      const apiUrl = domain.startsWith("http") ? domain : `https://${domain}`;
+      const response = await fetch(`${apiUrl}/api/questions`);
       const data = await response.json();
       setQuestions(data);
     } catch (error) {
@@ -342,7 +372,7 @@ export default function ReelsScreen() {
         setActiveIndex(viewableItems[0].index);
       }
     },
-    []
+    [],
   );
 
   const viewabilityConfig = useRef({
@@ -360,14 +390,14 @@ export default function ReelsScreen() {
           liked: !q.liked,
           likes: q.liked ? currentLikes - 1 : currentLikes + 1,
         };
-      })
+      }),
     );
   }, []);
 
   const handleSave = useCallback((id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
     setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, saved: !q.saved } : q))
+      prev.map((q) => (q.id === id ? { ...q, saved: !q.saved } : q)),
     );
   }, []);
 
@@ -382,12 +412,17 @@ export default function ReelsScreen() {
         onComment={() => {}}
       />
     ),
-    [activeIndex, handleLike, handleSave, tabBarHeight]
+    [activeIndex, handleLike, handleSave, tabBarHeight],
   );
 
   if (loading) {
     return (
-      <View style={[styles.container, { justifyContent: "center", alignItems: "center" }]}>
+      <View
+        style={[
+          styles.container,
+          { justifyContent: "center", alignItems: "center" },
+        ]}
+      >
         <ActivityIndicator size="large" color={Colors.dark.primary} />
       </View>
     );
@@ -414,7 +449,16 @@ export default function ReelsScreen() {
           index,
         })}
         ListEmptyComponent={() => (
-          <View style={[styles.reelCard, { height: SCREEN_HEIGHT, justifyContent: "center", alignItems: "center" }]}>
+          <View
+            style={[
+              styles.reelCard,
+              {
+                height: SCREEN_HEIGHT,
+                justifyContent: "center",
+                alignItems: "center",
+              },
+            ]}
+          >
             <ThemedText>Henüz soru eklenmemiş.</ThemedText>
           </View>
         )}
