@@ -12,7 +12,7 @@ Bu uygulama, soru paketlerini JSON formatında içe aktarmanıza olanak tanır. 
 {
   "packageName": "Paket Adı",
   "examType": "TYT veya AYT",
-  "year": 2025,
+  "year": 2026,
   "description": "Paket açıklaması",
   "questions": [...]
 }
@@ -22,9 +22,9 @@ Bu uygulama, soru paketlerini JSON formatında içe aktarmanıza olanak tanır. 
 
 | Alan | Tip | Zorunlu | Açıklama |
 |------|-----|---------|----------|
-| `packageName` | string | ✅ Evet | Soru paketinin adı (örn: "TYT 2025 Matematik") |
+| `packageName` | string | ✅ Evet | Soru paketinin adı (örn: "TYT 2026 Matematik") |
 | `examType` | string | ✅ Evet | Sınav tipi: "TYT" veya "AYT" |
-| `year` | number | ❌ Hayır | Sınav yılı (örn: 2025) |
+| `year` | number | ❌ Hayır | Sınav yılı (örn: 2026) |
 | `description` | string | ❌ Hayır | Paket hakkında kısa açıklama |
 | `questions` | array | ✅ Evet | Soru dizisi (en az 1 soru gerekli) |
 
@@ -59,7 +59,7 @@ Sistem, Türkçe alan adlarını da destekler:
 
 ```json
 {
-  "packageName": "TYT 2025 Temel Matematik",
+  "packageName": "TYT 2026 Temel Matematik",
   "examType": "TYT",
   "questions": [
     {
@@ -76,9 +76,9 @@ Sistem, Türkçe alan adlarını da destekler:
 
 ```json
 {
-  "packageName": "TYT 2025 Matematik - Denklemler",
+  "packageName": "TYT 2026 Matematik - Denklemler",
   "examType": "TYT",
-  "year": 2025,
+  "year": 2026,
   "description": "TYT Matematik - Birinci Dereceden Denklemler",
   "questions": [
     {
@@ -97,7 +97,7 @@ Sistem, Türkçe alan adlarını da destekler:
 
 ```json
 {
-  "packageName": "TYT 2025 Fizik",
+  "packageName": "TYT 2026 Fizik",
   "examType": "TYT",
   "questions": [
     {
@@ -171,7 +171,7 @@ Sistem, Türkçe alan adlarını da destekler:
 - ✅ Çözüm açıklamalarında adım adım mantığı gösterin
 - ✅ Kategori ve subject alanlarını doldurarak istatistik takibini kolaylaştırın
 - ✅ Sınav yılı ekleyerek paketleri organize edin
-- ✅ Açıklayıcı paket adları kullanın (örn: "TYT 2025 Matematik - Türev")
+- ✅ Açıklayıcı paket adları kullanın (örn: "TYT 2026 Matematik - Türev")
 
 ## Örnek Dosyalar
 

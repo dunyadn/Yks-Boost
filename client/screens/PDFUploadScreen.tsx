@@ -23,10 +23,10 @@ import type { InsertQuestion } from "@shared/schema";
 
 // Örnek JSON formatı
 const EXAMPLE_JSON = `{
-  "packageName": "TYT 2025 Türkçe",
+  "packageName": "TYT 2026 Türkçe",
   "examType": "TYT",
-  "year": 2025,
-  "description": "2025 TYT Türkçe Soruları",
+  "year": 2026,
+  "description": "2026 TYT Türkçe Soruları",
   "questions": [
     {
       "content": "Aşağıdaki cümlelerin hangisinde yazım yanlışı vardır?",
@@ -224,7 +224,7 @@ export default function PDFUploadScreen() {
         <View style={styles.infoRow}>
           <Feather name="package" size={20} color={Colors.dark.primary} />
           <ThemedText style={styles.infoText}>
-            Soru paketleri oluşturun (örn: TYT 2025)
+            Soru paketleri oluşturun (örn: TYT 2026)
           </ThemedText>
         </View>
         <View style={styles.infoRow}>
