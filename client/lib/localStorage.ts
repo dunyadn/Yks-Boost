@@ -26,7 +26,18 @@ function generateId(): string {
 export async function getQuestions(): Promise<Question[]> {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEYS.QUESTIONS);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+    
+    const parsed = JSON.parse(data);
+    if (!Array.isArray(parsed)) return [];
+    
+    // Validate and filter out invalid questions
+    return parsed.filter((q): q is Question => 
+      q && 
+      typeof q === 'object' && 
+      typeof q.id === 'string' &&
+      (typeof q.content === 'string' || q.content === null || q.content === undefined)
+    );
   } catch (error) {
     console.error("Error loading questions:", error);
     return [];
@@ -363,12 +374,20 @@ export async function getSavedQuestionsWithMeta(): Promise<SavedQuestionMeta[]> 
     if (Array.isArray(parsed) && parsed.length > 0) {
       if (typeof parsed[0] === 'string') {
         // Legacy format - convert to new format
-        return parsed.map((id: string) => ({
-          questionId: id,
-          savedAt: new Date().toISOString(),
-        }));
+        return parsed
+          .filter((id): id is string => typeof id === 'string' && id.length > 0)
+          .map((id: string) => ({
+            questionId: id,
+            savedAt: new Date().toISOString(),
+          }));
       }
-      return parsed;
+      // Validate new format items
+      return parsed.filter((item): item is SavedQuestionMeta => 
+        item && 
+        typeof item === 'object' && 
+        typeof item.questionId === 'string' && 
+        typeof item.savedAt === 'string'
+      );
     }
     return [];
   } catch (error) {

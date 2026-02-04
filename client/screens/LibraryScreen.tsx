@@ -53,15 +53,28 @@ export default function LibraryScreen() {
       
       const saved = allQuestions
         .filter(q => savedMetaMap.has(q.id))
-        .map(q => ({
-          id: q.id,
-          text: q.content,
-          subject: q.subject || "Genel",
-          category: q.category || "Genel",
-          examType: (q.examType || "TYT") as "TYT" | "AYT",
-          savedAt: new Date(savedMetaMap.get(q.id)!).toLocaleDateString('tr-TR'),
-          packageId: q.packageId,
-        }));
+        .map(q => {
+          // Handle potentially invalid date strings
+          const savedAtStr = savedMetaMap.get(q.id);
+          let savedAtFormatted = new Date().toLocaleDateString('tr-TR');
+          
+          if (savedAtStr) {
+            const savedAtDate = new Date(savedAtStr);
+            if (!isNaN(savedAtDate.getTime())) {
+              savedAtFormatted = savedAtDate.toLocaleDateString('tr-TR');
+            }
+          }
+          
+          return {
+            id: q.id,
+            text: q.content || "Metin yüklenmedi",
+            subject: q.subject || "Genel",
+            category: q.category || "Genel",
+            examType: (q.examType || "TYT") as "TYT" | "AYT",
+            savedAt: savedAtFormatted,
+            packageId: q.packageId,
+          };
+        });
       setSavedQuestions(saved);
 
       // Load packages
