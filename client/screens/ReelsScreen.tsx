@@ -40,6 +40,9 @@ interface Question {
   options: string[];
   correctAnswer: string;
   category: string;
+  subject?: string;
+  packageId?: string;
+  examType?: string;
   likes?: number;
   comments?: number;
   saved?: boolean;
@@ -227,8 +230,8 @@ function ReelCard({
           correct: isCorrect,
           solvingTimeMs,
           category: question.category,
-          subject: (question as any).subject || null,
-          packageId: (question as any).packageId || null,
+          subject: question.subject || null,
+          packageId: question.packageId || null,
         }),
       });
     }

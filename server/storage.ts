@@ -243,7 +243,7 @@ export class MemStorage implements IStorage {
       topicStat.wrongAnswers = (topicStat.wrongAnswers || 0) + 1;
     }
 
-    if (solvingTimeMs && topicStat.totalAnswered) {
+    if (solvingTimeMs) {
       const oldTotal =
         (topicStat.avgSolvingTimeMs || 0) * (topicStat.totalAnswered - 1);
       topicStat.avgSolvingTimeMs =

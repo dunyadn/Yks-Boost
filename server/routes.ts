@@ -3,6 +3,24 @@ import { createServer, type Server } from "node:http";
 import { storage } from "./storage";
 import type { InsertQuestion, InsertQuestionPackage } from "@shared/schema";
 
+// Interface for incoming question data from JSON import
+interface ImportQuestionData {
+  content?: string;
+  soru?: string;
+  question?: string;
+  options?: string[];
+  secenekler?: string[];
+  siklar?: string[];
+  correctAnswer?: string;
+  dogruCevap?: string;
+  cevap?: string;
+  category?: string;
+  ders?: string;
+  konu?: string;
+  subject?: string;
+  altKonu?: string;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Questions
   app.get("/api/questions", async (_req, res) => {
@@ -76,15 +94,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } as InsertQuestionPackage);
 
       // Add questions with package reference
-      const insertQuestions: InsertQuestion[] = questions.map((q: any) => ({
-        content: q.content || q.soru || q.question,
-        options: q.options || q.secenekler || q.siklar || [],
-        correctAnswer: q.correctAnswer || q.dogruCevap || q.cevap || "A",
-        category: q.category || q.ders || q.konu || "Genel",
-        subject: q.subject || q.altKonu || null,
-        packageId: pkg.id,
-        examType: examType,
-      }));
+      const insertQuestions: InsertQuestion[] = questions.map(
+        (q: ImportQuestionData) => ({
+          content: q.content || q.soru || q.question || "",
+          options: q.options || q.secenekler || q.siklar || [],
+          correctAnswer: q.correctAnswer || q.dogruCevap || q.cevap || "A",
+          category: q.category || q.ders || q.konu || "Genel",
+          subject: q.subject || q.altKonu || null,
+          packageId: pkg.id,
+          examType: examType,
+        }),
+      );
 
       const createdQuestions =
         await storage.createManyQuestions(insertQuestions);
