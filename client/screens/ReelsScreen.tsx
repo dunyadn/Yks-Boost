@@ -25,7 +25,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Tag } from "@/components/Tag";
 import { ReelsActionButton } from "@/components/ReelsActionButton";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getQuestions, updateStats, updatePackageStats } from "@/lib/localStorage";
+import { getQuestions, updateStats, updatePackageStats, toggleSavedQuestion, getSavedQuestions } from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -344,7 +344,16 @@ export default function ReelsScreen() {
   const fetchQuestions = useCallback(async () => {
     try {
       const data = await getQuestions();
-      setQuestions(data);
+      const savedQuestionIds = await getSavedQuestions();
+      // Mark questions as saved if they're in the saved list
+      const questionsWithSavedStatus = data.map(q => ({
+        ...q,
+        saved: savedQuestionIds.includes(q.id),
+        liked: false,
+        likes: 0,
+        comments: 0,
+      }));
+      setQuestions(questionsWithSavedStatus);
     } catch (error) {
       console.error("Error fetching questions:", error);
     } finally {
@@ -391,10 +400,11 @@ export default function ReelsScreen() {
     );
   }, []);
 
-  const handleSave = useCallback((id: string) => {
+  const handleSave = useCallback(async (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    const isSaved = await toggleSavedQuestion(id);
     setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, saved: !q.saved } : q)),
+      prev.map((q) => (q.id === id ? { ...q, saved: isSaved } : q)),
     );
   }, []);
 

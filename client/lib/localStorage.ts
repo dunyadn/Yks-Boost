@@ -15,6 +15,7 @@ const STORAGE_KEYS = {
   STATS: "@yks_boost:stats",
   PACKAGE_STATS: "@yks_boost:package_stats",
   TOPIC_STATS: "@yks_boost:topic_stats",
+  SAVED_QUESTIONS: "@yks_boost:saved_questions",
 };
 
 function generateId(): string {
@@ -299,4 +300,37 @@ export async function updatePackageStats(
   
   await AsyncStorage.setItem(STORAGE_KEYS.PACKAGE_STATS, JSON.stringify(packageStats));
   return stat;
+}
+
+// Saved Questions (Bookmarked/Favorited Questions)
+export async function getSavedQuestions(): Promise<string[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.SAVED_QUESTIONS);
+    return data ? JSON.parse(data) : [];
+  } catch (error) {
+    console.error("Error loading saved questions:", error);
+    return [];
+  }
+}
+
+export async function toggleSavedQuestion(questionId: string): Promise<boolean> {
+  const savedQuestions = await getSavedQuestions();
+  const index = savedQuestions.indexOf(questionId);
+  
+  if (index > -1) {
+    // Already saved, remove it
+    savedQuestions.splice(index, 1);
+    await AsyncStorage.setItem(STORAGE_KEYS.SAVED_QUESTIONS, JSON.stringify(savedQuestions));
+    return false; // Not saved anymore
+  } else {
+    // Not saved, add it
+    savedQuestions.push(questionId);
+    await AsyncStorage.setItem(STORAGE_KEYS.SAVED_QUESTIONS, JSON.stringify(savedQuestions));
+    return true; // Now saved
+  }
+}
+
+export async function isQuestionSaved(questionId: string): Promise<boolean> {
+  const savedQuestions = await getSavedQuestions();
+  return savedQuestions.includes(questionId);
 }
