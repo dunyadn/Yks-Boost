@@ -55,26 +55,26 @@ export class FileStorage implements IStorage {
       // Try to load existing data
       try {
         const fileContent = await fs.readFile(this.filePath, "utf-8");
-        const loadedData = JSON.parse(fileContent);
+        const loadedData: StorageData = JSON.parse(fileContent);
         
         // Convert date strings back to Date objects
         if (loadedData.stats?.lastUpdated) {
           loadedData.stats.lastUpdated = new Date(loadedData.stats.lastUpdated);
         }
         
-        Object.values(loadedData.questions || {}).forEach((q: any) => {
+        Object.values(loadedData.questions || {}).forEach((q) => {
           if (q.createdAt) q.createdAt = new Date(q.createdAt);
         });
         
-        Object.values(loadedData.packages || {}).forEach((p: any) => {
+        Object.values(loadedData.packages || {}).forEach((p) => {
           if (p.createdAt) p.createdAt = new Date(p.createdAt);
         });
         
-        Object.values(loadedData.packageStats || {}).forEach((s: any) => {
+        Object.values(loadedData.packageStats || {}).forEach((s) => {
           if (s.lastUpdated) s.lastUpdated = new Date(s.lastUpdated);
         });
         
-        Object.values(loadedData.topicStats || {}).forEach((s: any) => {
+        Object.values(loadedData.topicStats || {}).forEach((s) => {
           if (s.lastUpdated) s.lastUpdated = new Date(s.lastUpdated);
         });
 

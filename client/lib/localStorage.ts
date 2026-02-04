@@ -208,16 +208,17 @@ async function updateTopicStats(
   solvingTimeMs?: number,
 ): Promise<void> {
   const topicStats = await getTopicStats();
-  const key = subject ? `${category}:${subject}` : category;
+  // Normalize subject: empty string or undefined becomes null
+  const normalizedSubject = subject && subject.trim() ? subject : null;
   let stat = topicStats.find((s) => 
-    s.category === category && s.subject === (subject || null)
+    s.category === category && s.subject === normalizedSubject
   );
   
   if (!stat) {
     stat = {
       id: generateId(),
       category,
-      subject: subject || null,
+      subject: normalizedSubject,
       totalAnswered: 0,
       correctAnswers: 0,
       wrongAnswers: 0,
