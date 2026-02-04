@@ -7,7 +7,6 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as DocumentPicker from "expo-document-picker";
@@ -21,11 +20,13 @@ import { Button } from "@/components/Button";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
 export default function PDFUploadScreen() {
-  const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
 
-  const [selectedFile, setSelectedFile] = useState<{ name: string; uri: string } | null>(null);
+  const [selectedFile, setSelectedFile] = useState<{
+    name: string;
+    uri: string;
+  } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [processingState, setProcessingState] = useState<string>("");
@@ -62,7 +63,7 @@ export default function PDFUploadScreen() {
 
     // Progress simulation interval
     let progressInterval: NodeJS.Timeout | null = null;
-    
+
     // Timeout controller
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
@@ -72,11 +73,11 @@ export default function PDFUploadScreen() {
 
     try {
       console.log(`📤 Starting upload: ${selectedFile.name}`);
-      
+
       // Start simulated progress
       setProcessingState("📄 PDF okunuyor...");
       progressInterval = setInterval(() => {
-        setUploadProgress(prev => {
+        setUploadProgress((prev) => {
           if (prev >= 95) return prev;
           return prev + Math.random() * 10;
         });
@@ -90,19 +91,22 @@ export default function PDFUploadScreen() {
       } as any);
 
       console.log("🌐 Sending request to server...");
-      
+
       // Update processing state after a short delay
       setTimeout(() => setProcessingState("🤖 AI soruları algılıyor..."), 2000);
       setTimeout(() => setProcessingState("💾 Sorular kaydediliyor..."), 4000);
 
-      const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/upload-pdf`, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_DOMAIN}/api/upload-pdf`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          signal: controller.signal,
         },
-        signal: controller.signal,
-      });
+      );
 
       // Clear progress interval and set to 100%
       if (progressInterval) {
@@ -133,34 +137,36 @@ export default function PDFUploadScreen() {
               setProcessingState("");
             },
           },
-        ]
+        ],
       );
     } catch (error) {
       console.error("❌ Upload error:", error);
-      
+
       // Clear progress interval
       if (progressInterval) {
         clearInterval(progressInterval);
         progressInterval = null;
       }
-      
+
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      
-      let errorMessage = "PDF yüklenirken bir sorun oluştu. Lütfen tekrar deneyin.";
-      
+
+      let errorMessage =
+        "PDF yüklenirken bir sorun oluştu. Lütfen tekrar deneyin.";
+
       if (error instanceof Error) {
         if (error.name === "AbortError") {
-          errorMessage = "İşlem zaman aşımına uğradı (60 saniye). PDF çok büyük veya sunucu yanıt vermiyor. Lütfen daha küçük bir PDF deneyin.";
+          errorMessage =
+            "İşlem zaman aşımına uğradı (60 saniye). PDF çok büyük veya sunucu yanıt vermiyor. Lütfen daha küçük bir PDF deneyin.";
         } else {
           errorMessage = error.message;
         }
       }
-      
+
       Alert.alert("Hata", errorMessage);
     } finally {
       clearTimeout(timeoutId);
       setUploading(false);
-      
+
       // Final cleanup for progress interval
       if (progressInterval) {
         clearInterval(progressInterval);
@@ -194,9 +200,10 @@ export default function PDFUploadScreen() {
         >
           <Feather name="upload-cloud" size={48} color={Colors.dark.text} />
         </LinearGradient>
-        <ThemedText style={styles.title}>PDF'ten Soru Ekle</ThemedText>
+        <ThemedText style={styles.title}>PDF&apos;ten Soru Ekle</ThemedText>
         <ThemedText style={styles.subtitle}>
-          YKS soru PDF'i yükleyin, sorular otomatik olarak sisteme eklensin!
+          YKS soru PDF&apos;i yükleyin, sorular otomatik olarak sisteme
+          eklensin!
         </ThemedText>
       </Animated.View>
 
@@ -224,7 +231,11 @@ export default function PDFUploadScreen() {
       {!selectedFile ? (
         <Animated.View entering={SlideInUp.delay(200)}>
           <Pressable style={styles.uploadArea} onPress={handlePickPDF}>
-            <Feather name="file-plus" size={64} color={Colors.dark.textSecondary} />
+            <Feather
+              name="file-plus"
+              size={64}
+              color={Colors.dark.textSecondary}
+            />
             <ThemedText style={styles.uploadText}>PDF Seç</ThemedText>
             <ThemedText style={styles.uploadSubtext}>
               Dokunarak PDF dosyası seçin
@@ -243,7 +254,11 @@ export default function PDFUploadScreen() {
             </View>
           </View>
           <Pressable onPress={handleRemoveFile} hitSlop={8}>
-            <Feather name="x-circle" size={24} color={Colors.dark.textSecondary} />
+            <Feather
+              name="x-circle"
+              size={24}
+              color={Colors.dark.textSecondary}
+            />
           </Pressable>
         </Animated.View>
       )}
@@ -260,10 +275,7 @@ export default function PDFUploadScreen() {
           </ThemedText>
           <View style={styles.progressBar}>
             <View
-              style={[
-                styles.progressFill,
-                { width: `${uploadProgress}%` },
-              ]}
+              style={[styles.progressFill, { width: `${uploadProgress}%` }]}
             />
           </View>
           <ActivityIndicator
