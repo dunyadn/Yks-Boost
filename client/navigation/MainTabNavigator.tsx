@@ -40,7 +40,11 @@ export default function MainTabNavigator() {
         },
         tabBarBackground: () =>
           Platform.OS === "ios" ? (
-            <BlurView intensity={100} tint="dark" style={StyleSheet.absoluteFill} />
+            <BlurView
+              intensity={100}
+              tint="dark"
+              style={StyleSheet.absoluteFill}
+            />
           ) : null,
         tabBarLabelStyle: {
           fontSize: 11,
@@ -73,9 +77,9 @@ export default function MainTabNavigator() {
         name="PDFUploadTab"
         component={PDFUploadStackNavigator}
         options={{
-          title: "PDF Yükle",
+          title: "Soru Ekle",
           tabBarIcon: ({ color, size }) => (
-            <Feather name="upload" size={size} color={color} />
+            <Feather name="plus-circle" size={size} color={color} />
           ),
         }}
       />

@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, ScrollView } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -30,7 +26,9 @@ export default function ProfileScreen() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`);
+        const response = await fetch(
+          `${process.env.EXPO_PUBLIC_DOMAIN}/api/stats`,
+        );
         const data = await response.json();
         setStats(data);
       } catch (error) {
@@ -40,9 +38,10 @@ export default function ProfileScreen() {
     fetchStats();
   }, []);
 
-  const successRate = stats.totalAnswered > 0 
-    ? Math.round((stats.correctAnswers / stats.totalAnswered) * 100) 
-    : 0;
+  const successRate =
+    stats.totalAnswered > 0
+      ? Math.round((stats.correctAnswers / stats.totalAnswered) * 100)
+      : 0;
 
   return (
     <ScrollView
@@ -69,12 +68,16 @@ export default function ProfileScreen() {
 
         <View style={styles.statsRow}>
           <View style={styles.statItem}>
-            <ThemedText style={styles.statValue}>{stats.totalAnswered}</ThemedText>
+            <ThemedText style={styles.statValue}>
+              {stats.totalAnswered}
+            </ThemedText>
             <ThemedText style={styles.statLabel}>Cevaplanan</ThemedText>
           </View>
           <View style={styles.statDivider} />
           <View style={styles.statItem}>
-            <ThemedText style={styles.statValue}>{stats.correctAnswers}</ThemedText>
+            <ThemedText style={styles.statValue}>
+              {stats.correctAnswers}
+            </ThemedText>
             <ThemedText style={styles.statLabel}>Doğru</ThemedText>
           </View>
           <View style={styles.statDivider} />

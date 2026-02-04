@@ -44,7 +44,7 @@ export function IconButton({
     }
     scale.value = withSequence(
       withSpring(0.85, { damping: 10, stiffness: 200 }),
-      withSpring(1, { damping: 15, stiffness: 150 })
+      withSpring(1, { damping: 15, stiffness: 150 }),
     );
     onPress?.();
   };

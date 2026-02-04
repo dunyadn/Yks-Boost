@@ -10,7 +10,12 @@ interface TagProps {
   selected?: boolean;
 }
 
-export function Tag({ label, variant = "primary", onPress, selected }: TagProps) {
+export function Tag({
+  label,
+  variant = "primary",
+  onPress,
+  selected,
+}: TagProps) {
   const getBackgroundColor = () => {
     if (selected) {
       switch (variant) {

@@ -6,11 +6,7 @@ export type ThemedTextProps = TextProps & {
   type?: "h1" | "h2" | "h3" | "h4" | "body" | "small" | "caption" | "link";
 };
 
-export function ThemedText({
-  style,
-  type = "body",
-  ...rest
-}: ThemedTextProps) {
+export function ThemedText({ style, type = "body", ...rest }: ThemedTextProps) {
   const getColor = () => {
     if (type === "link") {
       return Colors.dark.link;
