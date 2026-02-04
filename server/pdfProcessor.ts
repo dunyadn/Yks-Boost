@@ -1,4 +1,4 @@
-import PDFParse from "pdf-parse";
+import { PDFParse } from "pdf-parse";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { storage } from "./storage";
 import type { InsertQuestion } from "@shared/schema";
@@ -10,7 +10,7 @@ interface ParsedQuestion {
   category: string;
 }
 
-// Initialize Google Gemini client
+// Initialize Gemini client (will be null if no API key)
 const genAI = process.env.GEMINI_API_KEY
   ? new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
   : null;
@@ -20,8 +20,10 @@ const genAI = process.env.GEMINI_API_KEY
  */
 export async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
   try {
-    const data = await PDFParse(pdfBuffer);
-    return data.text;
+    const parser = new PDFParse({ data: pdfBuffer });
+    const result = await parser.getText();
+    await parser.destroy();
+    return result.text;
   } catch (error) {
     console.error("Error extracting text from PDF:", error);
     throw new Error("PDF dosyası okunamadı. Lütfen geçerli bir PDF dosyası yükleyin.");
@@ -29,12 +31,12 @@ export async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
 }
 
 /**
- * Parse questions from text using Google Gemini AI
+ * Parse questions from text using Gemini AI
  */
 export async function parseQuestionsWithAI(text: string): Promise<ParsedQuestion[]> {
   if (!genAI) {
     console.warn("Gemini API key not configured, using fallback parser");
-    return parseQuestionsWithFallback(text);
+    return parsePatternsWithFallback(text);
   }
 
   try {
@@ -54,7 +56,7 @@ Farklı formatları destekle:
 3. Numarasız sorular
 4. Sadece metinli sorular
 
-SADECE geçerli JSON array döndür, başka metin ekleme.
+SADECE geçerli JSON array döndür, başka metin ekleme:
 
 Metin:
 ${text}
@@ -72,158 +74,213 @@ JSON çıktı formatı:
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const content = response.text();
-
-    if (!content) {
-      throw new Error("Gemini API'den yanıt alınamadı");
-    }
-
-    // Extract JSON from response
-    const jsonMatch = content.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) {
-      console.warn("Valid JSON not found in Gemini response, using fallback");
-      return parseQuestionsWithFallback(text);
-    }
-
-    const questions: ParsedQuestion[] = JSON.parse(jsonMatch[0]);
     
-    // Validate questions
-    const validQuestions = questions.filter(q => 
-      q.content && 
-      Array.isArray(q.options) && 
-      q.options.length >= 2 &&
-      q.correctAnswer &&
-      q.category
-    );
-
-    if (validQuestions.length === 0) {
-      console.warn("No valid questions found, using fallback");
-      return parseQuestionsWithFallback(text);
+    if (!content) {
+      throw new Error("AI yanıt vermedi");
     }
 
-    console.log(`Parsed ${validQuestions.length} questions with Gemini AI`);
-    return validQuestions;
+    // Clean up the response - remove markdown code blocks if present
+    let cleanContent = content.trim();
+    if (cleanContent.startsWith("```json")) {
+      cleanContent = cleanContent.replace(/^```json\s*/, "").replace(/\s*```$/, "");
+    } else if (cleanContent.startsWith("```")) {
+      cleanContent = cleanContent.replace(/^```\s*/, "").replace(/\s*```$/, "");
+    }
 
+    const questions = JSON.parse(cleanContent);
+    
+    if (!Array.isArray(questions)) {
+      throw new Error("Invalid response format");
+    }
+
+    // Validate and clean questions
+    return questions
+      .filter((q: any) => {
+        return (
+          q.content &&
+          Array.isArray(q.options) &&
+          q.options.length >= 2 &&
+          q.correctAnswer
+        );
+      })
+      .map((q: any) => ({
+        content: String(q.content).trim(),
+        options: q.options.map((opt: any) => String(opt).trim()),
+        correctAnswer: String(q.correctAnswer).trim().toUpperCase(),
+        category: q.category ? String(q.category).trim() : "Genel",
+      }));
   } catch (error) {
-    console.error("Error parsing with Gemini AI:", error);
-    console.log("Falling back to pattern-based parser");
-    return parseQuestionsWithFallback(text);
+    console.error("Error parsing questions with AI:", error);
+    // Fallback to pattern-based parsing
+    return parsePatternsWithFallback(text);
   }
 }
 
 /**
  * Fallback parser using regex patterns
  */
-function parseQuestionsWithFallback(text: string): ParsedQuestion[] {
+function parsePatternsWithFallback(text: string): ParsedQuestion[] {
   const questions: ParsedQuestion[] = [];
   
-  // Pattern 1: "1. Soru? A) ... B) ... Cevap: A"
-  const pattern1 = /(\d+)\.\s*(.+?)\s*A\)(.*?)B\)(.*?)(?:C\)(.*?))?(?:D\)(.*?))?(?:E\)(.*?))?\s*(?:Cevap|Doğru Cevap|Yanıt):\s*([A-E])/gi;
+  // Split text into potential question blocks
+  const lines = text.split("\n");
+  let currentQuestion: Partial<ParsedQuestion> = {};
+  let options: string[] = [];
   
-  let match;
-  while ((match = pattern1.exec(text)) !== null) {
-    const options = [
-      match[3]?.trim(),
-      match[4]?.trim(),
-      match[5]?.trim(),
-      match[6]?.trim(),
-      match[7]?.trim(),
-    ].filter(Boolean);
-
-    if (options.length >= 2) {
-      questions.push({
-        content: match[2].trim(),
-        options,
-        correctAnswer: match[8].toUpperCase(),
-        category: detectCategory(match[2]),
-      });
+  for (const line of lines) {
+    const trimmed = line.trim();
+    
+    // Check if line starts with a number (potential question)
+    if (/^\d+\./.test(trimmed)) {
+      // Save previous question if exists
+      if (currentQuestion.content && options.length > 0) {
+        questions.push({
+          content: currentQuestion.content,
+          options: options,
+          correctAnswer: currentQuestion.correctAnswer || "A",
+          category: currentQuestion.category || "Genel",
+        });
+      }
+      
+      // Start new question
+      currentQuestion = {
+        content: trimmed.replace(/^\d+\.\s*/, ""),
+        category: detectCategory(trimmed),
+      };
+      options = [];
+    }
+    // Check if line is an option (A), B), etc.)
+    else if (/^[AaBbCcDdEe]\s*[\):]/.test(trimmed)) {
+      const optionText = trimmed.replace(/^[AaBbCcDdEe]\s*[\):]\s*/, "");
+      options.push(optionText);
+    }
+    // Check for answer
+    else if (/cevap|doğru|answer/i.test(trimmed)) {
+      const match = trimmed.match(/[AaBbCcDdEe]/);
+      if (match) {
+        currentQuestion.correctAnswer = match[0].toUpperCase();
+      }
     }
   }
-
-  if (questions.length === 0) {
-    console.warn("No questions found with pattern matching");
-  } else {
-    console.log(`Parsed ${questions.length} questions with fallback parser`);
+  
+  // Save last question
+  if (currentQuestion.content && options.length > 0) {
+    questions.push({
+      content: currentQuestion.content,
+      options: options,
+      correctAnswer: currentQuestion.correctAnswer || "A",
+      category: currentQuestion.category || "Genel",
+    });
   }
-
+  
   return questions;
 }
 
 /**
- * Detect question category from content
+ * Detect category from question text
  */
-function detectCategory(content: string): string {
-  const keywords = {
-    "Matematik": ["türev", "integral", "limit", "fonksiyon", "denklem", "sayı"],
-    "Fizik": ["kuvvet", "hız", "ivme", "enerji", "optik", "elektrik"],
-    "Kimya": ["molekül", "atom", "element", "reaksiyon", "bileşik"],
-    "Biyoloji": ["hücre", "doku", "organ", "genetik", "DNA"],
-    "Türkçe": ["kelime", "cümle", "anlam", "dil bilgisi", "edebiyat"],
-    "Tarih": ["Osmanlı", "devlet", "savaş", "dönem", "tarih"],
-    "Coğrafya": ["bölge", "iklim", "harita", "nüfus", "şehir"],
-  };
-
-  const lowerContent = content.toLowerCase();
+function detectCategory(text: string): string {
+  const lowerText = text.toLowerCase();
   
-  for (const [category, words] of Object.entries(keywords)) {
-    if (words.some(word => lowerContent.includes(word))) {
-      return category;
-    }
+  if (
+    /matematik|türev|integral|trigonometri|geometri|sayılar/i.test(text)
+  ) {
+    return "Matematik";
   }
-
+  if (/fizik|kuvvet|enerji|hareket|elektrik|manyetik/i.test(text)) {
+    return "Fizik";
+  }
+  if (/kimya|element|molekül|reaksiyon|asit|baz/i.test(text)) {
+    return "Kimya";
+  }
+  if (/biyoloji|hücre|doku|organ|gen|protein/i.test(text)) {
+    return "Biyoloji";
+  }
+  if (/türkçe|dilbilgisi|edebiyat|sözcük|cümle/i.test(text)) {
+    return "Türkçe";
+  }
+  if (/tarih|osmanlı|cumhuriyet|savaş|antlaşma/i.test(text)) {
+    return "Tarih";
+  }
+  if (/coğrafya|iklim|harita|kıta|ülke/i.test(text)) {
+    return "Coğrafya";
+  }
+  
   return "Genel";
 }
 
 /**
- * Main PDF processing function
+ * Save questions to database
  */
-export async function processPDF(pdfBuffer: Buffer): Promise<{ success: boolean; questionsAdded: number; error?: string; }> {
+export async function saveQuestionsToDatabase(
+  questions: ParsedQuestion[]
+): Promise<number> {
+  let savedCount = 0;
+  
+  for (const question of questions) {
+    try {
+      const insertQuestion: InsertQuestion = {
+        content: question.content,
+        options: question.options,
+        correctAnswer: question.correctAnswer,
+        category: question.category,
+      };
+      
+      await storage.createQuestion(insertQuestion);
+      savedCount++;
+    } catch (error) {
+      console.error("Error saving question:", error);
+      // Continue with other questions even if one fails
+    }
+  }
+  
+  return savedCount;
+}
+
+/**
+ * Process PDF end-to-end
+ */
+export async function processPDF(pdfBuffer: Buffer): Promise<{ 
+  success: boolean;
+  questionsAdded: number;
+  error?: string;
+}> {
   try {
-    console.log("Starting PDF processing...");
-    
     // Step 1: Extract text
     const text = await extractTextFromPDF(pdfBuffer);
-    console.log(`Extracted ${text.length} characters from PDF`);
-
-    if (text.length < 50) {
-      throw new Error("PDF çok kısa veya boş görünüyor");
+    
+    if (!text || text.trim().length === 0) {
+      return {
+        success: false,
+        questionsAdded: 0,
+        error: "PDF'den metin çıkarılamadı. Dosya boş olabilir.",
+      };
     }
-
-    // Step 2: Parse questions with AI
+    
+    // Step 2: Parse questions
     const questions = await parseQuestionsWithAI(text);
-
+    
     if (questions.length === 0) {
-      throw new Error("PDF'te soru bulunamadı. Lütfen geçerli bir sınav PDF'i yükleyin.");
+      return {
+        success: false,
+        questionsAdded: 0,
+        error: "PDF'de soru bulunamadı. Lütfen geçerli bir sınav sorusu PDF'i yükleyin.",
+      };
     }
-
+    
     // Step 3: Save to database
-    let savedCount = 0;
-    for (const question of questions) {
-      try {
-        await storage.createQuestion({
-          content: question.content,
-          options: question.options,
-          correctAnswer: question.correctAnswer,
-          category: question.category,
-        } as InsertQuestion);
-        savedCount++;
-      } catch (error) {
-        console.error("Error saving question:", error);
-      }
-    }
-
-    console.log(`Successfully saved ${savedCount}/${questions.length} questions`);
-
+    const savedCount = await saveQuestionsToDatabase(questions);
+    
     return {
       success: true,
       questionsAdded: savedCount,
     };
-
   } catch (error) {
     console.error("Error processing PDF:", error);
     return {
       success: false,
       questionsAdded: 0,
-      error: error instanceof Error ? error.message : "Bilinmeyen hata",
+      error: error instanceof Error ? error.message : "PDF işlenirken bir hata oluştu",
     };
   }
 }
