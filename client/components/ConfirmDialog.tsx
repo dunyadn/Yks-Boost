@@ -39,7 +39,7 @@ export function ConfirmDialog({
       statusBarTranslucent
     >
       <Pressable style={styles.backdrop} onPress={onCancel}>
-        <Pressable style={styles.dialog} onPress={(e) => e.stopPropagation()}>
+        <View style={styles.dialog}>
           <View style={styles.content}>
             <ThemedText style={styles.title}>{title}</ThemedText>
             <ThemedText style={styles.message}>{message}</ThemedText>
@@ -70,7 +70,7 @@ export function ConfirmDialog({
               </ThemedText>
             </Pressable>
           </View>
-        </Pressable>
+        </View>
       </Pressable>
     </Modal>
   );
@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
         elevation: 16,
       },
       web: {
-        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)",
+        boxShadow: "0 8px 32px rgba(0, 0, 0, 0.3)" as any,
       },
     }),
   },
