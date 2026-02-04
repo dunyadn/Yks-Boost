@@ -1,6 +1,7 @@
 import express from "express";
 import type { Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { storage } from "./storage";
 import * as fs from "fs";
 import * as path from "path";
 
@@ -232,6 +233,16 @@ function setupErrorHandler(app: express.Application) {
   setupRequestLogging(app);
 
   configureExpoAndLanding(app);
+
+  // Initialize file storage
+  log("Initializing file storage...");
+  try {
+    await (storage as any).init();
+    log("✅ File storage initialized successfully");
+  } catch (error) {
+    log("❌ Failed to initialize file storage:", error);
+    process.exit(1);
+  }
 
   const server = await registerRoutes(app);
 
