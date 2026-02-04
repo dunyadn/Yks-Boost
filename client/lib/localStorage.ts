@@ -26,14 +26,30 @@ function generateId(): string {
 export async function getQuestions(): Promise<Question[]> {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEYS.QUESTIONS);
-    return data ? JSON.parse(data) : [];
+    if (!data) return [];
+
+    const parsed = JSON.parse(data);
+    if (!Array.isArray(parsed)) return [];
+
+    // Validate and filter out invalid questions
+    return parsed.filter(
+      (q): q is Question =>
+        q &&
+        typeof q === "object" &&
+        typeof q.id === "string" &&
+        (typeof q.content === "string" ||
+          q.content === null ||
+          q.content === undefined),
+    );
   } catch (error) {
     console.error("Error loading questions:", error);
     return [];
   }
 }
 
-export async function saveQuestion(question: InsertQuestion): Promise<Question> {
+export async function saveQuestion(
+  question: InsertQuestion,
+): Promise<Question> {
   const questions = await getQuestions();
   const newQuestion: Question = {
     ...question,
@@ -46,21 +62,26 @@ export async function saveQuestion(question: InsertQuestion): Promise<Question> 
   };
   questions.push(newQuestion);
   await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(questions));
-  
+
   // Update package question count
   if (newQuestion.packageId) {
     const packages = await getPackages();
     const pkg = packages.find((p) => p.id === newQuestion.packageId);
     if (pkg) {
       pkg.totalQuestions = (pkg.totalQuestions || 0) + 1;
-      await AsyncStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(packages));
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.PACKAGES,
+        JSON.stringify(packages),
+      );
     }
   }
-  
+
   return newQuestion;
 }
 
-export async function saveQuestions(insertQuestions: InsertQuestion[]): Promise<Question[]> {
+export async function saveQuestions(
+  insertQuestions: InsertQuestion[],
+): Promise<Question[]> {
   const questions = await getQuestions();
   const newQuestions: Question[] = insertQuestions.map((q) => ({
     ...q,
@@ -71,30 +92,40 @@ export async function saveQuestions(insertQuestions: InsertQuestion[]): Promise<
     packageId: q.packageId || null,
     examType: q.examType || "TYT",
   }));
-  
+
   const allQuestions = [...questions, ...newQuestions];
-  await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(allQuestions));
-  
+  await AsyncStorage.setItem(
+    STORAGE_KEYS.QUESTIONS,
+    JSON.stringify(allQuestions),
+  );
+
   // Update package question counts for each unique package
-  const packageIds = new Set(newQuestions.map((q) => q.packageId).filter(Boolean));
+  const packageIds = new Set(
+    newQuestions.map((q) => q.packageId).filter(Boolean),
+  );
   if (packageIds.size > 0) {
     const packages = await getPackages();
     let packagesUpdated = false;
-    
+
     for (const packageId of packageIds) {
       const pkg = packages.find((p) => p.id === packageId);
       if (pkg) {
-        const questionsInPackage = newQuestions.filter((q) => q.packageId === packageId).length;
+        const questionsInPackage = newQuestions.filter(
+          (q) => q.packageId === packageId,
+        ).length;
         pkg.totalQuestions = (pkg.totalQuestions || 0) + questionsInPackage;
         packagesUpdated = true;
       }
     }
-    
+
     if (packagesUpdated) {
-      await AsyncStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(packages));
+      await AsyncStorage.setItem(
+        STORAGE_KEYS.PACKAGES,
+        JSON.stringify(packages),
+      );
     }
   }
-  
+
   return newQuestions;
 }
 
@@ -116,7 +147,9 @@ export async function getPackages(): Promise<QuestionPackage[]> {
         return false;
       }
       const candidate = pkg as { id?: unknown; name?: unknown };
-      return typeof candidate.id === "string" && typeof candidate.name === "string";
+      return (
+        typeof candidate.id === "string" && typeof candidate.name === "string"
+      );
     };
 
     if (Array.isArray(parsed)) {
@@ -138,7 +171,9 @@ export async function getPackages(): Promise<QuestionPackage[]> {
   }
 }
 
-export async function savePackage(pkg: InsertQuestionPackage): Promise<QuestionPackage> {
+export async function savePackage(
+  pkg: InsertQuestionPackage,
+): Promise<QuestionPackage> {
   const packages = await getPackages();
   const newPackage: QuestionPackage = {
     ...pkg,
@@ -157,11 +192,14 @@ export async function deletePackage(id: string): Promise<void> {
   const packages = await getPackages();
   const filtered = packages.filter((p) => p.id !== id);
   await AsyncStorage.setItem(STORAGE_KEYS.PACKAGES, JSON.stringify(filtered));
-  
+
   // Delete all questions in this package
   const questions = await getQuestions();
   const filteredQuestions = questions.filter((q) => q.packageId !== id);
-  await AsyncStorage.setItem(STORAGE_KEYS.QUESTIONS, JSON.stringify(filteredQuestions));
+  await AsyncStorage.setItem(
+    STORAGE_KEYS.QUESTIONS,
+    JSON.stringify(filteredQuestions),
+  );
 }
 
 // Statistics
@@ -205,12 +243,12 @@ export async function updateStats(
   }
   stats.lastUpdated = new Date();
   await AsyncStorage.setItem(STORAGE_KEYS.STATS, JSON.stringify(stats));
-  
+
   // Update topic stats if category provided
   if (category) {
     await updateTopicStats(category, subject, correct, solvingTimeMs);
   }
-  
+
   return stats;
 }
 
@@ -234,10 +272,10 @@ async function updateTopicStats(
   const topicStats = await getTopicStats();
   // Normalize subject: empty string or undefined becomes null
   const normalizedSubject = subject && subject.trim() ? subject : null;
-  let stat = topicStats.find((s) => 
-    s.category === category && s.subject === normalizedSubject
+  let stat = topicStats.find(
+    (s) => s.category === category && s.subject === normalizedSubject,
   );
-  
+
   if (!stat) {
     stat = {
       id: generateId(),
@@ -251,7 +289,7 @@ async function updateTopicStats(
     };
     topicStats.push(stat);
   }
-  
+
   const oldTotalAnswered = stat.totalAnswered || 0;
   stat.totalAnswered = oldTotalAnswered + 1;
   if (correct) {
@@ -259,17 +297,22 @@ async function updateTopicStats(
   } else {
     stat.wrongAnswers = (stat.wrongAnswers || 0) + 1;
   }
-  
+
   if (solvingTimeMs) {
     const oldTotal = (stat.avgSolvingTimeMs || 0) * oldTotalAnswered;
     stat.avgSolvingTimeMs = (oldTotal + solvingTimeMs) / stat.totalAnswered;
   }
-  
+
   stat.lastUpdated = new Date();
-  await AsyncStorage.setItem(STORAGE_KEYS.TOPIC_STATS, JSON.stringify(topicStats));
+  await AsyncStorage.setItem(
+    STORAGE_KEYS.TOPIC_STATS,
+    JSON.stringify(topicStats),
+  );
 }
 
-export async function getWorstTopics(limit: number = 5): Promise<TopicStatistic[]> {
+export async function getWorstTopics(
+  limit: number = 5,
+): Promise<TopicStatistic[]> {
   const stats = await getTopicStats();
   return stats
     .filter((s) => (s.totalAnswered || 0) > 0)
@@ -299,7 +342,7 @@ export async function updatePackageStats(
 ): Promise<PackageStatistic> {
   const packageStats = await getPackageStats();
   let stat = packageStats.find((s) => s.packageId === packageId);
-  
+
   if (!stat) {
     stat = {
       id: generateId(),
@@ -311,7 +354,7 @@ export async function updatePackageStats(
     };
     packageStats.push(stat);
   }
-  
+
   stat.totalAnswered = (stat.totalAnswered || 0) + 1;
   if (correct) {
     stat.correctAnswers = (stat.correctAnswers || 0) + 1;
@@ -320,8 +363,11 @@ export async function updatePackageStats(
     stat.totalSolvingTimeMs = (stat.totalSolvingTimeMs || 0) + solvingTimeMs;
   }
   stat.lastUpdated = new Date();
-  
-  await AsyncStorage.setItem(STORAGE_KEYS.PACKAGE_STATS, JSON.stringify(packageStats));
+
+  await AsyncStorage.setItem(
+    STORAGE_KEYS.PACKAGE_STATS,
+    JSON.stringify(packageStats),
+  );
   return stat;
 }
 
@@ -335,11 +381,11 @@ export async function getSavedQuestions(): Promise<string[]> {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEYS.SAVED_QUESTIONS);
     if (!data) return [];
-    
+
     const parsed = JSON.parse(data);
     // Support legacy format (array of strings) and new format (array of objects)
     if (Array.isArray(parsed) && parsed.length > 0) {
-      if (typeof parsed[0] === 'string') {
+      if (typeof parsed[0] === "string") {
         // Legacy format - return as is
         return parsed;
       } else {
@@ -354,21 +400,32 @@ export async function getSavedQuestions(): Promise<string[]> {
   }
 }
 
-export async function getSavedQuestionsWithMeta(): Promise<SavedQuestionMeta[]> {
+export async function getSavedQuestionsWithMeta(): Promise<
+  SavedQuestionMeta[]
+> {
   try {
     const data = await AsyncStorage.getItem(STORAGE_KEYS.SAVED_QUESTIONS);
     if (!data) return [];
-    
+
     const parsed = JSON.parse(data);
     if (Array.isArray(parsed) && parsed.length > 0) {
-      if (typeof parsed[0] === 'string') {
+      if (typeof parsed[0] === "string") {
         // Legacy format - convert to new format
-        return parsed.map((id: string) => ({
-          questionId: id,
-          savedAt: new Date().toISOString(),
-        }));
+        return parsed
+          .filter((id): id is string => typeof id === "string" && id.length > 0)
+          .map((id: string) => ({
+            questionId: id,
+            savedAt: new Date().toISOString(),
+          }));
       }
-      return parsed;
+      // Validate new format items
+      return parsed.filter(
+        (item): item is SavedQuestionMeta =>
+          item &&
+          typeof item === "object" &&
+          typeof item.questionId === "string" &&
+          typeof item.savedAt === "string",
+      );
     }
     return [];
   } catch (error) {
@@ -377,14 +434,19 @@ export async function getSavedQuestionsWithMeta(): Promise<SavedQuestionMeta[]> 
   }
 }
 
-export async function toggleSavedQuestion(questionId: string): Promise<boolean> {
+export async function toggleSavedQuestion(
+  questionId: string,
+): Promise<boolean> {
   const savedMeta = await getSavedQuestionsWithMeta();
-  const index = savedMeta.findIndex(item => item.questionId === questionId);
-  
+  const index = savedMeta.findIndex((item) => item.questionId === questionId);
+
   if (index > -1) {
     // Already saved, remove it
     savedMeta.splice(index, 1);
-    await AsyncStorage.setItem(STORAGE_KEYS.SAVED_QUESTIONS, JSON.stringify(savedMeta));
+    await AsyncStorage.setItem(
+      STORAGE_KEYS.SAVED_QUESTIONS,
+      JSON.stringify(savedMeta),
+    );
     return false; // Not saved anymore
   } else {
     // Not saved, add it with timestamp
@@ -392,7 +454,10 @@ export async function toggleSavedQuestion(questionId: string): Promise<boolean> 
       questionId,
       savedAt: new Date().toISOString(),
     });
-    await AsyncStorage.setItem(STORAGE_KEYS.SAVED_QUESTIONS, JSON.stringify(savedMeta));
+    await AsyncStorage.setItem(
+      STORAGE_KEYS.SAVED_QUESTIONS,
+      JSON.stringify(savedMeta),
+    );
     return true; // Now saved
   }
 }

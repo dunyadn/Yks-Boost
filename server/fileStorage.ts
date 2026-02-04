@@ -56,34 +56,41 @@ export class FileStorage implements IStorage {
       try {
         const fileContent = await fs.readFile(this.filePath, "utf-8");
         const loadedData: StorageData = JSON.parse(fileContent);
-        
+
         // Convert date strings back to Date objects
         if (loadedData.stats?.lastUpdated) {
           loadedData.stats.lastUpdated = new Date(loadedData.stats.lastUpdated);
         }
-        
+
         Object.values(loadedData.questions || {}).forEach((q) => {
           if (q.createdAt) q.createdAt = new Date(q.createdAt);
         });
-        
+
         Object.values(loadedData.packages || {}).forEach((p) => {
           if (p.createdAt) p.createdAt = new Date(p.createdAt);
         });
-        
+
         Object.values(loadedData.packageStats || {}).forEach((s) => {
           if (s.lastUpdated) s.lastUpdated = new Date(s.lastUpdated);
         });
-        
+
         Object.values(loadedData.topicStats || {}).forEach((s) => {
           if (s.lastUpdated) s.lastUpdated = new Date(s.lastUpdated);
         });
 
         this.data = loadedData;
         console.log(`✅ Loaded storage from ${this.filePath}`);
-        console.log(`   - ${Object.keys(this.data.questions).length} questions`);
+        console.log(
+          `   - ${Object.keys(this.data.questions).length} questions`,
+        );
         console.log(`   - ${Object.keys(this.data.packages).length} packages`);
       } catch (error: unknown) {
-        if (error && typeof error === 'object' && 'code' in error && error.code === "ENOENT") {
+        if (
+          error &&
+          typeof error === "object" &&
+          "code" in error &&
+          error.code === "ENOENT"
+        ) {
           console.log(`📝 Creating new storage file at ${this.filePath}`);
           await this.save();
         } else {
@@ -107,7 +114,7 @@ export class FileStorage implements IStorage {
         await fs.writeFile(
           this.filePath,
           JSON.stringify(this.data, null, 2),
-          "utf-8"
+          "utf-8",
         );
         console.log(`💾 Storage saved to ${this.filePath}`);
       } catch (error) {
@@ -253,7 +260,8 @@ export class FileStorage implements IStorage {
   ): Promise<Statistic> {
     this.data.stats.totalAnswered = (this.data.stats.totalAnswered || 0) + 1;
     if (correct) {
-      this.data.stats.correctAnswers = (this.data.stats.correctAnswers || 0) + 1;
+      this.data.stats.correctAnswers =
+        (this.data.stats.correctAnswers || 0) + 1;
     }
     if (solvingTimeMs) {
       this.data.stats.totalSolvingTimeMs =
@@ -307,7 +315,8 @@ export class FileStorage implements IStorage {
 
     if (solvingTimeMs) {
       const oldTotal = (topicStat.avgSolvingTimeMs || 0) * oldTotalAnswered;
-      topicStat.avgSolvingTimeMs = (oldTotal + solvingTimeMs) / topicStat.totalAnswered;
+      topicStat.avgSolvingTimeMs =
+        (oldTotal + solvingTimeMs) / topicStat.totalAnswered;
     }
 
     topicStat.lastUpdated = new Date();

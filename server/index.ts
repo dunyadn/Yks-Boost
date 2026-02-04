@@ -238,7 +238,7 @@ function setupErrorHandler(app: express.Application) {
   log("Initializing file storage...");
   try {
     // Type guard to check if storage has init method
-    if ('init' in storage && typeof storage.init === 'function') {
+    if ("init" in storage && typeof storage.init === "function") {
       await storage.init();
       log("✅ File storage initialized successfully");
     } else {

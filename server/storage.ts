@@ -11,6 +11,8 @@ import {
 } from "@shared/schema";
 import { randomUUID } from "crypto";
 
+import { FileStorage } from "./fileStorage";
+
 export interface IStorage {
   getUser(id: string): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
@@ -315,8 +317,6 @@ export class MemStorage implements IStorage {
       .slice(0, limit);
   }
 }
-
-import { FileStorage } from "./fileStorage";
 
 // Use FileStorage for persistent data
 export const storage = new FileStorage();
