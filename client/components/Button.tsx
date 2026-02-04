@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useCallback } from "react";
 import { StyleSheet, Pressable, ViewStyle, StyleProp } from "react-native";
 import Animated, {
   useAnimatedStyle,
@@ -25,8 +25,6 @@ const springConfig: WithSpringConfig = {
   overshootClamping: true,
 };
 
-const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
-
 export function Button({
   onPress,
   children,
@@ -40,17 +38,23 @@ export function Button({
     transform: [{ scale: scale.value }],
   }));
 
-  const handlePressIn = () => {
+  const handlePressIn = useCallback(() => {
     if (!disabled) {
       scale.value = withSpring(0.97, springConfig);
     }
-  };
+  }, [disabled, scale]);
 
-  const handlePressOut = () => {
+  const handlePressOut = useCallback(() => {
     if (!disabled) {
       scale.value = withSpring(1, springConfig);
     }
-  };
+  }, [disabled, scale]);
+
+  const handlePress = useCallback(() => {
+    if (!disabled && onPress) {
+      onPress();
+    }
+  }, [disabled, onPress]);
 
   const getBackgroundColor = () => {
     if (variant === "outline") return "transparent";
@@ -69,27 +73,30 @@ export function Button({
   };
 
   return (
-    <AnimatedPressable
-      onPress={disabled ? undefined : onPress}
+    <Pressable
+      onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={disabled}
-      style={[
-        styles.button,
-        {
-          backgroundColor: getBackgroundColor(),
-          borderColor: getBorderColor(),
-          borderWidth: variant === "outline" ? 2 : 0,
-          opacity: disabled ? 0.5 : 1,
-        },
-        style,
-        animatedStyle,
-      ]}
     >
-      <ThemedText style={[styles.buttonText, { color: getTextColor() }]}>
-        {children}
-      </ThemedText>
-    </AnimatedPressable>
+      <Animated.View
+        style={[
+          styles.button,
+          {
+            backgroundColor: getBackgroundColor(),
+            borderColor: getBorderColor(),
+            borderWidth: variant === "outline" ? 2 : 0,
+            opacity: disabled ? 0.5 : 1,
+          },
+          style,
+          animatedStyle,
+        ]}
+      >
+        <ThemedText style={[styles.buttonText, { color: getTextColor() }]}>
+          {children}
+        </ThemedText>
+      </Animated.View>
+    </Pressable>
   );
 }
 

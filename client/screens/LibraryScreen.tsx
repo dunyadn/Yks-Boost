@@ -19,37 +19,6 @@ interface SavedQuestion {
   savedAt: string;
 }
 
-const MOCK_SAVED: SavedQuestion[] = [
-  {
-    id: "1",
-    text: "Bir fonksiyonun türevi x = 2 noktasında 0 ise, bu nokta kesinlikle ekstremum mudur?",
-    subject: "Matematik",
-    examType: "AYT",
-    savedAt: "2 saat önce",
-  },
-  {
-    id: "2",
-    text: "Newton'un 3. yasasına göre tepki kuvveti hangi cisme etki eder?",
-    subject: "Fizik",
-    examType: "TYT",
-    savedAt: "Dün",
-  },
-  {
-    id: "3",
-    text: "Aşağıdaki cümlelerin hangisinde yazım yanlışı vardır?",
-    subject: "Türkçe",
-    examType: "TYT",
-    savedAt: "2 gün önce",
-  },
-  {
-    id: "4",
-    text: "NH₃ molekülünün geometrik şekli hangisidir?",
-    subject: "Kimya",
-    examType: "AYT",
-    savedAt: "3 gün önce",
-  },
-];
-
 const FILTERS = ["Tümü", "Matematik", "Fizik", "Türkçe", "Kimya", "Tarih"];
 
 export default function LibraryScreen() {
@@ -57,8 +26,7 @@ export default function LibraryScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
 
-  const [savedQuestions, setSavedQuestions] =
-    useState<SavedQuestion[]>(MOCK_SAVED);
+  const [savedQuestions, setSavedQuestions] = useState<SavedQuestion[]>([]);
   const [selectedFilter, setSelectedFilter] = useState("Tümü");
 
   const filteredQuestions =
