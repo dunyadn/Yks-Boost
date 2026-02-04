@@ -111,7 +111,9 @@ export async function getPackages(): Promise<QuestionPackage[]> {
     if (!data) return [];
     const parsed = JSON.parse(data);
     if (Array.isArray(parsed)) {
-      return parsed.filter((pkg) => pkg && typeof pkg === "object");
+      return parsed.filter(
+        (pkg) => pkg && typeof pkg === "object" && !Array.isArray(pkg),
+      );
     }
     if (
       parsed &&
@@ -119,7 +121,7 @@ export async function getPackages(): Promise<QuestionPackage[]> {
       Array.isArray((parsed as { packages?: QuestionPackage[] }).packages)
     ) {
       return (parsed as { packages: QuestionPackage[] }).packages.filter(
-        (pkg) => pkg && typeof pkg === "object",
+        (pkg) => pkg && typeof pkg === "object" && !Array.isArray(pkg),
       );
     }
     return [];
