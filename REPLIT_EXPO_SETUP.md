@@ -1,6 +1,6 @@
 # Replit Expo Development Setup
 
-Bu dokuman, Replit üzerinde Expo uygulamasını çalıştırmak ve Expo Go ile test etmek için gerekli adımları açıklar.
+Bu doküman, Replit üzerinde Expo uygulamasını çalıştırmak ve Expo Go ile test etmek için gerekli adımları açıklar.
 
 ## Port Konfigürasyonu
 
