@@ -7,7 +7,6 @@ import {
   Alert,
   ActivityIndicator,
 } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as DocumentPicker from "expo-document-picker";
@@ -21,13 +20,16 @@ import { Button } from "@/components/Button";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
 export default function PDFUploadScreen() {
-  const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
 
-  const [selectedFile, setSelectedFile] = useState<{ name: string; uri: string } | null>(null);
+  const [selectedFile, setSelectedFile] = useState<{
+    name: string;
+    uri: string;
+  } | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [processingState, setProcessingState] = useState<string>("");
 
   const handlePickPDF = async () => {
     try {
@@ -57,8 +59,30 @@ export default function PDFUploadScreen() {
 
     setUploading(true);
     setUploadProgress(0);
+    setProcessingState("");
+
+    // Progress simulation interval
+    let progressInterval: NodeJS.Timeout | null = null;
+
+    // Timeout controller
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => {
+      console.log("⏰ Upload timeout triggered (60s)");
+      controller.abort();
+    }, 60000); // 60 seconds timeout
 
     try {
+      console.log(`📤 Starting upload: ${selectedFile.name}`);
+
+      // Start simulated progress
+      setProcessingState("📄 PDF okunuyor...");
+      progressInterval = setInterval(() => {
+        setUploadProgress((prev) => {
+          if (prev >= 95) return prev;
+          return Math.min(prev + Math.random() * 10, 95);
+        });
+      }, 500);
+
       const formData = new FormData();
       formData.append("pdf", {
         uri: selectedFile.uri,
@@ -66,20 +90,40 @@ export default function PDFUploadScreen() {
         name: selectedFile.name,
       } as any);
 
-      const response = await fetch(`${process.env.EXPO_PUBLIC_DOMAIN}/api/upload-pdf`, {
-        method: "POST",
-        body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      console.log("🌐 Sending request to server...");
 
+      // Update processing state after a short delay
+      setTimeout(() => setProcessingState("🤖 AI soruları algılıyor..."), 2000);
+      setTimeout(() => setProcessingState("💾 Sorular kaydediliyor..."), 4000);
+
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_DOMAIN}/api/upload-pdf`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+          signal: controller.signal,
+        },
+      );
+
+      // Clear progress interval and set to 100%
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+      setUploadProgress(100);
+
+      console.log(`✅ Server responded with status: ${response.status}`);
       const data = await response.json();
 
       if (!response.ok || !data.success) {
+        console.error("❌ Upload failed:", data.error);
         throw new Error(data.error || "Yükleme başarısız");
       }
 
+      console.log(`✅ Success! ${data.questionsAdded} questions added`);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       Alert.alert(
         "Başarılı! 🎉",
@@ -90,25 +134,50 @@ export default function PDFUploadScreen() {
             onPress: () => {
               setSelectedFile(null);
               setUploadProgress(0);
+              setProcessingState("");
             },
           },
-        ]
+        ],
       );
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error("❌ Upload error:", error);
+
+      // Clear progress interval
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(
-        "Hata",
-        error instanceof Error ? error.message : "PDF yüklenirken bir sorun oluştu. Lütfen tekrar deneyin."
-      );
+
+      let errorMessage =
+        "PDF yüklenirken bir sorun oluştu. Lütfen tekrar deneyin.";
+
+      if (error instanceof Error) {
+        if (error.name === "AbortError") {
+          errorMessage =
+            "İşlem zaman aşımına uğradı (60 saniye). PDF çok büyük veya sunucu yanıt vermiyor. Lütfen daha küçük bir PDF deneyin.";
+        } else {
+          errorMessage = error.message;
+        }
+      }
+
+      Alert.alert("Hata", errorMessage);
     } finally {
+      clearTimeout(timeoutId);
       setUploading(false);
+
+      // Final cleanup for progress interval
+      if (progressInterval) {
+        clearInterval(progressInterval);
+      }
     }
   };
 
   const handleRemoveFile = () => {
     setSelectedFile(null);
     setUploadProgress(0);
+    setProcessingState("");
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
@@ -131,9 +200,10 @@ export default function PDFUploadScreen() {
         >
           <Feather name="upload-cloud" size={48} color={Colors.dark.text} />
         </LinearGradient>
-        <ThemedText style={styles.title}>PDF'ten Soru Ekle</ThemedText>
+        <ThemedText style={styles.title}>PDF&apos;ten Soru Ekle</ThemedText>
         <ThemedText style={styles.subtitle}>
-          YKS soru PDF'i yükleyin, sorular otomatik olarak sisteme eklensin!
+          YKS soru PDF&apos;i yükleyin, sorular otomatik olarak sisteme
+          eklensin!
         </ThemedText>
       </Animated.View>
 
@@ -161,7 +231,11 @@ export default function PDFUploadScreen() {
       {!selectedFile ? (
         <Animated.View entering={SlideInUp.delay(200)}>
           <Pressable style={styles.uploadArea} onPress={handlePickPDF}>
-            <Feather name="file-plus" size={64} color={Colors.dark.textSecondary} />
+            <Feather
+              name="file-plus"
+              size={64}
+              color={Colors.dark.textSecondary}
+            />
             <ThemedText style={styles.uploadText}>PDF Seç</ThemedText>
             <ThemedText style={styles.uploadSubtext}>
               Dokunarak PDF dosyası seçin
@@ -180,22 +254,28 @@ export default function PDFUploadScreen() {
             </View>
           </View>
           <Pressable onPress={handleRemoveFile} hitSlop={8}>
-            <Feather name="x-circle" size={24} color={Colors.dark.textSecondary} />
+            <Feather
+              name="x-circle"
+              size={24}
+              color={Colors.dark.textSecondary}
+            />
           </Pressable>
         </Animated.View>
       )}
 
       {uploading && (
         <Animated.View entering={FadeIn} style={styles.progressContainer}>
+          {processingState && (
+            <ThemedText style={styles.processingStateText}>
+              {processingState}
+            </ThemedText>
+          )}
           <ThemedText style={styles.progressText}>
             PDF işleniyor... {Math.round(uploadProgress)}%
           </ThemedText>
           <View style={styles.progressBar}>
             <View
-              style={[
-                styles.progressFill,
-                { width: `${uploadProgress}%` },
-              ]}
+              style={[styles.progressFill, { width: `${uploadProgress}%` }]}
             />
           </View>
           <ActivityIndicator
@@ -318,6 +398,13 @@ const styles = StyleSheet.create({
   progressContainer: {
     alignItems: "center",
     marginBottom: Spacing.xl,
+  },
+  processingStateText: {
+    fontSize: 18,
+    fontWeight: "600",
+    color: Colors.dark.primary,
+    marginBottom: Spacing.sm,
+    textAlign: "center",
   },
   progressText: {
     fontSize: 16,

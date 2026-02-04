@@ -48,25 +48,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   // PDF upload endpoint
   app.post("/api/upload-pdf", upload.single("pdf"), async (req, res) => {
+    const startTime = Date.now();
+    
     try {
       if (!req.file) {
+        console.error("❌ No PDF file in request");
         return res.status(400).json({
           success: false,
           error: "PDF dosyası bulunamadı",
         });
       }
 
-      console.log("Processing PDF:", req.file.originalname);
+      console.log(`📤 Processing PDF: ${req.file.originalname} (${req.file.size} bytes)`);
       
       const result = await processPDF(req.file.buffer);
       
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.log(`⏱️  Processing completed in ${duration}s`);
+      
       if (!result.success) {
+        console.error(`❌ Processing failed: ${result.error}`);
         return res.status(400).json(result);
       }
       
+      console.log(`✅ Success: ${result.questionsAdded} questions added`);
       return res.json(result);
     } catch (error) {
-      console.error("Error in PDF upload endpoint:", error);
+      const duration = ((Date.now() - startTime) / 1000).toFixed(2);
+      console.error(`❌ Error after ${duration}s:`, error);
       return res.status(500).json({
         success: false,
         questionsAdded: 0,
