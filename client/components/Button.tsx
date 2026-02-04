@@ -11,7 +11,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
 interface ButtonProps {
-  onPress?: () => void | Promise<void>;
+  onPress?: (() => void) | (() => Promise<void>);
   children: ReactNode;
   style?: StyleProp<ViewStyle>;
   disabled?: boolean;
