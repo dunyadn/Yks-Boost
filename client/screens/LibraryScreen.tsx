@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, FlatList, Pressable, Alert } from "react-native";
+import { StyleSheet, View, FlatList, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -10,6 +10,7 @@ import { useFocusEffect } from "@react-navigation/native";
 import { ThemedText } from "@/components/ThemedText";
 import { Tag } from "@/components/Tag";
 import { EmptyState } from "@/components/EmptyState";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 import {
   getQuestions,
@@ -52,6 +53,8 @@ export default function LibraryScreen() {
   const [packages, setPackages] = useState<QuestionPackage[]>([]);
   const [selectedFilter, setSelectedFilter] = useState("Tümü");
   const [viewMode, setViewMode] = useState<ViewMode>("saved");
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  const [packageToDelete, setPackageToDelete] = useState<QuestionPackage | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -120,32 +123,32 @@ export default function LibraryScreen() {
   };
 
   const handleDeletePackage = useCallback(
-    async (pkg: QuestionPackage) => {
-      Alert.alert(
-        "Paketi Sil",
-        `"${pkg.name}" paketini silmek istediğinize emin misiniz? Bu paketteki ${pkg.totalQuestions || 0} soru da silinecek.`,
-        [
-          {
-            text: "İptal",
-            style: "cancel",
-          },
-          {
-            text: "Sil",
-            style: "destructive",
-            onPress: async () => {
-              try {
-                await deletePackage(pkg.id);
-                setPackages((prev) => prev.filter((p) => p.id !== pkg.id));
-              } catch (error) {
-                console.error("Error deleting package:", error);
-              }
-            },
-          },
-        ],
-      );
+    (pkg: QuestionPackage) => {
+      setPackageToDelete(pkg);
+      setDeleteDialogVisible(true);
     },
     [],
   );
+
+  const confirmDeletePackage = useCallback(async () => {
+    if (!packageToDelete) return;
+
+    try {
+      await deletePackage(packageToDelete.id);
+      setPackages((prev) => prev.filter((p) => p.id !== packageToDelete.id));
+      setDeleteDialogVisible(false);
+      setPackageToDelete(null);
+    } catch (error) {
+      console.error("Error deleting package:", error);
+      setDeleteDialogVisible(false);
+      setPackageToDelete(null);
+    }
+  }, [packageToDelete]);
+
+  const cancelDeletePackage = useCallback(() => {
+    setDeleteDialogVisible(false);
+    setPackageToDelete(null);
+  }, []);
 
   const renderPackageItem = useCallback(
     ({ item, index }: { item: QuestionPackage; index: number }) => (
@@ -361,6 +364,21 @@ export default function LibraryScreen() {
           )}
         />
       )}
+
+      <ConfirmDialog
+        visible={deleteDialogVisible}
+        title="Paketi Sil"
+        message={
+          packageToDelete
+            ? `"${packageToDelete.name}" paketini silmek istediğinize emin misiniz? Bu paketteki ${packageToDelete.totalQuestions || 0} soru da silinecek.`
+            : ""
+        }
+        confirmText="Sil"
+        cancelText="İptal"
+        onConfirm={confirmDeletePackage}
+        onCancel={cancelDeletePackage}
+        destructive
+      />
     </View>
   );
 }
