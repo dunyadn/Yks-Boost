@@ -99,6 +99,8 @@ const styles = StyleSheet.create({
     borderRadius: BorderRadius.full,
     alignItems: "center",
     justifyContent: "center",
+    paddingHorizontal: Spacing.lg,
+    width: "100%",
   },
   buttonText: {
     fontSize: 16,

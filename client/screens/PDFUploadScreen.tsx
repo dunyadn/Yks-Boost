@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
+import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import * as DocumentPicker from "expo-document-picker";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -22,6 +23,7 @@ import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 export default function PDFUploadScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  const tabBarHeight = useBottomTabBarHeight();
 
   const [selectedFile, setSelectedFile] = useState<{ name: string; uri: string } | null>(null);
   const [uploading, setUploading] = useState(false);
@@ -115,10 +117,10 @@ export default function PDFUploadScreen() {
       style={styles.container}
       contentContainerStyle={{
         paddingTop: headerHeight + Spacing.xl,
-        paddingBottom: insets.bottom + Spacing.xl,
+        paddingBottom: tabBarHeight + Spacing.xl,
         paddingHorizontal: Spacing.lg,
       }}
-      scrollIndicatorInsets={{ bottom: insets.bottom }}
+      scrollIndicatorInsets={{ bottom: tabBarHeight }}
     >
       <Animated.View entering={FadeIn} style={styles.header}>
         <LinearGradient
@@ -206,12 +208,12 @@ export default function PDFUploadScreen() {
 
       <View style={styles.buttonContainer}>
         <Button
-          title={uploading ? "Yükleniyor..." : "Soruları Ekle"}
           onPress={handleUpload}
           disabled={!selectedFile || uploading}
           variant="primary"
-          icon={uploading ? undefined : "upload"}
-        />
+        >
+          {uploading ? "Yükleniyor..." : "Soruları Ekle"}
+        </Button>
       </View>
     </ScrollView>
   );
@@ -338,5 +340,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     marginTop: Spacing.lg,
+    paddingHorizontal: Spacing.sm,
+    width: "100%",
   },
 });
