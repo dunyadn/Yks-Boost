@@ -112,6 +112,7 @@ export class MemStorage implements IStorage {
       createdAt: new Date(),
       category: insertQuestion.category || "general",
       subject: insertQuestion.subject || null,
+      solution: insertQuestion.solution || null,
       packageId: insertQuestion.packageId || null,
       examType: insertQuestion.examType || "TYT",
     };

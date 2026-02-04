@@ -159,6 +159,7 @@ export class FileStorage implements IStorage {
       createdAt: new Date(),
       category: insertQuestion.category || "general",
       subject: insertQuestion.subject || null,
+      solution: insertQuestion.solution || null,
       packageId: insertQuestion.packageId || null,
       examType: insertQuestion.examType || "TYT",
     };
@@ -184,6 +185,7 @@ export class FileStorage implements IStorage {
         createdAt: new Date(),
         category: q.category || "general",
         subject: q.subject || null,
+        solution: q.solution || null,
         packageId: q.packageId || null,
         examType: q.examType || "TYT",
       };
