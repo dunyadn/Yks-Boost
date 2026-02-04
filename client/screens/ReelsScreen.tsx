@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { LinearGradient } from "expo-linear-gradient";
+import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import Animated, {
   useAnimatedStyle,
@@ -47,6 +48,7 @@ interface Question {
   content: string;
   options: string[];
   correctAnswer: string;
+  solution?: string | null;
   category: string;
   subject?: string;
   packageId?: string;
@@ -203,7 +205,6 @@ function ReelCard({
   isActive,
   tabBarHeight,
   onLike,
-  onSave,
   onComment,
   onShare,
 }: {
@@ -211,13 +212,13 @@ function ReelCard({
   isActive: boolean;
   tabBarHeight: number;
   onLike: () => void;
-  onSave: () => void;
   onComment: () => void;
   onShare: () => void;
 }) {
   const insets = useSafeAreaInsets();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
+  const [showSolution, setShowSolution] = useState(false);
   const [startTime] = useState<number>(Date.now());
 
   const handleOptionPress = async (label: string) => {
@@ -258,7 +259,7 @@ function ReelCard({
 
   const handleShowSolution = () => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setRevealed(true);
+    setShowSolution(!showSolution);
   };
 
   const contentPaddingBottom = tabBarHeight + 70;
@@ -321,6 +322,48 @@ function ReelCard({
             );
           })}
         </View>
+
+        {/* Show Solution Button and Solution Display */}
+        {question.solution && revealed && (
+          <Animated.View entering={SlideInUp.delay(200)}>
+            <Pressable
+              style={styles.solutionButton}
+              onPress={handleShowSolution}
+            >
+              <Feather
+                name={showSolution ? "eye-off" : "eye"}
+                size={16}
+                color={Colors.dark.backgroundRoot}
+                style={{ marginRight: Spacing.xs }}
+              />
+              <ThemedText style={styles.solutionButtonText}>
+                {showSolution ? "Çözümü Gizle" : "Çözümü Göster"}
+              </ThemedText>
+            </Pressable>
+
+            {showSolution && (
+              <Animated.View
+                entering={FadeIn.delay(100)}
+                style={styles.solutionContainer}
+              >
+                <View style={styles.solutionHeader}>
+                  <Feather
+                    name="check-circle"
+                    size={16}
+                    color={Colors.dark.primary}
+                    style={{ marginRight: Spacing.xs }}
+                  />
+                  <ThemedText style={styles.solutionTitle}>
+                    Çözüm Açıklaması
+                  </ThemedText>
+                </View>
+                <ThemedText style={styles.solutionText}>
+                  {question.solution}
+                </ThemedText>
+              </Animated.View>
+            )}
+          </Animated.View>
+        )}
       </ScrollView>
 
       <View style={[styles.actionsContainer, { bottom: tabBarHeight + 80 }]}>
@@ -330,12 +373,6 @@ function ReelCard({
           active={question.liked}
           activeColor={Colors.dark.accent}
           onPress={onLike}
-        />
-        <ReelsActionButton
-          icon="bookmark"
-          active={question.saved}
-          activeColor={Colors.dark.primary}
-          onPress={onSave}
         />
         <ReelsActionButton
           icon="share-2"
@@ -400,26 +437,29 @@ export default function ReelsScreen() {
     itemVisiblePercentThreshold: 50,
   }).current;
 
-  const handleLike = useCallback((id: string) => {
+  const handleLike = useCallback(async (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    
     setQuestions((prev) =>
       prev.map((q) => {
         if (q.id !== id) return q;
         const currentLikes = q.likes ?? 0;
+        const isLiking = !q.liked;
+        
+        // Auto-save when liking
+        if (isLiking) {
+          toggleSavedQuestion(id).then((saved) => {
+            // Question is now saved
+          });
+        }
+        
         return {
           ...q,
-          liked: !q.liked,
-          likes: q.liked ? currentLikes - 1 : currentLikes + 1,
+          liked: isLiking,
+          likes: isLiking ? currentLikes + 1 : currentLikes - 1,
+          saved: isLiking ? true : q.saved, // Save when liking, keep saved state when unliking
         };
       }),
-    );
-  }, []);
-
-  const handleSave = useCallback(async (id: string) => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-    const isSaved = await toggleSavedQuestion(id);
-    setQuestions((prev) =>
-      prev.map((q) => (q.id === id ? { ...q, saved: isSaved } : q)),
     );
   }, []);
 
@@ -451,12 +491,11 @@ export default function ReelsScreen() {
         isActive={index === activeIndex}
         tabBarHeight={tabBarHeight}
         onLike={() => handleLike(item.id)}
-        onSave={() => handleSave(item.id)}
         onComment={() => {}}
         onShare={() => handleShare(item)}
       />
     ),
-    [activeIndex, handleLike, handleSave, handleShare, tabBarHeight],
+    [activeIndex, handleLike, handleShare, tabBarHeight],
   );
 
   if (loading) {
@@ -668,11 +707,15 @@ const styles = StyleSheet.create({
   solutionButton: {
     backgroundColor: Colors.dark.primary,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs + 2,
-    borderRadius: BorderRadius.full,
+    paddingVertical: Spacing.sm,
+    borderRadius: BorderRadius.md,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: Spacing.md,
   },
   solutionButtonText: {
-    fontSize: 12,
+    fontSize: 13,
     fontWeight: "600",
     color: Colors.dark.backgroundRoot,
   },
