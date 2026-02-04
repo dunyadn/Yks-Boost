@@ -110,10 +110,17 @@ export async function getPackages(): Promise<QuestionPackage[]> {
     const data = await AsyncStorage.getItem(STORAGE_KEYS.PACKAGES);
     if (!data) return [];
     const parsed = JSON.parse(data);
+
+    const isPackageObject = (pkg: unknown): pkg is QuestionPackage => {
+      if (!pkg || typeof pkg !== "object" || Array.isArray(pkg)) {
+        return false;
+      }
+      const candidate = pkg as { id?: unknown; name?: unknown };
+      return typeof candidate.id === "string" && typeof candidate.name === "string";
+    };
+
     if (Array.isArray(parsed)) {
-      return parsed.filter(
-        (pkg) => pkg && typeof pkg === "object" && !Array.isArray(pkg),
-      );
+      return parsed.filter(isPackageObject);
     }
     if (
       parsed &&
@@ -121,7 +128,7 @@ export async function getPackages(): Promise<QuestionPackage[]> {
       Array.isArray((parsed as { packages?: QuestionPackage[] }).packages)
     ) {
       return (parsed as { packages: QuestionPackage[] }).packages.filter(
-        (pkg) => pkg && typeof pkg === "object" && !Array.isArray(pkg),
+        isPackageObject,
       );
     }
     return [];
