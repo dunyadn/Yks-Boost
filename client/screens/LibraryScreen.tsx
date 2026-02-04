@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import { StyleSheet, View, FlatList, Pressable } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -11,8 +11,13 @@ import { ThemedText } from "@/components/ThemedText";
 import { Tag } from "@/components/Tag";
 import { EmptyState } from "@/components/EmptyState";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getQuestions, getSavedQuestions, getPackages, toggleSavedQuestion, getSavedQuestionsWithMeta } from "@/lib/localStorage";
-import type { Question, QuestionPackage } from "@shared/schema";
+import {
+  getQuestions,
+  getPackages,
+  toggleSavedQuestion,
+  getSavedQuestionsWithMeta,
+} from "@/lib/localStorage";
+import type { QuestionPackage } from "@shared/schema";
 
 interface SavedQuestion {
   id: string;
@@ -25,7 +30,17 @@ interface SavedQuestion {
 }
 
 type ViewMode = "saved" | "packages";
-const FILTERS = ["Tümü", "Genel", "Matematik", "Fizik", "Türkçe", "Kimya", "Biyoloji", "Tarih", "Coğrafya"];
+const FILTERS = [
+  "Tümü",
+  "Genel",
+  "Matematik",
+  "Fizik",
+  "Türkçe",
+  "Kimya",
+  "Biyoloji",
+  "Tarih",
+  "Coğrafya",
+];
 
 export default function LibraryScreen() {
   const insets = useSafeAreaInsets();
@@ -36,35 +51,32 @@ export default function LibraryScreen() {
   const [packages, setPackages] = useState<QuestionPackage[]>([]);
   const [selectedFilter, setSelectedFilter] = useState("Tümü");
   const [viewMode, setViewMode] = useState<ViewMode>("saved");
-  const [loading, setLoading] = useState(true);
 
   const loadData = useCallback(async () => {
     try {
-      setLoading(true);
-      
       // Load saved questions with metadata
       const savedMeta = await getSavedQuestionsWithMeta();
       const allQuestions = await getQuestions();
-      
+
       // Create a map of questionId -> savedAt for quick lookup
       const savedMetaMap = new Map(
-        savedMeta.map(item => [item.questionId, item.savedAt])
+        savedMeta.map((item) => [item.questionId, item.savedAt]),
       );
-      
+
       const saved = allQuestions
-        .filter(q => savedMetaMap.has(q.id))
-        .map(q => {
+        .filter((q) => savedMetaMap.has(q.id))
+        .map((q) => {
           // Handle potentially invalid date strings
           const savedAtStr = savedMetaMap.get(q.id);
-          let savedAtFormatted = new Date().toLocaleDateString('tr-TR');
-          
+          let savedAtFormatted = new Date().toLocaleDateString("tr-TR");
+
           if (savedAtStr) {
             const savedAtDate = new Date(savedAtStr);
             if (!isNaN(savedAtDate.getTime())) {
-              savedAtFormatted = savedAtDate.toLocaleDateString('tr-TR');
+              savedAtFormatted = savedAtDate.toLocaleDateString("tr-TR");
             }
           }
-          
+
           return {
             id: q.id,
             text: q.content || "Metin yüklenmedi",
@@ -82,8 +94,6 @@ export default function LibraryScreen() {
       setPackages(pkgs);
     } catch (error) {
       console.error("Error loading library data:", error);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -91,7 +101,7 @@ export default function LibraryScreen() {
   useFocusEffect(
     useCallback(() => {
       loadData();
-    }, [loadData])
+    }, [loadData]),
   );
 
   const filteredQuestions =
@@ -129,7 +139,11 @@ export default function LibraryScreen() {
         </View>
         <View style={styles.packageStats}>
           <View style={styles.packageStat}>
-            <Feather name="file-text" size={16} color={Colors.dark.textSecondary} />
+            <Feather
+              name="file-text"
+              size={16}
+              color={Colors.dark.textSecondary}
+            />
             <ThemedText style={styles.packageStatText}>
               {item.totalQuestions || 0} Soru
             </ThemedText>
@@ -201,7 +215,11 @@ export default function LibraryScreen() {
           <Feather
             name="bookmark"
             size={18}
-            color={viewMode === "saved" ? Colors.dark.primary : Colors.dark.textSecondary}
+            color={
+              viewMode === "saved"
+                ? Colors.dark.primary
+                : Colors.dark.textSecondary
+            }
           />
           <ThemedText
             style={[
@@ -222,7 +240,11 @@ export default function LibraryScreen() {
           <Feather
             name="package"
             size={18}
-            color={viewMode === "packages" ? Colors.dark.primary : Colors.dark.textSecondary}
+            color={
+              viewMode === "packages"
+                ? Colors.dark.primary
+                : Colors.dark.textSecondary
+            }
           />
           <ThemedText
             style={[
@@ -252,7 +274,9 @@ export default function LibraryScreen() {
             keyExtractor={(item) => item}
             showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.filtersList}
-            ItemSeparatorComponent={() => <View style={{ width: Spacing.sm }} />}
+            ItemSeparatorComponent={() => (
+              <View style={{ width: Spacing.sm }} />
+            )}
           />
         </View>
       )}

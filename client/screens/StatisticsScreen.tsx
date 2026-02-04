@@ -14,7 +14,12 @@ import { Feather } from "@expo/vector-icons";
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getStats, getWorstTopics, getPackages, getPackageStats } from "@/lib/localStorage";
+import {
+  getStats,
+  getWorstTopics,
+  getPackages,
+  getPackageStats,
+} from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 
@@ -143,12 +148,13 @@ export default function StatisticsScreen() {
 
   const fetchStats = async () => {
     try {
-      const [statsData, worstTopicsData, packagesData, packageStatsData] = await Promise.all([
-        getStats(),
-        getWorstTopics(5),
-        getPackages(),
-        getPackageStats(),
-      ]);
+      const [statsData, worstTopicsData, packagesData, packageStatsData] =
+        await Promise.all([
+          getStats(),
+          getWorstTopics(5),
+          getPackages(),
+          getPackageStats(),
+        ]);
 
       // Calculate average solving time
       const avgSolvingTime =

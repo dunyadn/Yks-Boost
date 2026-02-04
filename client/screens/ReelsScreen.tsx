@@ -25,7 +25,13 @@ import { ThemedText } from "@/components/ThemedText";
 import { Tag } from "@/components/Tag";
 import { ReelsActionButton } from "@/components/ReelsActionButton";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
-import { getQuestions, updateStats, updatePackageStats, toggleSavedQuestion, getSavedQuestions } from "@/lib/localStorage";
+import {
+  getQuestions,
+  updateStats,
+  updatePackageStats,
+  toggleSavedQuestion,
+  getSavedQuestions,
+} from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
 
@@ -228,7 +234,7 @@ function ReelCard({
         question.category,
         question.subject || undefined,
       );
-      
+
       // Update package stats if packageId exists
       if (question.packageId) {
         await updatePackageStats(question.packageId, isCorrect, solvingTimeMs);
@@ -346,7 +352,7 @@ export default function ReelsScreen() {
       const data = await getQuestions();
       const savedQuestionIds = await getSavedQuestions();
       // Mark questions as saved if they're in the saved list
-      const questionsWithSavedStatus = data.map(q => ({
+      const questionsWithSavedStatus = data.map((q) => ({
         ...q,
         saved: savedQuestionIds.includes(q.id),
         // TODO: Implement like/comment functionality in future
