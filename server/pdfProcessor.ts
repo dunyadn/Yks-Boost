@@ -38,9 +38,10 @@ export async function extractTextFromPDF(pdfBuffer: Buffer): Promise<string> {
  */
 export async function parseQuestionsWithAI(text: string): Promise<ParsedQuestion[]> {
   console.log("🤖 Step 2: Parsing questions with AI...");
+  console.log(`📝 Text length: ${text.length} characters`);
   
   if (!genAI) {
-    console.warn("⚠️ Gemini API key not configured, using fallback parser");
+    console.warn("⚠️ GEMINI_API_KEY not configured, using fallback parser");
     return parsePatternsWithFallback(text);
   }
 
@@ -77,47 +78,71 @@ JSON çıktı formatı:
   }
 ]`;
 
-    // Timeout koruması ile API çağrısı
+    console.log("⏳ Waiting for Gemini API response (max 30s)...");
+    
+    // Timeout protection
     const timeoutPromise = new Promise<never>((_, reject) =>
-      setTimeout(() => reject(new Error("Gemini API timeout (30s)")), 30000)
+      setTimeout(() => {
+        console.error("⏰ Gemini API timeout reached (30s)");
+        reject(new Error("Gemini API timeout (30s)"));
+      }, 30000)
     );
     
     const apiPromise = model.generateContent(prompt);
     
     const result = await Promise.race([apiPromise, timeoutPromise]);
-    console.log("✅ Gemini API responded");
+    console.log("✅ Gemini API responded successfully");
     
     const response = await result.response;
     const content = response.text();
-    console.log(`Response length: ${content.length} characters`);
+    console.log(`📄 AI Response length: ${content.length} characters`);
+    console.log(`📄 AI Response preview: ${content.substring(0, 200)}...`);
     
     if (!content) {
+      console.error("❌ AI returned empty response");
       throw new Error("AI yanıt vermedi");
     }
 
     // Clean up the response - remove markdown code blocks if present
     let cleanContent = content.trim();
     if (cleanContent.startsWith("```json")) {
+      console.log("🔧 Removing ```json markers");
       cleanContent = cleanContent.replace(/^```json\s*/, "").replace(/\s*```$/, "");
     } else if (cleanContent.startsWith("```")) {
+      console.log("🔧 Removing ``` markers");
       cleanContent = cleanContent.replace(/^```\s*/, "").replace(/\s*```$/, "");
     }
 
+    console.log("📦 Parsing JSON response...");
     const questions = JSON.parse(cleanContent);
     
     if (!Array.isArray(questions)) {
-      throw new Error("Invalid response format");
+      console.error("❌ AI response is not an array");
+      throw new Error("Invalid response format - expected array");
     }
+
+    console.log(`📊 Received ${questions.length} questions from AI`);
 
     // Validate and clean questions
     const validQuestions = questions
       .filter((q: any) => {
-        return (
+        const isValid = (
           q.content &&
           Array.isArray(q.options) &&
           q.options.length >= 2 &&
           q.correctAnswer
         );
+        
+        if (!isValid) {
+          console.warn("⚠️ Skipping invalid question:", {
+            hasContent: !!q.content,
+            hasOptions: Array.isArray(q.options),
+            optionsLength: q.options?.length,
+            hasCorrectAnswer: !!q.correctAnswer,
+          });
+        }
+        
+        return isValid;
       })
       .map((q: any) => ({
         content: String(q.content).trim(),
@@ -126,10 +151,19 @@ JSON çıktı formatı:
         category: q.category ? String(q.category).trim() : "Genel",
       }));
     
-    console.log(`✅ Found ${validQuestions.length} valid questions`);
+    console.log(`✅ Validated ${validQuestions.length} out of ${questions.length} questions`);
     return validQuestions;
   } catch (error) {
     console.error("❌ Error in Gemini API:", error);
+    
+    if (error instanceof Error) {
+      console.error("Error details:", {
+        name: error.name,
+        message: error.message,
+        stack: error.stack?.substring(0, 500),
+      });
+    }
+    
     console.log("⚠️ Falling back to pattern-based parser");
     return parsePatternsWithFallback(text);
   }
@@ -139,6 +173,7 @@ JSON çıktı formatı:
  * Fallback parser using regex patterns
  */
 function parsePatternsWithFallback(text: string): ParsedQuestion[] {
+  console.log("🔍 Using fallback pattern-based parser");
   const questions: ParsedQuestion[] = [];
   
   // Split text into potential question blocks
@@ -146,7 +181,10 @@ function parsePatternsWithFallback(text: string): ParsedQuestion[] {
   let currentQuestion: Partial<ParsedQuestion> = {};
   let options: string[] = [];
   
-  for (const line of lines) {
+  console.log(`📄 Processing ${lines.length} lines`);
+  
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const trimmed = line.trim();
     
     // Check if line starts with a number (potential question)
@@ -159,6 +197,7 @@ function parsePatternsWithFallback(text: string): ParsedQuestion[] {
           correctAnswer: currentQuestion.correctAnswer || "A",
           category: currentQuestion.category || "Genel",
         });
+        console.log(`✅ Found question ${questions.length}: ${currentQuestion.content.substring(0, 50)}...`);
       }
       
       // Start new question
@@ -190,8 +229,10 @@ function parsePatternsWithFallback(text: string): ParsedQuestion[] {
       correctAnswer: currentQuestion.correctAnswer || "A",
       category: currentQuestion.category || "Genel",
     });
+    console.log(`✅ Found question ${questions.length}: ${currentQuestion.content.substring(0, 50)}...`);
   }
   
+  console.log(`✅ Fallback parser found ${questions.length} questions`);
   return questions;
 }
 

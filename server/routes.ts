@@ -9,11 +9,29 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB max file size
+    files: 1,
   },
   fileFilter: (_req, file, cb) => {
-    if (file.mimetype === "application/pdf") {
+    console.log("📋 File filter - checking file:");
+    console.log("  - originalname:", file.originalname);
+    console.log("  - mimetype:", file.mimetype);
+    console.log("  - fieldname:", file.fieldname);
+    
+    // PDF mimetype check - different platforms may send different MIME types
+    const validMimeTypes = [
+      "application/pdf",
+      "application/x-pdf",
+      "application/octet-stream", // iOS sometimes sends this
+    ];
+    
+    const isPdfByMimeType = validMimeTypes.includes(file.mimetype);
+    const isPdfByExtension = file.originalname.toLowerCase().endsWith('.pdf');
+    
+    if (isPdfByMimeType || isPdfByExtension) {
+      console.log("✅ File accepted as PDF");
       cb(null, true);
     } else {
+      console.error("❌ Invalid file type:", file.mimetype);
       cb(new Error("Only PDF files are allowed"));
     }
   },
@@ -50,15 +68,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/upload-pdf", upload.single("pdf"), async (req, res) => {
     const startTime = Date.now();
     
+    console.log("📨 Received PDF upload request");
+    console.log("Headers:", JSON.stringify({
+      'content-type': req.headers['content-type'],
+      'content-length': req.headers['content-length'],
+      'origin': req.headers['origin'],
+    }));
+    
     try {
       if (!req.file) {
-        console.error("❌ No PDF file in request");
+        console.error("❌ No file in request");
+        console.error("Request body keys:", Object.keys(req.body));
+        console.error("Request files:", req.files);
         return res.status(400).json({
           success: false,
-          error: "PDF dosyası bulunamadı",
+          questionsAdded: 0,
+          error: "PDF dosyası bulunamadı. Lütfen bir PDF dosyası seçin.",
         });
       }
 
+      console.log("📄 File received:");
+      console.log("  - originalname:", req.file.originalname);
+      console.log("  - mimetype:", req.file.mimetype);
+      console.log("  - size:", req.file.size, "bytes");
+      console.log("  - buffer length:", req.file.buffer.length);
+      
       console.log(`📤 Processing PDF: ${req.file.originalname} (${req.file.size} bytes)`);
       
       const result = await processPDF(req.file.buffer);
@@ -75,7 +109,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       return res.json(result);
     } catch (error) {
       const duration = ((Date.now() - startTime) / 1000).toFixed(2);
-      console.error(`❌ Error after ${duration}s:`, error);
+      console.error(`❌ Upload endpoint error after ${duration}s:`, error);
+      
+      if (error instanceof Error) {
+        console.error("Error name:", error.name);
+        console.error("Error message:", error.message);
+        console.error("Error stack:", error.stack);
+      }
+      
       return res.status(500).json({
         success: false,
         questionsAdded: 0,

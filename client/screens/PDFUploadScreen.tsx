@@ -51,6 +51,24 @@ export default function PDFUploadScreen() {
     }
   };
 
+  const getApiUrl = () => {
+    const domain = process.env.EXPO_PUBLIC_DOMAIN;
+    
+    if (!domain) {
+      console.error("❌ EXPO_PUBLIC_DOMAIN is not set!");
+      Alert.alert(
+        "Konfigürasyon Hatası",
+        "API domain ayarlanmamış. Lütfen .env dosyasını kontrol edin veya uygulamayı yeniden başlatın."
+      );
+      throw new Error("EXPO_PUBLIC_DOMAIN is not set");
+    }
+    
+    // Add https:// if not present
+    const url = domain.startsWith('http') ? domain : `https://${domain}`;
+    console.log("🌐 API URL:", url);
+    return url;
+  };
+
   const handleUpload = async () => {
     if (!selectedFile) {
       Alert.alert("Hata", "Lütfen bir PDF dosyası seçin.");
@@ -59,7 +77,7 @@ export default function PDFUploadScreen() {
 
     setUploading(true);
     setUploadProgress(0);
-    setProcessingState("");
+    setProcessingState("📄 PDF dosyası hazırlanıyor...");
 
     // Progress simulation interval
     let progressInterval: NodeJS.Timeout | null = null;
@@ -67,15 +85,22 @@ export default function PDFUploadScreen() {
     // Timeout controller
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
-      console.log("⏰ Upload timeout triggered (60s)");
+      console.error("⏰ Upload timeout triggered (60s)");
       controller.abort();
     }, 60000); // 60 seconds timeout
 
     try {
-      console.log(`📤 Starting upload: ${selectedFile.name}`);
+      console.log("📤 Starting upload:", selectedFile.name);
+      console.log("📄 File URI:", selectedFile.uri);
+      
+      // Validate API URL
+      const apiUrl = getApiUrl();
+      const uploadUrl = `${apiUrl}/api/upload-pdf`;
+      
+      console.log("📡 Upload URL:", uploadUrl);
 
       // Start simulated progress
-      setProcessingState("📄 PDF okunuyor...");
+      setProcessingState("📄 PDF dosyası yükleniyor...");
       progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
           if (prev >= 95) return prev;
@@ -83,30 +108,32 @@ export default function PDFUploadScreen() {
         });
       }, 500);
 
+      // Create FormData - React Native specific format
       const formData = new FormData();
+      
+      // @ts-ignore - React Native FormData typing issue
       formData.append("pdf", {
         uri: selectedFile.uri,
         type: "application/pdf",
         name: selectedFile.name,
-      } as any);
+      });
 
-      console.log("🌐 Sending request to server...");
+      console.log("📦 FormData prepared");
 
-      // Update processing state after a short delay
+      // Update processing state after delays
       setTimeout(() => setProcessingState("🤖 AI soruları algılıyor..."), 2000);
       setTimeout(() => setProcessingState("💾 Sorular kaydediliyor..."), 4000);
 
-      const response = await fetch(
-        `${process.env.EXPO_PUBLIC_DOMAIN}/api/upload-pdf`,
-        {
-          method: "POST",
-          body: formData,
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-          signal: controller.signal,
+      console.log("🚀 Sending POST request...");
+      const response = await fetch(uploadUrl, {
+        method: "POST",
+        body: formData,
+        headers: {
+          "Accept": "application/json",
+          // DON'T set Content-Type for FormData - fetch will set it with boundary
         },
-      );
+        signal: controller.signal,
+      });
 
       // Clear progress interval and set to 100%
       if (progressInterval) {
@@ -115,16 +142,32 @@ export default function PDFUploadScreen() {
       }
       setUploadProgress(100);
 
-      console.log(`✅ Server responded with status: ${response.status}`);
-      const data = await response.json();
+      console.log("📥 Response status:", response.status);
+      console.log("📥 Response headers:", JSON.stringify([...response.headers.entries()]));
 
-      if (!response.ok || !data.success) {
-        console.error("❌ Upload failed:", data.error);
-        throw new Error(data.error || "Yükleme başarısız");
+      // Parse response
+      const responseText = await response.text();
+      console.log("📥 Response body:", responseText);
+
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (e) {
+        console.error("❌ Failed to parse response as JSON:", responseText);
+        throw new Error("Sunucu geçersiz yanıt döndürdü");
       }
 
-      console.log(`✅ Success! ${data.questionsAdded} questions added`);
+      if (!response.ok || !data.success) {
+        console.error("❌ Upload failed:", data.error || `HTTP ${response.status}`);
+        throw new Error(data.error || `HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      console.log("✅ Upload successful:", data);
+      console.log(`✅ ${data.questionsAdded} questions added`);
+      
+      setProcessingState("✅ Tamamlandı!");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+      
       Alert.alert(
         "Başarılı! 🎉",
         `${data.questionsAdded} soru başarıyla eklendi!\n\nReels sekmesinden soruları görebilirsiniz.`,
@@ -148,6 +191,7 @@ export default function PDFUploadScreen() {
         progressInterval = null;
       }
 
+      setProcessingState("❌ Hata oluştu");
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
 
       let errorMessage =
@@ -165,7 +209,15 @@ export default function PDFUploadScreen() {
       Alert.alert("Hata", errorMessage);
     } finally {
       clearTimeout(timeoutId);
-      setUploading(false);
+      
+      // Delay cleanup to show final state
+      setTimeout(() => {
+        setUploading(false);
+        if (!selectedFile) {
+          setProcessingState("");
+          setUploadProgress(0);
+        }
+      }, 2000);
 
       // Final cleanup for progress interval
       if (progressInterval) {
