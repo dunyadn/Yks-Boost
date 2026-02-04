@@ -111,9 +111,27 @@ export default function PDFUploadScreen() {
         description: parsedData.description || null,
       });
 
+      // Define type for parsed question data
+      interface ParsedQuestion {
+        content?: string;
+        soru?: string;
+        question?: string;
+        options?: string[];
+        secenekler?: string[];
+        siklar?: string[];
+        correctAnswer?: string;
+        dogruCevap?: string;
+        cevap?: string;
+        category?: string;
+        ders?: string;
+        konu?: string;
+        subject?: string;
+        altKonu?: string;
+      }
+
       // Add questions with package reference
       const insertQuestions: InsertQuestion[] = parsedData.questions.map(
-        (q: any) => ({
+        (q: ParsedQuestion) => ({
           content: q.content || q.soru || q.question || "",
           options: q.options || q.secenekler || q.siklar || [],
           correctAnswer: q.correctAnswer || q.dogruCevap || q.cevap || "A",

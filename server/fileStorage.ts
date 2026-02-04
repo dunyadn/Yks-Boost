@@ -82,8 +82,8 @@ export class FileStorage implements IStorage {
         console.log(`✅ Loaded storage from ${this.filePath}`);
         console.log(`   - ${Object.keys(this.data.questions).length} questions`);
         console.log(`   - ${Object.keys(this.data.packages).length} packages`);
-      } catch (error: any) {
-        if (error.code === "ENOENT") {
+      } catch (error: unknown) {
+        if (error && typeof error === 'object' && 'code' in error && error.code === "ENOENT") {
           console.log(`📝 Creating new storage file at ${this.filePath}`);
           await this.save();
         } else {
