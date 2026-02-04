@@ -29,7 +29,7 @@ externalPort = 8081
 localPort = 19002
 
 [env]
-PORT = "5000"
+PORT = "8000"
 
 [agent]
 stack = "EXPO"
@@ -91,5 +91,5 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "EXPO_PACKAGER_PROXY_URL=https://$REPLIT_DEV_DOMAIN REACT_NATIVE_PACKAGER_HOSTNAME=$REPLIT_DEV_DOMAIN EXPO_PUBLIC_DOMAIN=$REPLIT_DEV_DOMAIN:5000 npx expo start --port 5000 --tunnel --non-interactive"
+args = "EXPO_PACKAGER_PROXY_URL=https://$REPLIT_DEV_DOMAIN REACT_NATIVE_PACKAGER_HOSTNAME=$REPLIT_DEV_DOMAIN EXPO_PUBLIC_DOMAIN=$REPLIT_DEV_DOMAIN:8000 npx expo start --port 5000 --tunnel --non-interactive"
 waitForPort = 5000
