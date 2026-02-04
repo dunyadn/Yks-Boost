@@ -167,8 +167,11 @@ export default function LibraryScreen() {
           </View>
           <Pressable
             onPress={() => handleDeletePackage(item)}
-            hitSlop={8}
-            style={styles.deleteButton}
+            hitSlop={{ top: 12, bottom: 12, left: 12, right: 12 }}
+            style={({ pressed }) => [
+              styles.deleteButton,
+              pressed && styles.deleteButtonPressed,
+            ]}
           >
             <Feather name="trash-2" size={20} color={Colors.dark.accent} />
           </Pressable>
@@ -476,5 +479,9 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     padding: Spacing.xs,
+    alignSelf: "flex-start",
+  },
+  deleteButtonPressed: {
+    opacity: 0.5,
   },
 });
