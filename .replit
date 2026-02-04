@@ -29,7 +29,7 @@ externalPort = 8081
 localPort = 19002
 
 [env]
-PORT = "8000"
+PORT = "5000"
 
 [agent]
 stack = "EXPO"
