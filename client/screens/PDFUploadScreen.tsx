@@ -79,7 +79,7 @@ export default function PDFUploadScreen() {
       progressInterval = setInterval(() => {
         setUploadProgress((prev) => {
           if (prev >= 95) return prev;
-          return prev + Math.random() * 10;
+          return Math.min(prev + Math.random() * 10, 95);
         });
       }, 500);
 
