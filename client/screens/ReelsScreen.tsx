@@ -222,7 +222,6 @@ function ReelCard({
   const insets = useSafeAreaInsets();
   const [selectedOption, setSelectedOption] = useState<string | null>(null);
   const [revealed, setRevealed] = useState(false);
-  const [showSolution, setShowSolution] = useState(false);
   const [startTime] = useState<number>(Date.now());
   const [isSolved, setIsSolved] = useState(false);
 
@@ -295,11 +294,6 @@ function ReelCard({
     }, 400);
   };
 
-  const handleShowSolution = () => {
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    setShowSolution(!showSolution);
-  };
-
   const contentPaddingBottom = tabBarHeight + 70;
   const labels = ["A", "B", "C", "D", "E"];
 
@@ -323,6 +317,9 @@ function ReelCard({
       >
         <View style={styles.tagRow}>
           <Tag label={`#${question.category || "Genel"}`} variant="accent" />
+          {question.subject && (
+            <Tag label={`#${question.subject}`} variant="secondary" />
+          )}
           {isSolved && (
             <View style={styles.solvedBadge}>
               <Feather
@@ -371,45 +368,28 @@ function ReelCard({
           })}
         </View>
 
-        {/* Show Solution Button and Solution Display */}
+        {/* Auto-show Solution Display when revealed */}
         {question.solution && revealed && (
           <Animated.View entering={SlideInUp.delay(200)}>
-            <Pressable
-              style={styles.solutionButton}
-              onPress={handleShowSolution}
+            <Animated.View
+              entering={FadeIn.delay(100)}
+              style={styles.solutionContainer}
             >
-              <Feather
-                name={showSolution ? "eye-off" : "eye"}
-                size={16}
-                color={Colors.dark.backgroundRoot}
-                style={{ marginRight: Spacing.xs }}
-              />
-              <ThemedText style={styles.solutionButtonText}>
-                {showSolution ? "Çözümü Gizle" : "Çözümü Göster"}
-              </ThemedText>
-            </Pressable>
-
-            {showSolution && (
-              <Animated.View
-                entering={FadeIn.delay(100)}
-                style={styles.solutionContainer}
-              >
-                <View style={styles.solutionHeader}>
-                  <Feather
-                    name="check-circle"
-                    size={16}
-                    color={Colors.dark.primary}
-                    style={{ marginRight: Spacing.xs }}
-                  />
-                  <ThemedText style={styles.solutionTitle}>
-                    Çözüm Açıklaması
-                  </ThemedText>
-                </View>
-                <ThemedText style={styles.solutionText}>
-                  {question.solution}
+              <View style={styles.solutionHeader}>
+                <Feather
+                  name="check-circle"
+                  size={16}
+                  color={Colors.dark.primary}
+                  style={{ marginRight: Spacing.xs }}
+                />
+                <ThemedText style={styles.solutionTitle}>
+                  Çözüm Açıklaması
                 </ThemedText>
-              </Animated.View>
-            )}
+              </View>
+              <ThemedText style={styles.solutionText}>
+                {question.solution}
+              </ThemedText>
+            </Animated.View>
           </Animated.View>
         )}
       </ScrollView>
@@ -472,7 +452,19 @@ export default function ReelsScreen() {
         }
       });
       
-      // Prioritize unsolved questions first, then show solved ones
+      // Shuffle unsolved questions using Fisher-Yates algorithm
+      for (let i = unsolvedQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [unsolvedQuestions[i], unsolvedQuestions[j]] = [unsolvedQuestions[j], unsolvedQuestions[i]];
+      }
+      
+      // Shuffle solved questions as well
+      for (let i = solvedQuestions.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [solvedQuestions[i], solvedQuestions[j]] = [solvedQuestions[j], solvedQuestions[i]];
+      }
+      
+      // Prioritize unsolved questions first, then show solved ones (both randomized)
       const orderedQuestions = [...unsolvedQuestions, ...solvedQuestions];
       
       setQuestions(orderedQuestions);
@@ -654,6 +646,7 @@ const styles = StyleSheet.create({
   tagRow: {
     flexDirection: "row",
     alignItems: "center",
+    flexWrap: "wrap",
     gap: Spacing.xs,
   },
   questionNumber: {
@@ -670,24 +663,24 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    marginTop: 80,
+    marginTop: 60,
     paddingHorizontal: Spacing.md,
   },
   scrollContent: {
-    paddingTop: Spacing.sm,
+    paddingTop: Spacing.xs,
     flexGrow: 1,
   },
   questionTextContainer: {
     backgroundColor: Colors.dark.backgroundSecondary,
     borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    marginBottom: Spacing.sm,
+    padding: Spacing.sm,
+    marginBottom: Spacing.xs,
     borderWidth: 1,
     borderColor: Colors.dark.border,
   },
   questionText: {
-    fontSize: 15,
-    lineHeight: 22,
+    fontSize: 14,
+    lineHeight: 20,
     color: Colors.dark.text,
   },
   optionsContainer: {
@@ -721,10 +714,10 @@ const styles = StyleSheet.create({
     lineHeight: 17,
   },
   solutionContainer: {
-    marginTop: Spacing.md,
+    marginTop: Spacing.sm,
     backgroundColor: Colors.dark.primary + "15",
     borderRadius: BorderRadius.md,
-    padding: Spacing.md,
+    padding: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.dark.primary + "50",
   },
@@ -734,13 +727,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   solutionTitle: {
-    fontSize: 13,
+    fontSize: 12,
     fontWeight: "700",
     color: Colors.dark.primary,
   },
   solutionText: {
-    fontSize: 13,
-    lineHeight: 20,
+    fontSize: 12,
+    lineHeight: 18,
     color: Colors.dark.text,
   },
   actionsContainer: {
@@ -784,21 +777,6 @@ const styles = StyleSheet.create({
   authorUsername: {
     fontSize: 10,
     color: Colors.dark.textSecondary,
-  },
-  solutionButton: {
-    backgroundColor: Colors.dark.primary,
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
-    borderRadius: BorderRadius.md,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    marginTop: Spacing.md,
-  },
-  solutionButtonText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: Colors.dark.backgroundRoot,
   },
   solvedBadge: {
     flexDirection: "row",
