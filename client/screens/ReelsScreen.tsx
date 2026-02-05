@@ -102,6 +102,16 @@ const MOCK_REELS: Question[] = [
   },
 ];
 
+/**
+ * Fisher-Yates shuffle algorithm to randomize array order
+ */
+function shuffleArray<T>(array: T[]): void {
+  for (let i = array.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
+
 function OptionButton({
   option,
   selected,
@@ -452,17 +462,9 @@ export default function ReelsScreen() {
         }
       });
       
-      // Shuffle unsolved questions using Fisher-Yates algorithm
-      for (let i = unsolvedQuestions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [unsolvedQuestions[i], unsolvedQuestions[j]] = [unsolvedQuestions[j], unsolvedQuestions[i]];
-      }
-      
-      // Shuffle solved questions as well
-      for (let i = solvedQuestions.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [solvedQuestions[i], solvedQuestions[j]] = [solvedQuestions[j], solvedQuestions[i]];
-      }
+      // Shuffle both question arrays for randomized order
+      shuffleArray(unsolvedQuestions);
+      shuffleArray(solvedQuestions);
       
       // Prioritize unsolved questions first, then show solved ones (both randomized)
       const orderedQuestions = [...unsolvedQuestions, ...solvedQuestions];
@@ -648,6 +650,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     flexWrap: "wrap",
     gap: Spacing.xs,
+    rowGap: Spacing.xs,
   },
   questionNumber: {
     marginLeft: "auto",
