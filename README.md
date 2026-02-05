@@ -41,6 +41,7 @@ npm run expo:dev
   - Çözüm otomatik olarak görünür
 - ❤️ Beğen, yorum, kaydet, paylaş aksiyonları
 - 📳 Haptic geri bildirim
+- 🎁 **Otomatik Soru Yükleme**: Uygulama ilk açıldığında örnek sorular otomatik olarak yüklenir
 
 ### Diğer Özellikler
 - 📝 **Soru Ekle**: Modal form ile kolay soru paylaşımı
@@ -77,6 +78,7 @@ npm run expo:dev
 │   ├── components/       # Yeniden kullanılabilir UI bileşenleri
 │   ├── constants/        # Tema ve sabitler
 │   ├── hooks/           # Custom hooks
+│   ├── lib/             # Utility fonksiyonlar (localStorage, initQuestions)
 │   ├── navigation/      # Navigation yapılandırması
 │   └── screens/         # Uygulama ekranları
 ├── server/              # Express.js backend
@@ -85,6 +87,8 @@ npm run expo:dev
 ├── shared/              # Frontend ve backend arasında paylaşılan kod
 ├── scripts/             # Build ve deployment scriptleri
 │   └── converters/      # Soru dönüştürme araçları
+├── assets/              # Uygulama varlıkları
+│   └── questions/       # Otomatik yüklenen soru paketleri (JSON)
 └── data/                # Soru dosyaları
     ├── text-files/      # Kaynak text dosyaları
     └── questions/       # Dönüştürülmüş JSON dosyaları
@@ -96,10 +100,22 @@ npm run expo:dev
 - [Conversion Guide](CONVERSION_GUIDE.md) - **YENİ!** Text dosyalarını JSON'a dönüştürme rehberi
 - [Text Format Examples](TEXT_FORMAT_EXAMPLES.md) - **YENİ!** Desteklenen text formatları
 - [JSON Format Guide](JSON_FORMAT_GUIDE.md) - JSON soru formatı kılavuzu
+- [Auto-loaded Questions](assets/questions/README.md) - **YENİ!** Otomatik yüklenen soru paketleri
 - [Testing Guide](TESTING_GUIDE.md) - Test etme rehberi
 - [Visual Guide](VISUAL_GUIDE.md) - Görsel tasarım rehberi
 - [Soru Ekleme Kılavuzu](SORU_EKLEME_KILAVUZU.md) - Soru ekleme rehberi
 - [Design Guidelines](design_guidelines.md) - Tasarım kuralları
+
+## ⚡ Otomatik Soru Yükleme
+
+Uygulama ilk kez başlatıldığında, `assets/questions/` dizinindeki tüm soru paketleri otomatik olarak AsyncStorage'a yüklenir:
+
+- ✅ **24 örnek soru** (3 paket: Tarih, Matematik, Fizik)
+- 🔒 **Bir kez yükleme**: Veriler cihazda kalıcı olarak saklanır
+- 🚀 **Anında kullanıma hazır**: Hiçbir ek işlem gerektirmez
+- 📱 **Offline çalışma**: İnternet bağlantısı gerekmez
+
+Yeni soru paketleri eklemek için `assets/questions/README.md` dosyasına bakın.
 
 ## 🧪 Test ve Build
 
