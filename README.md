@@ -96,9 +96,17 @@ npm run expo:dev
 
 ## 📖 Dokümantasyon
 
+### 🎯 Geliştirici Dokümantasyonu
+- **[Development Guide](DEVELOPMENT_GUIDE.md)** - **YENİ!** Kapsamlı geliştirme rehberi
+- **[Architecture](ARCHITECTURE.md)** - **YENİ!** Sistem mimarisi ve design patterns
+- **[API Documentation](API_DOCUMENTATION.md)** - **YENİ!** API endpoint'leri ve kullanım
+- **[Contributing](CONTRIBUTING.md)** - **YENİ!** Katkıda bulunma rehberi
+- **[Changelog](CHANGELOG.md)** - **YENİ!** Versiyon geçmişi
+
+### 📚 Kullanıcı Dokümantasyonu
 - [Replit Expo Setup](REPLIT_EXPO_SETUP.md) - Replit'te çalıştırma talimatları
-- [Quick Start: Soru Dönüştürme](QUICK_START_CONVERTER.md) - **YENİ!** PDF/TXT soru dönüştürme hızlı başlangıç
-- [Comprehensive Converter Guide](COMPREHENSIVE_CONVERTER_GUIDE.md) - **YENİ!** Detaylı dönüştürme kılavuzu
+- [Quick Start: Soru Dönüştürme](QUICK_START_CONVERTER.md) - PDF/TXT soru dönüştürme hızlı başlangıç
+- [Comprehensive Converter Guide](COMPREHENSIVE_CONVERTER_GUIDE.md) - Detaylı dönüştürme kılavuzu
 - [Conversion Guide](CONVERSION_GUIDE.md) - Text dosyalarını JSON'a dönüştürme rehberi
 - [Text Format Examples](TEXT_FORMAT_EXAMPLES.md) - Desteklenen text formatları
 - [JSON Format Guide](JSON_FORMAT_GUIDE.md) - JSON soru formatı kılavuzu
@@ -122,6 +130,11 @@ Yeni soru paketleri eklemek için `assets/questions/README.md` dosyasına bakın
 ## 🧪 Test ve Build
 
 ```bash
+# Testler
+npm test              # Tüm testleri çalıştır
+npm run test:watch    # Watch mode
+npm run test:ci       # CI için testler
+
 # Text dosyasını JSON'a dönüştür (tekil)
 npm run convert-questions <input.txt> <output.json> -- --package-name "Paket Adı" --exam-type TYT
 
@@ -131,14 +144,11 @@ npm run convert-bulk <kaynak-dizin> <hedef-dizin>
 # AI destekli detaylı çözümlerle toplu dönüştürme
 npm run convert-bulk <kaynak-dizin> <hedef-dizin> -- --api-key YOUR_GEMINI_API_KEY
 
-# Tip kontrolü
-npm run check:types
-
-# Linting
-npm run lint
-
-# Code formatting
-npm run format
+# Kod Kalitesi
+npm run check:types   # Tip kontrolü
+npm run lint          # Linting
+npm run format        # Code formatting
+npm run validate      # Tüm kontroller (types + lint + test)
 
 # Production build
 npm run expo:static:build
@@ -147,6 +157,45 @@ npm run server:build
 # Production sunucu
 npm run server:prod
 ```
+
+## 🛠 Yeni Geliştirici Araçları
+
+### Logger Utility
+Merkezi log yönetimi için:
+```typescript
+import { logger } from '@/utils/logger';
+
+logger.info('İşlem başarılı');
+logger.error('Hata oluştu', error);
+```
+
+### Performance Monitor
+Performans izleme:
+```typescript
+import { performanceMonitor } from '@/utils/performance';
+
+const result = await performanceMonitor.measure('api-call', async () => {
+  return await fetchData();
+});
+```
+
+### API Client
+Gelişmiş API client (otomatik retry, error handling):
+```typescript
+import { apiClient } from '@/utils/apiClient';
+
+const data = await apiClient.get('/api/questions');
+```
+
+### Validation
+Zod ile veri doğrulama:
+```typescript
+import { validate, QuestionSchema } from '@/utils/validation';
+
+const validQuestion = validate(QuestionSchema, data);
+```
+
+Detaylar için [Development Guide](DEVELOPMENT_GUIDE.md)'a bakın.
 
 ## 🔐 Güvenlik
 
