@@ -19,6 +19,8 @@ import {
   getWorstTopics,
   getPackages,
   getPackageStats,
+  getAllQuestionsIncludingPackages,
+  getSolvedQuestionIds,
 } from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
@@ -141,6 +143,9 @@ export default function StatisticsScreen() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [packageStats, setPackageStats] = useState<PackageWithStats[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unsolvedCount, setUnsolvedCount] = useState(0);
+  const [solvedCount, setSolvedCount] = useState(0);
+  const [totalQuestions, setTotalQuestions] = useState(0);
 
   useEffect(() => {
     fetchStats();
@@ -148,13 +153,24 @@ export default function StatisticsScreen() {
 
   const fetchStats = async () => {
     try {
-      const [statsData, worstTopicsData, packagesData, packageStatsData] =
+      const [statsData, worstTopicsData, packagesData, packageStatsData, questionsData, solvedQuestionIds] =
         await Promise.all([
           getStats(),
           getWorstTopics(5),
           getPackages(),
           getPackageStats(),
+          getAllQuestionsIncludingPackages(),
+          getSolvedQuestionIds(),
         ]);
+
+      // Calculate solved/unsolved counts
+      const solvedIdsSet = new Set(solvedQuestionIds);
+      const solved = questionsData.filter(q => solvedIdsSet.has(q.id)).length;
+      const unsolved = questionsData.length - solved;
+      
+      setUnsolvedCount(unsolved);
+      setSolvedCount(solved);
+      setTotalQuestions(questionsData.length);
 
       // Calculate average solving time
       const avgSolvingTime =
@@ -244,6 +260,38 @@ export default function StatisticsScreen() {
           Son güncelleme: {formatDate(stats?.lastUpdated)}
         </ThemedText>
       </Animated.View>
+
+      {/* Soru Çözüm Durumu */}
+      {totalQuestions > 0 && (
+        <Animated.View entering={FadeIn.delay(125)} style={styles.section}>
+          <ThemedText style={styles.sectionTitle}>📝 Soru Çözüm Durumu</ThemedText>
+          <View style={styles.questionProgressCard}>
+            <View style={styles.questionProgressStats}>
+              <View style={styles.questionProgressStatItem}>
+                <Feather name="clock" size={16} color={Colors.dark.warning} />
+                <ThemedText style={styles.questionProgressStatText}>
+                  {unsolvedCount} Çözülecek
+                </ThemedText>
+              </View>
+              <View style={styles.questionProgressDivider} />
+              <View style={styles.questionProgressStatItem}>
+                <Feather name="check-circle" size={16} color={Colors.dark.success} />
+                <ThemedText style={styles.questionProgressStatText}>
+                  {solvedCount} Çözüldü
+                </ThemedText>
+              </View>
+            </View>
+            <View style={styles.questionProgressBarContainer}>
+              <View 
+                style={[
+                  styles.questionProgressBarFill, 
+                  { width: `${(solvedCount / totalQuestions) * 100}%` }
+                ]} 
+              />
+            </View>
+          </View>
+        </Animated.View>
+      )}
 
       {/* Ana İstatistikler */}
       <View style={styles.section}>
@@ -759,5 +807,46 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
     color: Colors.dark.text,
+  },
+  // Question progress styles
+  questionProgressCard: {
+    backgroundColor: Colors.dark.backgroundDefault,
+    borderRadius: BorderRadius.lg,
+    padding: Spacing.lg,
+    gap: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  questionProgressStats: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.lg,
+  },
+  questionProgressStatItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs,
+  },
+  questionProgressStatText: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: Colors.dark.text,
+  },
+  questionProgressDivider: {
+    width: 1,
+    height: 16,
+    backgroundColor: Colors.dark.border,
+  },
+  questionProgressBarContainer: {
+    height: 6,
+    backgroundColor: Colors.dark.backgroundTertiary,
+    borderRadius: 3,
+    overflow: "hidden",
+  },
+  questionProgressBarFill: {
+    height: "100%",
+    backgroundColor: Colors.dark.success,
+    borderRadius: 3,
   },
 });
