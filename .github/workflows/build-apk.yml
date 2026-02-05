@@ -43,9 +43,34 @@ jobs:
         run: npm ci
 
       - name: 🚀 Build APK
+        id: eas-build
         run: |
           PROFILE=${{ github.event.inputs.profile || 'preview' }}
-          eas build --platform android --profile $PROFILE --non-interactive --output yksreels.apk
+          # Run EAS build and wait for completion
+          eas build --platform android --profile $PROFILE --non-interactive --wait --json > build_result.json
+          # Extract build ID from result
+          BUILD_ID=$(jq -r '.[0].id' build_result.json)
+          echo "build_id=$BUILD_ID" >> $GITHUB_OUTPUT
+          # Extract build URL directly from the build result
+          BUILD_URL=$(jq -r '.[0].artifacts.buildUrl' build_result.json)
+          echo "build_url=$BUILD_URL" >> $GITHUB_OUTPUT
+      
+      - name: 📥 Download APK
+        run: |
+          BUILD_URL="${{ steps.eas-build.outputs.build_url }}"
+          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
+            echo "Error: Build URL is not available. The build may have failed or artifacts are not ready."
+            exit 1
+          fi
+          echo "Downloading APK from: $BUILD_URL"
+          curl -L -o yksreels.apk "$BUILD_URL"
+          
+          # Verify the APK was downloaded
+          if [ ! -f yksreels.apk ] || [ ! -s yksreels.apk ]; then
+            echo "Error: APK file was not downloaded successfully"
+            exit 1
+          fi
+          echo "APK downloaded successfully: $(ls -la yksreels.apk)"
 
       - name: 📤 Upload APK artifact
         uses: actions/upload-artifact@v4
