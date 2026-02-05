@@ -16,6 +16,7 @@ const STORAGE_KEYS = {
   PACKAGE_STATS: "@yks_boost:package_stats",
   TOPIC_STATS: "@yks_boost:topic_stats",
   SAVED_QUESTIONS: "@yks_boost:saved_questions",
+  SOLVED_QUESTIONS: "@yks_boost:solved_questions",
 };
 
 function generateId(): string {
@@ -43,6 +44,21 @@ export async function getQuestions(): Promise<Question[]> {
     );
   } catch (error) {
     console.error("Error loading questions:", error);
+    return [];
+  }
+}
+
+/**
+ * Get all questions including both manual questions and package questions.
+ * This is an alias for getQuestions() since all questions (manual and package-based)
+ * are stored in the same storage location. Provided for semantic clarity and
+ * potential future separation of storage mechanisms.
+ */
+export async function getAllQuestionsIncludingPackages(): Promise<Question[]> {
+  try {
+    return await getQuestions();
+  } catch (error) {
+    console.error("Error loading all questions including packages:", error);
     return [];
   }
 }
@@ -467,4 +483,74 @@ export async function toggleSavedQuestion(
 export async function isQuestionSaved(questionId: string): Promise<boolean> {
   const savedQuestions = await getSavedQuestions();
   return savedQuestions.includes(questionId);
+}
+
+// Solved Questions (for tracking question solving state)
+interface SolvedQuestionData {
+  selectedOption: string;
+  isCorrect: boolean;
+  solvedAt: number; // timestamp
+  revealed: boolean;
+}
+
+interface SolvedQuestionsMap {
+  [questionId: string]: SolvedQuestionData;
+}
+
+/**
+ * Save a solved question state to AsyncStorage
+ */
+export async function saveSolvedQuestion(
+  questionId: string,
+  selectedOption: string,
+  isCorrect: boolean,
+  revealed: boolean = true,
+): Promise<void> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.SOLVED_QUESTIONS);
+    const solvedQuestions: SolvedQuestionsMap = data ? JSON.parse(data) : {};
+
+    solvedQuestions[questionId] = {
+      selectedOption,
+      isCorrect,
+      solvedAt: Date.now(),
+      revealed,
+    };
+
+    await AsyncStorage.setItem(
+      STORAGE_KEYS.SOLVED_QUESTIONS,
+      JSON.stringify(solvedQuestions),
+    );
+  } catch (error) {
+    console.error("Error saving solved question:", error);
+  }
+}
+
+/**
+ * Get solved question state if it exists
+ */
+export async function getSolvedQuestion(
+  questionId: string,
+): Promise<SolvedQuestionData | null> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.SOLVED_QUESTIONS);
+    if (!data) return null;
+
+    const solvedQuestions: SolvedQuestionsMap = JSON.parse(data);
+    return solvedQuestions[questionId] || null;
+  } catch (error) {
+    console.error("Error getting solved question:", error);
+    return null;
+  }
+}
+
+/**
+ * Clear all solved questions (reset)
+ */
+export async function clearSolvedQuestions(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEYS.SOLVED_QUESTIONS);
+  } catch (error) {
+    console.error("Error clearing solved questions:", error);
+  }
 }
