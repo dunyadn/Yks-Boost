@@ -16,6 +16,7 @@ const STORAGE_KEYS = {
   PACKAGE_STATS: "@yks_boost:package_stats",
   TOPIC_STATS: "@yks_boost:topic_stats",
   SAVED_QUESTIONS: "@yks_boost:saved_questions",
+  SOLVED_QUESTIONS: "@yks_boost:solved_questions",
 };
 
 function generateId(): string {
@@ -467,4 +468,104 @@ export async function toggleSavedQuestion(
 export async function isQuestionSaved(questionId: string): Promise<boolean> {
   const savedQuestions = await getSavedQuestions();
   return savedQuestions.includes(questionId);
+}
+
+// Solved Questions (Questions that have been answered)
+interface SolvedQuestionData {
+  questionId: string;
+  solvedAt: string; // ISO timestamp
+  isCorrect: boolean;
+  selectedAnswer: string;
+}
+
+export async function saveSolvedQuestion(
+  questionId: string,
+  isCorrect: boolean,
+  selectedAnswer: string,
+): Promise<void> {
+  try {
+    const solvedQuestions = await getSolvedQuestions();
+    
+    // Remove existing entry if it exists (user re-answered)
+    const filtered = solvedQuestions.filter((sq) => sq.questionId !== questionId);
+    
+    // Add new solved entry
+    filtered.push({
+      questionId,
+      solvedAt: new Date().toISOString(),
+      isCorrect,
+      selectedAnswer,
+    });
+    
+    await AsyncStorage.setItem(
+      STORAGE_KEYS.SOLVED_QUESTIONS,
+      JSON.stringify(filtered),
+    );
+  } catch (error) {
+    console.error("Error saving solved question:", error);
+  }
+}
+
+export async function getSolvedQuestion(
+  questionId: string,
+): Promise<SolvedQuestionData | null> {
+  try {
+    const solvedQuestions = await getSolvedQuestions();
+    return solvedQuestions.find((sq) => sq.questionId === questionId) || null;
+  } catch (error) {
+    console.error("Error getting solved question:", error);
+    return null;
+  }
+}
+
+export async function getSolvedQuestions(): Promise<SolvedQuestionData[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.SOLVED_QUESTIONS);
+    if (!data) return [];
+    
+    const parsed = JSON.parse(data);
+    if (Array.isArray(parsed)) {
+      // Validate each item
+      return parsed.filter(
+        (item): item is SolvedQuestionData =>
+          item &&
+          typeof item === "object" &&
+          typeof item.questionId === "string" &&
+          typeof item.solvedAt === "string" &&
+          typeof item.isCorrect === "boolean" &&
+          typeof item.selectedAnswer === "string",
+      );
+    }
+    return [];
+  } catch (error) {
+    console.error("Error loading solved questions:", error);
+    return [];
+  }
+}
+
+export async function clearSolvedQuestions(): Promise<void> {
+  try {
+    await AsyncStorage.removeItem(STORAGE_KEYS.SOLVED_QUESTIONS);
+  } catch (error) {
+    console.error("Error clearing solved questions:", error);
+  }
+}
+
+// Get all questions including those from packages
+// Note: In the current implementation, getQuestions() already returns all questions
+// (both manually added and those from packages) because packages are stored in the
+// same questions array with packageId set. This function exists for:
+// 1. Semantic clarity - making it explicit that we want ALL questions
+// 2. Future-proofing - if package questions need special handling later
+// 3. API consistency - matching the requirement specification
+export async function getAllQuestionsIncludingPackages(): Promise<Question[]> {
+  try {
+    const questions = await getQuestions();
+    // Questions from packages already have packageId set
+    // getQuestions() returns all questions including those in packages
+    return questions;
+  } catch (error) {
+    console.error("Error getting all questions including packages:", error);
+    return [];
+  }
 }
