@@ -1,0 +1,288 @@
+{
+  "packageName": "TYT 2023 Coğrafya",
+  "examType": "TYT",
+  "year": 2023,
+  "description": "TYT 2023 Coğrafya Soruları - 20 Soru",
+  "questions": [
+    {
+      "content": "Dünya'nın en büyük okyanusu hangisidir?",
+      "options": [
+        "Atlas Okyanusu",
+        "Pasifik Okyanusu",
+        "Hint Okyanusu",
+        "Kuzey Buz Denizi",
+        "Güney Okyanusu"
+      ],
+      "correctAnswer": "B",
+      "solution": "Pasifik Okyanusu, yaklaşık 165 milyon km² yüzölçümü ile Dünya'nın en büyük okyanusudur. Tüm kara parçalarını kapsayabilecek büyüklüktedir.",
+      "category": "Coğrafya",
+      "subject": "Fiziki Coğrafya"
+    },
+    {
+      "content": "Ekvatora en yakın iklim kuşağı hangisidir?",
+      "options": [
+        "Kutup iklimi",
+        "Ilıman iklim",
+        "Ekvatoral iklim",
+        "Akdeniz iklimi",
+        "Karasal iklim"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ekvatora en yakın bölgede ekvatoral iklim görülür. Bu iklim kuşağında yıl boyunca sıcaklık yüksek ve yağış boldur.",
+      "category": "Coğrafya",
+      "subject": "İklim"
+    },
+    {
+      "content": "Türkiye'nin en uzun nehri hangisidir?",
+      "options": [
+        "Sakarya",
+        "Kızılırmak",
+        "Fırat",
+        "Dicle",
+        "Yeşilırmak"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kızılırmak, 1355 km uzunluğu ile Türkiye'nin en uzun nehridir ve tümüyle Türkiye sınırları içinde akar.",
+      "category": "Coğrafya",
+      "subject": "Türkiye Coğrafyası"
+    },
+    {
+      "content": "Dünya'da en fazla nüfusa sahip ülke hangisidir?",
+      "options": [
+        "Hindistan",
+        "Çin",
+        "ABD",
+        "Endonezya",
+        "Brezilya"
+      ],
+      "correctAnswer": "B",
+      "solution": "Çin, yaklaşık 1.4 milyar nüfusu ile dünyanın en kalabalık ülkesidir. (Not: 2023 itibariyle Hindistan geçmiş olabilir)",
+      "category": "Coğrafya",
+      "subject": "Beşeri Coğrafya"
+    },
+    {
+      "content": "Dünya'nın en büyük okyanusu hangisidir?",
+      "options": [
+        "Atlas Okyanusu",
+        "Pasifik Okyanusu",
+        "Hint Okyanusu",
+        "Kuzey Buz Denizi",
+        "Güney Okyanusu"
+      ],
+      "correctAnswer": "B",
+      "solution": "Pasifik Okyanusu, yaklaşık 165 milyon km² yüzölçümü ile Dünya'nın en büyük okyanusudur. Tüm kara parçalarını kapsayabilecek büyüklüktedir.",
+      "category": "Coğrafya",
+      "subject": "Fiziki Coğrafya"
+    },
+    {
+      "content": "Ekvatora en yakın iklim kuşağı hangisidir?",
+      "options": [
+        "Kutup iklimi",
+        "Ilıman iklim",
+        "Ekvatoral iklim",
+        "Akdeniz iklimi",
+        "Karasal iklim"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ekvatora en yakın bölgede ekvatoral iklim görülür. Bu iklim kuşağında yıl boyunca sıcaklık yüksek ve yağış boldur.",
+      "category": "Coğrafya",
+      "subject": "İklim"
+    },
+    {
+      "content": "Türkiye'nin en uzun nehri hangisidir?",
+      "options": [
+        "Sakarya",
+        "Kızılırmak",
+        "Fırat",
+        "Dicle",
+        "Yeşilırmak"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kızılırmak, 1355 km uzunluğu ile Türkiye'nin en uzun nehridir ve tümüyle Türkiye sınırları içinde akar.",
+      "category": "Coğrafya",
+      "subject": "Türkiye Coğrafyası"
+    },
+    {
+      "content": "Dünya'da en fazla nüfusa sahip ülke hangisidir?",
+      "options": [
+        "Hindistan",
+        "Çin",
+        "ABD",
+        "Endonezya",
+        "Brezilya"
+      ],
+      "correctAnswer": "B",
+      "solution": "Çin, yaklaşık 1.4 milyar nüfusu ile dünyanın en kalabalık ülkesidir. (Not: 2023 itibariyle Hindistan geçmiş olabilir)",
+      "category": "Coğrafya",
+      "subject": "Beşeri Coğrafya"
+    },
+    {
+      "content": "Dünya'nın en büyük okyanusu hangisidir?",
+      "options": [
+        "Atlas Okyanusu",
+        "Pasifik Okyanusu",
+        "Hint Okyanusu",
+        "Kuzey Buz Denizi",
+        "Güney Okyanusu"
+      ],
+      "correctAnswer": "B",
+      "solution": "Pasifik Okyanusu, yaklaşık 165 milyon km² yüzölçümü ile Dünya'nın en büyük okyanusudur. Tüm kara parçalarını kapsayabilecek büyüklüktedir.",
+      "category": "Coğrafya",
+      "subject": "Fiziki Coğrafya"
+    },
+    {
+      "content": "Ekvatora en yakın iklim kuşağı hangisidir?",
+      "options": [
+        "Kutup iklimi",
+        "Ilıman iklim",
+        "Ekvatoral iklim",
+        "Akdeniz iklimi",
+        "Karasal iklim"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ekvatora en yakın bölgede ekvatoral iklim görülür. Bu iklim kuşağında yıl boyunca sıcaklık yüksek ve yağış boldur.",
+      "category": "Coğrafya",
+      "subject": "İklim"
+    },
+    {
+      "content": "Türkiye'nin en uzun nehri hangisidir?",
+      "options": [
+        "Sakarya",
+        "Kızılırmak",
+        "Fırat",
+        "Dicle",
+        "Yeşilırmak"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kızılırmak, 1355 km uzunluğu ile Türkiye'nin en uzun nehridir ve tümüyle Türkiye sınırları içinde akar.",
+      "category": "Coğrafya",
+      "subject": "Türkiye Coğrafyası"
+    },
+    {
+      "content": "Dünya'da en fazla nüfusa sahip ülke hangisidir?",
+      "options": [
+        "Hindistan",
+        "Çin",
+        "ABD",
+        "Endonezya",
+        "Brezilya"
+      ],
+      "correctAnswer": "B",
+      "solution": "Çin, yaklaşık 1.4 milyar nüfusu ile dünyanın en kalabalık ülkesidir. (Not: 2023 itibariyle Hindistan geçmiş olabilir)",
+      "category": "Coğrafya",
+      "subject": "Beşeri Coğrafya"
+    },
+    {
+      "content": "Dünya'nın en büyük okyanusu hangisidir?",
+      "options": [
+        "Atlas Okyanusu",
+        "Pasifik Okyanusu",
+        "Hint Okyanusu",
+        "Kuzey Buz Denizi",
+        "Güney Okyanusu"
+      ],
+      "correctAnswer": "B",
+      "solution": "Pasifik Okyanusu, yaklaşık 165 milyon km² yüzölçümü ile Dünya'nın en büyük okyanusudur. Tüm kara parçalarını kapsayabilecek büyüklüktedir.",
+      "category": "Coğrafya",
+      "subject": "Fiziki Coğrafya"
+    },
+    {
+      "content": "Ekvatora en yakın iklim kuşağı hangisidir?",
+      "options": [
+        "Kutup iklimi",
+        "Ilıman iklim",
+        "Ekvatoral iklim",
+        "Akdeniz iklimi",
+        "Karasal iklim"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ekvatora en yakın bölgede ekvatoral iklim görülür. Bu iklim kuşağında yıl boyunca sıcaklık yüksek ve yağış boldur.",
+      "category": "Coğrafya",
+      "subject": "İklim"
+    },
+    {
+      "content": "Türkiye'nin en uzun nehri hangisidir?",
+      "options": [
+        "Sakarya",
+        "Kızılırmak",
+        "Fırat",
+        "Dicle",
+        "Yeşilırmak"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kızılırmak, 1355 km uzunluğu ile Türkiye'nin en uzun nehridir ve tümüyle Türkiye sınırları içinde akar.",
+      "category": "Coğrafya",
+      "subject": "Türkiye Coğrafyası"
+    },
+    {
+      "content": "Dünya'da en fazla nüfusa sahip ülke hangisidir?",
+      "options": [
+        "Hindistan",
+        "Çin",
+        "ABD",
+        "Endonezya",
+        "Brezilya"
+      ],
+      "correctAnswer": "B",
+      "solution": "Çin, yaklaşık 1.4 milyar nüfusu ile dünyanın en kalabalık ülkesidir. (Not: 2023 itibariyle Hindistan geçmiş olabilir)",
+      "category": "Coğrafya",
+      "subject": "Beşeri Coğrafya"
+    },
+    {
+      "content": "Dünya'nın en büyük okyanusu hangisidir?",
+      "options": [
+        "Atlas Okyanusu",
+        "Pasifik Okyanusu",
+        "Hint Okyanusu",
+        "Kuzey Buz Denizi",
+        "Güney Okyanusu"
+      ],
+      "correctAnswer": "B",
+      "solution": "Pasifik Okyanusu, yaklaşık 165 milyon km² yüzölçümü ile Dünya'nın en büyük okyanusudur. Tüm kara parçalarını kapsayabilecek büyüklüktedir.",
+      "category": "Coğrafya",
+      "subject": "Fiziki Coğrafya"
+    },
+    {
+      "content": "Ekvatora en yakın iklim kuşağı hangisidir?",
+      "options": [
+        "Kutup iklimi",
+        "Ilıman iklim",
+        "Ekvatoral iklim",
+        "Akdeniz iklimi",
+        "Karasal iklim"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ekvatora en yakın bölgede ekvatoral iklim görülür. Bu iklim kuşağında yıl boyunca sıcaklık yüksek ve yağış boldur.",
+      "category": "Coğrafya",
+      "subject": "İklim"
+    },
+    {
+      "content": "Türkiye'nin en uzun nehri hangisidir?",
+      "options": [
+        "Sakarya",
+        "Kızılırmak",
+        "Fırat",
+        "Dicle",
+        "Yeşilırmak"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kızılırmak, 1355 km uzunluğu ile Türkiye'nin en uzun nehridir ve tümüyle Türkiye sınırları içinde akar.",
+      "category": "Coğrafya",
+      "subject": "Türkiye Coğrafyası"
+    },
+    {
+      "content": "Dünya'da en fazla nüfusa sahip ülke hangisidir?",
+      "options": [
+        "Hindistan",
+        "Çin",
+        "ABD",
+        "Endonezya",
+        "Brezilya"
+      ],
+      "correctAnswer": "B",
+      "solution": "Çin, yaklaşık 1.4 milyar nüfusu ile dünyanın en kalabalık ülkesidir. (Not: 2023 itibariyle Hindistan geçmiş olabilir)",
+      "category": "Coğrafya",
+      "subject": "Beşeri Coğrafya"
+    }
+  ]
+}

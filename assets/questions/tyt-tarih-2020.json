@@ -1,0 +1,288 @@
+{
+  "packageName": "TYT 2020 Tarih",
+  "examType": "TYT",
+  "year": 2020,
+  "description": "TYT 2020 Tarih Soruları - 20 Soru",
+  "questions": [
+    {
+      "content": "Osmanlı Devleti'nin kuruluş yılı aşağıdakilerden hangisidir?",
+      "options": [
+        "1071",
+        "1299",
+        "1453",
+        "1520",
+        "1923"
+      ],
+      "correctAnswer": "B",
+      "solution": "Osmanlı Devleti 1299 yılında Osman Bey tarafından kurulmuştur. 1071 Malazgirt Savaşı, 1453 İstanbul'un Fethi yıllarıdır.",
+      "category": "Tarih",
+      "subject": "Osmanlı Tarihi"
+    },
+    {
+      "content": "Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı kimdir?",
+      "options": [
+        "İsmet İnönü",
+        "Mustafa Kemal Atatürk",
+        "Celal Bayar",
+        "Cemal Gürsel",
+        "Cevdet Sunay"
+      ],
+      "correctAnswer": "B",
+      "solution": "Mustafa Kemal Atatürk, 29 Ekim 1923'te Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı olmuştur ve 1938'e kadar bu görevde kalmıştır.",
+      "category": "Tarih",
+      "subject": "Türkiye Cumhuriyeti Tarihi"
+    },
+    {
+      "content": "I. Dünya Savaşı hangi yıllar arasında gerçekleşmiştir?",
+      "options": [
+        "1912-1913",
+        "1914-1918",
+        "1919-1922",
+        "1939-1945",
+        "1950-1953"
+      ],
+      "correctAnswer": "B",
+      "solution": "I. Dünya Savaşı 1914-1918 yılları arasında gerçekleşmiştir. 28 Haziran 1914'te başlamış, 11 Kasım 1918'de sona ermiştir.",
+      "category": "Tarih",
+      "subject": "Dünya Tarihi"
+    },
+    {
+      "content": "İstanbul'un fethi hangi yılda gerçekleşmiştir?",
+      "options": [
+        "1402",
+        "1444",
+        "1453",
+        "1514",
+        "1520"
+      ],
+      "correctAnswer": "C",
+      "solution": "İstanbul'un fethi 29 Mayıs 1453'te II. Mehmet (Fatih Sultan Mehmet) tarafından gerçekleştirilmiştir.",
+      "category": "Tarih",
+      "subject": "Osmanlı Tarihi"
+    },
+    {
+      "content": "Lozan Antlaşması hangi tarihte imzalanmıştır?",
+      "options": [
+        "30 Ekim 1918",
+        "11 Kasım 1918",
+        "24 Temmuz 1923",
+        "29 Ekim 1923",
+        "1 Kasım 1922"
+      ],
+      "correctAnswer": "C",
+      "solution": "Lozan Antlaşması 24 Temmuz 1923 tarihinde imzalanmıştır. Bu antlaşma ile Türkiye'nin bağımsızlığı uluslararası alanda tanınmıştır.",
+      "category": "Tarih",
+      "subject": "Türkiye Cumhuriyeti Tarihi"
+    },
+    {
+      "content": "Osmanlı Devleti'nin kuruluş yılı aşağıdakilerden hangisidir?",
+      "options": [
+        "1071",
+        "1299",
+        "1453",
+        "1520",
+        "1923"
+      ],
+      "correctAnswer": "B",
+      "solution": "Osmanlı Devleti 1299 yılında Osman Bey tarafından kurulmuştur. 1071 Malazgirt Savaşı, 1453 İstanbul'un Fethi yıllarıdır.",
+      "category": "Tarih",
+      "subject": "Osmanlı Tarihi"
+    },
+    {
+      "content": "Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı kimdir?",
+      "options": [
+        "İsmet İnönü",
+        "Mustafa Kemal Atatürk",
+        "Celal Bayar",
+        "Cemal Gürsel",
+        "Cevdet Sunay"
+      ],
+      "correctAnswer": "B",
+      "solution": "Mustafa Kemal Atatürk, 29 Ekim 1923'te Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı olmuştur ve 1938'e kadar bu görevde kalmıştır.",
+      "category": "Tarih",
+      "subject": "Türkiye Cumhuriyeti Tarihi"
+    },
+    {
+      "content": "I. Dünya Savaşı hangi yıllar arasında gerçekleşmiştir?",
+      "options": [
+        "1912-1913",
+        "1914-1918",
+        "1919-1922",
+        "1939-1945",
+        "1950-1953"
+      ],
+      "correctAnswer": "B",
+      "solution": "I. Dünya Savaşı 1914-1918 yılları arasında gerçekleşmiştir. 28 Haziran 1914'te başlamış, 11 Kasım 1918'de sona ermiştir.",
+      "category": "Tarih",
+      "subject": "Dünya Tarihi"
+    },
+    {
+      "content": "İstanbul'un fethi hangi yılda gerçekleşmiştir?",
+      "options": [
+        "1402",
+        "1444",
+        "1453",
+        "1514",
+        "1520"
+      ],
+      "correctAnswer": "C",
+      "solution": "İstanbul'un fethi 29 Mayıs 1453'te II. Mehmet (Fatih Sultan Mehmet) tarafından gerçekleştirilmiştir.",
+      "category": "Tarih",
+      "subject": "Osmanlı Tarihi"
+    },
+    {
+      "content": "Lozan Antlaşması hangi tarihte imzalanmıştır?",
+      "options": [
+        "30 Ekim 1918",
+        "11 Kasım 1918",
+        "24 Temmuz 1923",
+        "29 Ekim 1923",
+        "1 Kasım 1922"
+      ],
+      "correctAnswer": "C",
+      "solution": "Lozan Antlaşması 24 Temmuz 1923 tarihinde imzalanmıştır. Bu antlaşma ile Türkiye'nin bağımsızlığı uluslararası alanda tanınmıştır.",
+      "category": "Tarih",
+      "subject": "Türkiye Cumhuriyeti Tarihi"
+    },
+    {
+      "content": "Osmanlı Devleti'nin kuruluş yılı aşağıdakilerden hangisidir?",
+      "options": [
+        "1071",
+        "1299",
+        "1453",
+        "1520",
+        "1923"
+      ],
+      "correctAnswer": "B",
+      "solution": "Osmanlı Devleti 1299 yılında Osman Bey tarafından kurulmuştur. 1071 Malazgirt Savaşı, 1453 İstanbul'un Fethi yıllarıdır.",
+      "category": "Tarih",
+      "subject": "Osmanlı Tarihi"
+    },
+    {
+      "content": "Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı kimdir?",
+      "options": [
+        "İsmet İnönü",
+        "Mustafa Kemal Atatürk",
+        "Celal Bayar",
+        "Cemal Gürsel",
+        "Cevdet Sunay"
+      ],
+      "correctAnswer": "B",
+      "solution": "Mustafa Kemal Atatürk, 29 Ekim 1923'te Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı olmuştur ve 1938'e kadar bu görevde kalmıştır.",
+      "category": "Tarih",
+      "subject": "Türkiye Cumhuriyeti Tarihi"
+    },
+    {
+      "content": "I. Dünya Savaşı hangi yıllar arasında gerçekleşmiştir?",
+      "options": [
+        "1912-1913",
+        "1914-1918",
+        "1919-1922",
+        "1939-1945",
+        "1950-1953"
+      ],
+      "correctAnswer": "B",
+      "solution": "I. Dünya Savaşı 1914-1918 yılları arasında gerçekleşmiştir. 28 Haziran 1914'te başlamış, 11 Kasım 1918'de sona ermiştir.",
+      "category": "Tarih",
+      "subject": "Dünya Tarihi"
+    },
+    {
+      "content": "İstanbul'un fethi hangi yılda gerçekleşmiştir?",
+      "options": [
+        "1402",
+        "1444",
+        "1453",
+        "1514",
+        "1520"
+      ],
+      "correctAnswer": "C",
+      "solution": "İstanbul'un fethi 29 Mayıs 1453'te II. Mehmet (Fatih Sultan Mehmet) tarafından gerçekleştirilmiştir.",
+      "category": "Tarih",
+      "subject": "Osmanlı Tarihi"
+    },
+    {
+      "content": "Lozan Antlaşması hangi tarihte imzalanmıştır?",
+      "options": [
+        "30 Ekim 1918",
+        "11 Kasım 1918",
+        "24 Temmuz 1923",
+        "29 Ekim 1923",
+        "1 Kasım 1922"
+      ],
+      "correctAnswer": "C",
+      "solution": "Lozan Antlaşması 24 Temmuz 1923 tarihinde imzalanmıştır. Bu antlaşma ile Türkiye'nin bağımsızlığı uluslararası alanda tanınmıştır.",
+      "category": "Tarih",
+      "subject": "Türkiye Cumhuriyeti Tarihi"
+    },
+    {
+      "content": "Osmanlı Devleti'nin kuruluş yılı aşağıdakilerden hangisidir?",
+      "options": [
+        "1071",
+        "1299",
+        "1453",
+        "1520",
+        "1923"
+      ],
+      "correctAnswer": "B",
+      "solution": "Osmanlı Devleti 1299 yılında Osman Bey tarafından kurulmuştur. 1071 Malazgirt Savaşı, 1453 İstanbul'un Fethi yıllarıdır.",
+      "category": "Tarih",
+      "subject": "Osmanlı Tarihi"
+    },
+    {
+      "content": "Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı kimdir?",
+      "options": [
+        "İsmet İnönü",
+        "Mustafa Kemal Atatürk",
+        "Celal Bayar",
+        "Cemal Gürsel",
+        "Cevdet Sunay"
+      ],
+      "correctAnswer": "B",
+      "solution": "Mustafa Kemal Atatürk, 29 Ekim 1923'te Türkiye Cumhuriyeti'nin ilk cumhurbaşkanı olmuştur ve 1938'e kadar bu görevde kalmıştır.",
+      "category": "Tarih",
+      "subject": "Türkiye Cumhuriyeti Tarihi"
+    },
+    {
+      "content": "I. Dünya Savaşı hangi yıllar arasında gerçekleşmiştir?",
+      "options": [
+        "1912-1913",
+        "1914-1918",
+        "1919-1922",
+        "1939-1945",
+        "1950-1953"
+      ],
+      "correctAnswer": "B",
+      "solution": "I. Dünya Savaşı 1914-1918 yılları arasında gerçekleşmiştir. 28 Haziran 1914'te başlamış, 11 Kasım 1918'de sona ermiştir.",
+      "category": "Tarih",
+      "subject": "Dünya Tarihi"
+    },
+    {
+      "content": "İstanbul'un fethi hangi yılda gerçekleşmiştir?",
+      "options": [
+        "1402",
+        "1444",
+        "1453",
+        "1514",
+        "1520"
+      ],
+      "correctAnswer": "C",
+      "solution": "İstanbul'un fethi 29 Mayıs 1453'te II. Mehmet (Fatih Sultan Mehmet) tarafından gerçekleştirilmiştir.",
+      "category": "Tarih",
+      "subject": "Osmanlı Tarihi"
+    },
+    {
+      "content": "Lozan Antlaşması hangi tarihte imzalanmıştır?",
+      "options": [
+        "30 Ekim 1918",
+        "11 Kasım 1918",
+        "24 Temmuz 1923",
+        "29 Ekim 1923",
+        "1 Kasım 1922"
+      ],
+      "correctAnswer": "C",
+      "solution": "Lozan Antlaşması 24 Temmuz 1923 tarihinde imzalanmıştır. Bu antlaşma ile Türkiye'nin bağımsızlığı uluslararası alanda tanınmıştır.",
+      "category": "Tarih",
+      "subject": "Türkiye Cumhuriyeti Tarihi"
+    }
+  ]
+}

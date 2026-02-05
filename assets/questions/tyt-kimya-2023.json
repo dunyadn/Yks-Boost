@@ -1,0 +1,568 @@
+{
+  "packageName": "TYT 2023 Kimya",
+  "examType": "TYT",
+  "year": 2023,
+  "description": "TYT 2023 Kimya Soruları - 40 Soru",
+  "questions": [
+    {
+      "content": "1 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "0",
+        "11.2",
+        "22.4",
+        "33.599999999999994",
+        "44.8"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 1 mol gaz 1 × 22.4 = 22.4 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "132 gram CO₂ kaç moldür? (MA: 44 g/mol)",
+      "options": [
+        "2",
+        "2.5",
+        "3",
+        "3.5",
+        "4"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 132 / 44 = 3 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 4 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻2",
+        "10⁻3",
+        "10⁻4",
+        "10⁻5",
+        "10⁻6"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 4 = -log[H⁺] → [H⁺] = 10⁻4 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "4 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "67.19999999999999",
+        "78.39999999999999",
+        "89.6",
+        "100.8",
+        "112"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 4 mol gaz 4 × 22.4 = 89.6 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "36 gram su (H₂O) kaç moldür? (MA: 18 g/mol)",
+      "options": [
+        "1",
+        "1.5",
+        "2",
+        "2.5",
+        "3"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 36 / 18 = 2 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 7 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻5",
+        "10⁻6",
+        "10⁻7",
+        "10⁻8",
+        "10⁻9"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 7 = -log[H⁺] → [H⁺] = 10⁻7 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "2 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "22.4",
+        "33.599999999999994",
+        "44.8",
+        "56",
+        "67.19999999999999"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 2 mol gaz 2 × 22.4 = 44.8 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "320 gram SO₂ kaç moldür? (MA: 64 g/mol)",
+      "options": [
+        "4",
+        "4.5",
+        "5",
+        "5.5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 320 / 64 = 5 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 10 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻8",
+        "10⁻9",
+        "10⁻10",
+        "10⁻11",
+        "10⁻12"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 10 = -log[H⁺] → [H⁺] = 10⁻10 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "5 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "89.6",
+        "100.8",
+        "112",
+        "123.2",
+        "134.4"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 5 mol gaz 5 × 22.4 = 112 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "128 gram O₂ kaç moldür? (MA: 32 g/mol)",
+      "options": [
+        "3",
+        "3.5",
+        "4",
+        "4.5",
+        "5"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 128 / 32 = 4 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 2 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻0",
+        "10⁻1",
+        "10⁻2",
+        "10⁻3",
+        "10⁻4"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 2 = -log[H⁺] → [H⁺] = 10⁻2 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "3 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "44.79999999999999",
+        "55.999999999999986",
+        "67.19999999999999",
+        "78.39999999999999",
+        "89.6"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 3 mol gaz 3 × 22.4 = 67.19999999999999 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "132 gram CO₂ kaç moldür? (MA: 44 g/mol)",
+      "options": [
+        "2",
+        "2.5",
+        "3",
+        "3.5",
+        "4"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 132 / 44 = 3 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 5 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻3",
+        "10⁻4",
+        "10⁻5",
+        "10⁻6",
+        "10⁻7"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 5 = -log[H⁺] → [H⁺] = 10⁻5 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "1 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "0",
+        "11.2",
+        "22.4",
+        "33.599999999999994",
+        "44.8"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 1 mol gaz 1 × 22.4 = 22.4 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "36 gram su (H₂O) kaç moldür? (MA: 18 g/mol)",
+      "options": [
+        "1",
+        "1.5",
+        "2",
+        "2.5",
+        "3"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 36 / 18 = 2 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 8 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻6",
+        "10⁻7",
+        "10⁻8",
+        "10⁻9",
+        "10⁻10"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 8 = -log[H⁺] → [H⁺] = 10⁻8 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "4 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "67.19999999999999",
+        "78.39999999999999",
+        "89.6",
+        "100.8",
+        "112"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 4 mol gaz 4 × 22.4 = 89.6 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "320 gram SO₂ kaç moldür? (MA: 64 g/mol)",
+      "options": [
+        "4",
+        "4.5",
+        "5",
+        "5.5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 320 / 64 = 5 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 11 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻9",
+        "10⁻10",
+        "10⁻11",
+        "10⁻12",
+        "10⁻13"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 11 = -log[H⁺] → [H⁺] = 10⁻11 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "2 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "22.4",
+        "33.599999999999994",
+        "44.8",
+        "56",
+        "67.19999999999999"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 2 mol gaz 2 × 22.4 = 44.8 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "128 gram O₂ kaç moldür? (MA: 32 g/mol)",
+      "options": [
+        "3",
+        "3.5",
+        "4",
+        "4.5",
+        "5"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 128 / 32 = 4 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 3 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻1",
+        "10⁻2",
+        "10⁻3",
+        "10⁻4",
+        "10⁻5"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 3 = -log[H⁺] → [H⁺] = 10⁻3 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "5 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "89.6",
+        "100.8",
+        "112",
+        "123.2",
+        "134.4"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 5 mol gaz 5 × 22.4 = 112 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "132 gram CO₂ kaç moldür? (MA: 44 g/mol)",
+      "options": [
+        "2",
+        "2.5",
+        "3",
+        "3.5",
+        "4"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 132 / 44 = 3 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 6 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻4",
+        "10⁻5",
+        "10⁻6",
+        "10⁻7",
+        "10⁻8"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 6 = -log[H⁺] → [H⁺] = 10⁻6 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "3 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "44.79999999999999",
+        "55.999999999999986",
+        "67.19999999999999",
+        "78.39999999999999",
+        "89.6"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 3 mol gaz 3 × 22.4 = 67.19999999999999 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "36 gram su (H₂O) kaç moldür? (MA: 18 g/mol)",
+      "options": [
+        "1",
+        "1.5",
+        "2",
+        "2.5",
+        "3"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 36 / 18 = 2 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 9 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻7",
+        "10⁻8",
+        "10⁻9",
+        "10⁻10",
+        "10⁻11"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 9 = -log[H⁺] → [H⁺] = 10⁻9 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "1 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "0",
+        "11.2",
+        "22.4",
+        "33.599999999999994",
+        "44.8"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 1 mol gaz 1 × 22.4 = 22.4 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "320 gram SO₂ kaç moldür? (MA: 64 g/mol)",
+      "options": [
+        "4",
+        "4.5",
+        "5",
+        "5.5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 320 / 64 = 5 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 12 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻10",
+        "10⁻11",
+        "10⁻12",
+        "10⁻13",
+        "10⁻14"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 12 = -log[H⁺] → [H⁺] = 10⁻12 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "4 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "67.19999999999999",
+        "78.39999999999999",
+        "89.6",
+        "100.8",
+        "112"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 4 mol gaz 4 × 22.4 = 89.6 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "128 gram O₂ kaç moldür? (MA: 32 g/mol)",
+      "options": [
+        "3",
+        "3.5",
+        "4",
+        "4.5",
+        "5"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 128 / 32 = 4 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 4 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻2",
+        "10⁻3",
+        "10⁻4",
+        "10⁻5",
+        "10⁻6"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 4 = -log[H⁺] → [H⁺] = 10⁻4 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "2 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "22.4",
+        "33.599999999999994",
+        "44.8",
+        "56",
+        "67.19999999999999"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 2 mol gaz 2 × 22.4 = 44.8 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    },
+    {
+      "content": "132 gram CO₂ kaç moldür? (MA: 44 g/mol)",
+      "options": [
+        "2",
+        "2.5",
+        "3",
+        "3.5",
+        "4"
+      ],
+      "correctAnswer": "C",
+      "solution": "n = kütle / molar kütle = 132 / 44 = 3 mol",
+      "category": "Kimya",
+      "subject": "Mol Kavramı"
+    },
+    {
+      "content": "pH = 7 olan bir çözeltinin [H⁺] derişimi kaç M'dır?",
+      "options": [
+        "10⁻5",
+        "10⁻6",
+        "10⁻7",
+        "10⁻8",
+        "10⁻9"
+      ],
+      "correctAnswer": "C",
+      "solution": "pH = -log[H⁺] → 7 = -log[H⁺] → [H⁺] = 10⁻7 M",
+      "category": "Kimya",
+      "subject": "Asit-Baz"
+    },
+    {
+      "content": "5 mol ideal gazın STP koşullarında hacmi kaç L'dir?",
+      "options": [
+        "89.6",
+        "100.8",
+        "112",
+        "123.2",
+        "134.4"
+      ],
+      "correctAnswer": "C",
+      "solution": "STP koşullarında 1 mol gaz 22.4 L hacim kaplar. 5 mol gaz 5 × 22.4 = 112 L hacim kaplar.",
+      "category": "Kimya",
+      "subject": "Gazlar"
+    }
+  ]
+}

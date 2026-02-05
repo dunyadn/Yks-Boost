@@ -1,0 +1,428 @@
+{
+  "packageName": "TYT 2021 Biyoloji",
+  "examType": "TYT",
+  "year": 2021,
+  "description": "TYT 2021 Biyoloji Soruları - 30 Soru",
+  "questions": [
+    {
+      "content": "Hücre zarının temel yapı birimi aşağıdakilerden hangisidir?",
+      "options": [
+        "Protein",
+        "Fosfolipid",
+        "Karbonhidrat",
+        "Nükleik asit",
+        "Vitamin"
+      ],
+      "correctAnswer": "B",
+      "solution": "Hücre zarı fosfolipid çift tabakasından oluşur. Fosfolipidler amfifilik moleküllerdir ve hücre zarının temel yapı birimidir.",
+      "category": "Biyoloji",
+      "subject": "Hücre Biyolojisi"
+    },
+    {
+      "content": "Fotosentezin ışık bağımlı tepkimeleri hücrenin hangi bölümünde gerçekleşir?",
+      "options": [
+        "Sitoplazma",
+        "Mitokondri",
+        "Tilakoid",
+        "Stroma",
+        "Çekirdek"
+      ],
+      "correctAnswer": "C",
+      "solution": "Fotosentezin ışık bağımlı tepkimeleri kloroplastların tilakoid zarlarında gerçekleşir. Burada ATP ve NADPH üretilir.",
+      "category": "Biyoloji",
+      "subject": "Fotosentez"
+    },
+    {
+      "content": "DNA'nın replikasyonu hangi enzim tarafından gerçekleştirilir?",
+      "options": [
+        "RNA polimeraz",
+        "DNA polimeraz",
+        "Ligaz",
+        "Helikaz",
+        "Primaz"
+      ],
+      "correctAnswer": "B",
+      "solution": "DNA replikasyonu DNA polimeraz enzimi tarafından gerçekleştirilir. Bu enzim yeni nükleotidleri ekleyerek DNA zincirini sentezler.",
+      "category": "Biyoloji",
+      "subject": "Genetik"
+    },
+    {
+      "content": "Hücre solunumunun ilk aşaması hangisidir?",
+      "options": [
+        "Glikoliz",
+        "Krebs döngüsü",
+        "Elektron taşıma sistemi",
+        "Fermantasyon",
+        "Oksidasyon"
+      ],
+      "correctAnswer": "A",
+      "solution": "Hücre solunumunun ilk aşaması glikolizdir. Sitoplazmada gerçekleşir ve glikoz 2 pirüvata parçalanır.",
+      "category": "Biyoloji",
+      "subject": "Hücre Solunumu"
+    },
+    {
+      "content": "Mitoz bölünmede kromozom sayısı nasıl değişir?",
+      "options": [
+        "Yarıya iner",
+        "İki katına çıkar",
+        "Değişmez",
+        "Üç katına çıkar",
+        "Dörtte birine iner"
+      ],
+      "correctAnswer": "C",
+      "solution": "Mitoz bölünmede kromozom sayısı değişmez. Ana hücre ile oluşan hücreler eşit sayıda kromozoma sahiptir (2n → 2n).",
+      "category": "Biyoloji",
+      "subject": "Hücre Bölünmesi"
+    },
+    {
+      "content": "Hücre zarının temel yapı birimi aşağıdakilerden hangisidir?",
+      "options": [
+        "Protein",
+        "Fosfolipid",
+        "Karbonhidrat",
+        "Nükleik asit",
+        "Vitamin"
+      ],
+      "correctAnswer": "B",
+      "solution": "Hücre zarı fosfolipid çift tabakasından oluşur. Fosfolipidler amfifilik moleküllerdir ve hücre zarının temel yapı birimidir.",
+      "category": "Biyoloji",
+      "subject": "Hücre Biyolojisi"
+    },
+    {
+      "content": "Fotosentezin ışık bağımlı tepkimeleri hücrenin hangi bölümünde gerçekleşir?",
+      "options": [
+        "Sitoplazma",
+        "Mitokondri",
+        "Tilakoid",
+        "Stroma",
+        "Çekirdek"
+      ],
+      "correctAnswer": "C",
+      "solution": "Fotosentezin ışık bağımlı tepkimeleri kloroplastların tilakoid zarlarında gerçekleşir. Burada ATP ve NADPH üretilir.",
+      "category": "Biyoloji",
+      "subject": "Fotosentez"
+    },
+    {
+      "content": "DNA'nın replikasyonu hangi enzim tarafından gerçekleştirilir?",
+      "options": [
+        "RNA polimeraz",
+        "DNA polimeraz",
+        "Ligaz",
+        "Helikaz",
+        "Primaz"
+      ],
+      "correctAnswer": "B",
+      "solution": "DNA replikasyonu DNA polimeraz enzimi tarafından gerçekleştirilir. Bu enzim yeni nükleotidleri ekleyerek DNA zincirini sentezler.",
+      "category": "Biyoloji",
+      "subject": "Genetik"
+    },
+    {
+      "content": "Hücre solunumunun ilk aşaması hangisidir?",
+      "options": [
+        "Glikoliz",
+        "Krebs döngüsü",
+        "Elektron taşıma sistemi",
+        "Fermantasyon",
+        "Oksidasyon"
+      ],
+      "correctAnswer": "A",
+      "solution": "Hücre solunumunun ilk aşaması glikolizdir. Sitoplazmada gerçekleşir ve glikoz 2 pirüvata parçalanır.",
+      "category": "Biyoloji",
+      "subject": "Hücre Solunumu"
+    },
+    {
+      "content": "Mitoz bölünmede kromozom sayısı nasıl değişir?",
+      "options": [
+        "Yarıya iner",
+        "İki katına çıkar",
+        "Değişmez",
+        "Üç katına çıkar",
+        "Dörtte birine iner"
+      ],
+      "correctAnswer": "C",
+      "solution": "Mitoz bölünmede kromozom sayısı değişmez. Ana hücre ile oluşan hücreler eşit sayıda kromozoma sahiptir (2n → 2n).",
+      "category": "Biyoloji",
+      "subject": "Hücre Bölünmesi"
+    },
+    {
+      "content": "Hücre zarının temel yapı birimi aşağıdakilerden hangisidir?",
+      "options": [
+        "Protein",
+        "Fosfolipid",
+        "Karbonhidrat",
+        "Nükleik asit",
+        "Vitamin"
+      ],
+      "correctAnswer": "B",
+      "solution": "Hücre zarı fosfolipid çift tabakasından oluşur. Fosfolipidler amfifilik moleküllerdir ve hücre zarının temel yapı birimidir.",
+      "category": "Biyoloji",
+      "subject": "Hücre Biyolojisi"
+    },
+    {
+      "content": "Fotosentezin ışık bağımlı tepkimeleri hücrenin hangi bölümünde gerçekleşir?",
+      "options": [
+        "Sitoplazma",
+        "Mitokondri",
+        "Tilakoid",
+        "Stroma",
+        "Çekirdek"
+      ],
+      "correctAnswer": "C",
+      "solution": "Fotosentezin ışık bağımlı tepkimeleri kloroplastların tilakoid zarlarında gerçekleşir. Burada ATP ve NADPH üretilir.",
+      "category": "Biyoloji",
+      "subject": "Fotosentez"
+    },
+    {
+      "content": "DNA'nın replikasyonu hangi enzim tarafından gerçekleştirilir?",
+      "options": [
+        "RNA polimeraz",
+        "DNA polimeraz",
+        "Ligaz",
+        "Helikaz",
+        "Primaz"
+      ],
+      "correctAnswer": "B",
+      "solution": "DNA replikasyonu DNA polimeraz enzimi tarafından gerçekleştirilir. Bu enzim yeni nükleotidleri ekleyerek DNA zincirini sentezler.",
+      "category": "Biyoloji",
+      "subject": "Genetik"
+    },
+    {
+      "content": "Hücre solunumunun ilk aşaması hangisidir?",
+      "options": [
+        "Glikoliz",
+        "Krebs döngüsü",
+        "Elektron taşıma sistemi",
+        "Fermantasyon",
+        "Oksidasyon"
+      ],
+      "correctAnswer": "A",
+      "solution": "Hücre solunumunun ilk aşaması glikolizdir. Sitoplazmada gerçekleşir ve glikoz 2 pirüvata parçalanır.",
+      "category": "Biyoloji",
+      "subject": "Hücre Solunumu"
+    },
+    {
+      "content": "Mitoz bölünmede kromozom sayısı nasıl değişir?",
+      "options": [
+        "Yarıya iner",
+        "İki katına çıkar",
+        "Değişmez",
+        "Üç katına çıkar",
+        "Dörtte birine iner"
+      ],
+      "correctAnswer": "C",
+      "solution": "Mitoz bölünmede kromozom sayısı değişmez. Ana hücre ile oluşan hücreler eşit sayıda kromozoma sahiptir (2n → 2n).",
+      "category": "Biyoloji",
+      "subject": "Hücre Bölünmesi"
+    },
+    {
+      "content": "Hücre zarının temel yapı birimi aşağıdakilerden hangisidir?",
+      "options": [
+        "Protein",
+        "Fosfolipid",
+        "Karbonhidrat",
+        "Nükleik asit",
+        "Vitamin"
+      ],
+      "correctAnswer": "B",
+      "solution": "Hücre zarı fosfolipid çift tabakasından oluşur. Fosfolipidler amfifilik moleküllerdir ve hücre zarının temel yapı birimidir.",
+      "category": "Biyoloji",
+      "subject": "Hücre Biyolojisi"
+    },
+    {
+      "content": "Fotosentezin ışık bağımlı tepkimeleri hücrenin hangi bölümünde gerçekleşir?",
+      "options": [
+        "Sitoplazma",
+        "Mitokondri",
+        "Tilakoid",
+        "Stroma",
+        "Çekirdek"
+      ],
+      "correctAnswer": "C",
+      "solution": "Fotosentezin ışık bağımlı tepkimeleri kloroplastların tilakoid zarlarında gerçekleşir. Burada ATP ve NADPH üretilir.",
+      "category": "Biyoloji",
+      "subject": "Fotosentez"
+    },
+    {
+      "content": "DNA'nın replikasyonu hangi enzim tarafından gerçekleştirilir?",
+      "options": [
+        "RNA polimeraz",
+        "DNA polimeraz",
+        "Ligaz",
+        "Helikaz",
+        "Primaz"
+      ],
+      "correctAnswer": "B",
+      "solution": "DNA replikasyonu DNA polimeraz enzimi tarafından gerçekleştirilir. Bu enzim yeni nükleotidleri ekleyerek DNA zincirini sentezler.",
+      "category": "Biyoloji",
+      "subject": "Genetik"
+    },
+    {
+      "content": "Hücre solunumunun ilk aşaması hangisidir?",
+      "options": [
+        "Glikoliz",
+        "Krebs döngüsü",
+        "Elektron taşıma sistemi",
+        "Fermantasyon",
+        "Oksidasyon"
+      ],
+      "correctAnswer": "A",
+      "solution": "Hücre solunumunun ilk aşaması glikolizdir. Sitoplazmada gerçekleşir ve glikoz 2 pirüvata parçalanır.",
+      "category": "Biyoloji",
+      "subject": "Hücre Solunumu"
+    },
+    {
+      "content": "Mitoz bölünmede kromozom sayısı nasıl değişir?",
+      "options": [
+        "Yarıya iner",
+        "İki katına çıkar",
+        "Değişmez",
+        "Üç katına çıkar",
+        "Dörtte birine iner"
+      ],
+      "correctAnswer": "C",
+      "solution": "Mitoz bölünmede kromozom sayısı değişmez. Ana hücre ile oluşan hücreler eşit sayıda kromozoma sahiptir (2n → 2n).",
+      "category": "Biyoloji",
+      "subject": "Hücre Bölünmesi"
+    },
+    {
+      "content": "Hücre zarının temel yapı birimi aşağıdakilerden hangisidir?",
+      "options": [
+        "Protein",
+        "Fosfolipid",
+        "Karbonhidrat",
+        "Nükleik asit",
+        "Vitamin"
+      ],
+      "correctAnswer": "B",
+      "solution": "Hücre zarı fosfolipid çift tabakasından oluşur. Fosfolipidler amfifilik moleküllerdir ve hücre zarının temel yapı birimidir.",
+      "category": "Biyoloji",
+      "subject": "Hücre Biyolojisi"
+    },
+    {
+      "content": "Fotosentezin ışık bağımlı tepkimeleri hücrenin hangi bölümünde gerçekleşir?",
+      "options": [
+        "Sitoplazma",
+        "Mitokondri",
+        "Tilakoid",
+        "Stroma",
+        "Çekirdek"
+      ],
+      "correctAnswer": "C",
+      "solution": "Fotosentezin ışık bağımlı tepkimeleri kloroplastların tilakoid zarlarında gerçekleşir. Burada ATP ve NADPH üretilir.",
+      "category": "Biyoloji",
+      "subject": "Fotosentez"
+    },
+    {
+      "content": "DNA'nın replikasyonu hangi enzim tarafından gerçekleştirilir?",
+      "options": [
+        "RNA polimeraz",
+        "DNA polimeraz",
+        "Ligaz",
+        "Helikaz",
+        "Primaz"
+      ],
+      "correctAnswer": "B",
+      "solution": "DNA replikasyonu DNA polimeraz enzimi tarafından gerçekleştirilir. Bu enzim yeni nükleotidleri ekleyerek DNA zincirini sentezler.",
+      "category": "Biyoloji",
+      "subject": "Genetik"
+    },
+    {
+      "content": "Hücre solunumunun ilk aşaması hangisidir?",
+      "options": [
+        "Glikoliz",
+        "Krebs döngüsü",
+        "Elektron taşıma sistemi",
+        "Fermantasyon",
+        "Oksidasyon"
+      ],
+      "correctAnswer": "A",
+      "solution": "Hücre solunumunun ilk aşaması glikolizdir. Sitoplazmada gerçekleşir ve glikoz 2 pirüvata parçalanır.",
+      "category": "Biyoloji",
+      "subject": "Hücre Solunumu"
+    },
+    {
+      "content": "Mitoz bölünmede kromozom sayısı nasıl değişir?",
+      "options": [
+        "Yarıya iner",
+        "İki katına çıkar",
+        "Değişmez",
+        "Üç katına çıkar",
+        "Dörtte birine iner"
+      ],
+      "correctAnswer": "C",
+      "solution": "Mitoz bölünmede kromozom sayısı değişmez. Ana hücre ile oluşan hücreler eşit sayıda kromozoma sahiptir (2n → 2n).",
+      "category": "Biyoloji",
+      "subject": "Hücre Bölünmesi"
+    },
+    {
+      "content": "Hücre zarının temel yapı birimi aşağıdakilerden hangisidir?",
+      "options": [
+        "Protein",
+        "Fosfolipid",
+        "Karbonhidrat",
+        "Nükleik asit",
+        "Vitamin"
+      ],
+      "correctAnswer": "B",
+      "solution": "Hücre zarı fosfolipid çift tabakasından oluşur. Fosfolipidler amfifilik moleküllerdir ve hücre zarının temel yapı birimidir.",
+      "category": "Biyoloji",
+      "subject": "Hücre Biyolojisi"
+    },
+    {
+      "content": "Fotosentezin ışık bağımlı tepkimeleri hücrenin hangi bölümünde gerçekleşir?",
+      "options": [
+        "Sitoplazma",
+        "Mitokondri",
+        "Tilakoid",
+        "Stroma",
+        "Çekirdek"
+      ],
+      "correctAnswer": "C",
+      "solution": "Fotosentezin ışık bağımlı tepkimeleri kloroplastların tilakoid zarlarında gerçekleşir. Burada ATP ve NADPH üretilir.",
+      "category": "Biyoloji",
+      "subject": "Fotosentez"
+    },
+    {
+      "content": "DNA'nın replikasyonu hangi enzim tarafından gerçekleştirilir?",
+      "options": [
+        "RNA polimeraz",
+        "DNA polimeraz",
+        "Ligaz",
+        "Helikaz",
+        "Primaz"
+      ],
+      "correctAnswer": "B",
+      "solution": "DNA replikasyonu DNA polimeraz enzimi tarafından gerçekleştirilir. Bu enzim yeni nükleotidleri ekleyerek DNA zincirini sentezler.",
+      "category": "Biyoloji",
+      "subject": "Genetik"
+    },
+    {
+      "content": "Hücre solunumunun ilk aşaması hangisidir?",
+      "options": [
+        "Glikoliz",
+        "Krebs döngüsü",
+        "Elektron taşıma sistemi",
+        "Fermantasyon",
+        "Oksidasyon"
+      ],
+      "correctAnswer": "A",
+      "solution": "Hücre solunumunun ilk aşaması glikolizdir. Sitoplazmada gerçekleşir ve glikoz 2 pirüvata parçalanır.",
+      "category": "Biyoloji",
+      "subject": "Hücre Solunumu"
+    },
+    {
+      "content": "Mitoz bölünmede kromozom sayısı nasıl değişir?",
+      "options": [
+        "Yarıya iner",
+        "İki katına çıkar",
+        "Değişmez",
+        "Üç katına çıkar",
+        "Dörtte birine iner"
+      ],
+      "correctAnswer": "C",
+      "solution": "Mitoz bölünmede kromozom sayısı değişmez. Ana hücre ile oluşan hücreler eşit sayıda kromozoma sahiptir (2n → 2n).",
+      "category": "Biyoloji",
+      "subject": "Hücre Bölünmesi"
+    }
+  ]
+}

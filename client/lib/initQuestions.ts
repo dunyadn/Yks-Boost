@@ -1,15 +1,54 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { savePackage, saveQuestions } from "./localStorage";
-import type { InsertQuestion } from "@shared/schema";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { savePackage, saveQuestions } from './localStorage';
+import type { InsertQuestion } from '@shared/schema';
 
 // Storage key for initialization flag
-const INIT_FLAG_KEY = "@yks_boost:initial_data_loaded";
+const INIT_FLAG_KEY = '@yks_boost:initial_data_loaded';
 
 // Import question packages
 const questionPackages = [
-  require("../../assets/questions/tyt-tarih-2026.json"),
-  require("../../assets/questions/tyt-matematik-2026.json"),
-  require("../../assets/questions/tyt-fizik-2026.json"),
+  require('../../assets/questions/tyt-biyoloji-2020.json'),
+  require('../../assets/questions/tyt-biyoloji-2021.json'),
+  require('../../assets/questions/tyt-biyoloji-2022.json'),
+  require('../../assets/questions/tyt-biyoloji-2023.json'),
+  require('../../assets/questions/tyt-biyoloji-2024.json'),
+  require('../../assets/questions/tyt-biyoloji-2025.json'),
+  require('../../assets/questions/tyt-cografya-2020.json'),
+  require('../../assets/questions/tyt-cografya-2021.json'),
+  require('../../assets/questions/tyt-cografya-2022.json'),
+  require('../../assets/questions/tyt-cografya-2023.json'),
+  require('../../assets/questions/tyt-cografya-2024.json'),
+  require('../../assets/questions/tyt-cografya-2025.json'),
+  require('../../assets/questions/tyt-fizik-2020.json'),
+  require('../../assets/questions/tyt-fizik-2021.json'),
+  require('../../assets/questions/tyt-fizik-2022.json'),
+  require('../../assets/questions/tyt-fizik-2023.json'),
+  require('../../assets/questions/tyt-fizik-2024.json'),
+  require('../../assets/questions/tyt-fizik-2025.json'),
+  require('../../assets/questions/tyt-fizik-2026.json'),
+  require('../../assets/questions/tyt-fizik-complete-2026.json'),
+  require('../../assets/questions/tyt-kimya-2020.json'),
+  require('../../assets/questions/tyt-kimya-2021.json'),
+  require('../../assets/questions/tyt-kimya-2022.json'),
+  require('../../assets/questions/tyt-kimya-2023.json'),
+  require('../../assets/questions/tyt-kimya-2024.json'),
+  require('../../assets/questions/tyt-kimya-2025.json'),
+  require('../../assets/questions/tyt-matematik-2020.json'),
+  require('../../assets/questions/tyt-matematik-2021.json'),
+  require('../../assets/questions/tyt-matematik-2022.json'),
+  require('../../assets/questions/tyt-matematik-2023.json'),
+  require('../../assets/questions/tyt-matematik-2024.json'),
+  require('../../assets/questions/tyt-matematik-2025.json'),
+  require('../../assets/questions/tyt-matematik-2026.json'),
+  require('../../assets/questions/tyt-matematik-complete-2026.json'),
+  require('../../assets/questions/tyt-tarih-2020.json'),
+  require('../../assets/questions/tyt-tarih-2021.json'),
+  require('../../assets/questions/tyt-tarih-2022.json'),
+  require('../../assets/questions/tyt-tarih-2023.json'),
+  require('../../assets/questions/tyt-tarih-2024.json'),
+  require('../../assets/questions/tyt-tarih-2025.json'),
+  require('../../assets/questions/tyt-tarih-2026.json'),
+  require('../../assets/questions/tyt-tarih-complete-2026.json'),
 ];
 
 interface QuestionData {
@@ -38,12 +77,12 @@ export async function initializeQuestions(): Promise<void> {
     // Check if data has already been loaded
     const isLoaded = await AsyncStorage.getItem(INIT_FLAG_KEY);
     
-    if (isLoaded === "true") {
-      console.log("✅ Initial questions already loaded, skipping initialization");
+    if (isLoaded === 'true') {
+      console.log('✅ Initial questions already loaded, skipping initialization');
       return;
     }
 
-    console.log("🔄 Loading initial question packages...");
+    console.log('🔄 Loading initial question packages...');
     
     let totalQuestionsLoaded = 0;
     let totalPackagesLoaded = 0;
@@ -52,7 +91,6 @@ export async function initializeQuestions(): Promise<void> {
     for (const packageData of questionPackages as PackageData[]) {
       try {
         // Validate package data
-        if (!packageData.packageName || !packageData.examType || !packageData.questions) {
           console.warn(`⚠️  Skipping invalid package:`, packageData);
           continue;
         }
@@ -73,7 +111,7 @@ export async function initializeQuestions(): Promise<void> {
           options: q.options,
           correctAnswer: q.correctAnswer,
           solution: q.solution || null,
-          category: q.category || "general",
+          category: q.category || 'general',
           subject: q.subject || null,
           packageId: newPackage.id,
           examType: packageData.examType,
@@ -92,13 +130,12 @@ export async function initializeQuestions(): Promise<void> {
     }
 
     // Set the initialization flag
-    await AsyncStorage.setItem(INIT_FLAG_KEY, "true");
+    await AsyncStorage.setItem(INIT_FLAG_KEY, 'true');
     
-    console.log(`🎉 Initialization complete!`);
     console.log(`   📦 Packages loaded: ${totalPackagesLoaded}`);
     console.log(`   📝 Total questions: ${totalQuestionsLoaded}`);
   } catch (error) {
-    console.error("❌ Error during question initialization:", error);
+    console.error('❌ Error during question initialization:', error);
   }
 }
 
@@ -108,7 +145,7 @@ export async function initializeQuestions(): Promise<void> {
  */
 export async function resetInitialization(): Promise<void> {
   await AsyncStorage.removeItem(INIT_FLAG_KEY);
-  console.log("🔄 Initialization flag reset");
+  console.log('🔄 Initialization flag reset');
 }
 
 /**
@@ -116,5 +153,5 @@ export async function resetInitialization(): Promise<void> {
  */
 export async function isInitialized(): Promise<boolean> {
   const isLoaded = await AsyncStorage.getItem(INIT_FLAG_KEY);
-  return isLoaded === "true";
+  return isLoaded === 'true';
 }
