@@ -14,10 +14,6 @@ localPort = 5000
 externalPort = 80
 
 [[ports]]
-localPort = 5001
-externalPort = 3000
-
-[[ports]]
 localPort = 8000
 externalPort = 8000
 
@@ -78,7 +74,7 @@ outputType = "console"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "PORT=8000 NODE_ENV=development tsx server/index.ts"
+args = "PORT=8000 tsx server/index.ts"
 waitForPort = 8000
 
 [[workflows.workflow]]
@@ -91,5 +87,5 @@ outputType = "webview"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "EXPO_PACKAGER_PROXY_URL=https://$REPLIT_DEV_DOMAIN REACT_NATIVE_PACKAGER_HOSTNAME=$REPLIT_DEV_DOMAIN EXPO_PUBLIC_DOMAIN=$REPLIT_DEV_DOMAIN:5000 npx expo start --port 5000 --tunnel --non-interactive"
+args = "EXPO_PACKAGER_PROXY_URL=https://$REPLIT_DEV_DOMAIN REACT_NATIVE_PACKAGER_HOSTNAME=$REPLIT_DEV_DOMAIN EXPO_PUBLIC_DOMAIN=$REPLIT_DEV_DOMAIN:5000 CI=1 npx expo start --port 5000 --tunnel --non-interactive"
 waitForPort = 5000
