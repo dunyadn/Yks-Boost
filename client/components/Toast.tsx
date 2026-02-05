@@ -220,9 +220,7 @@ const styles = StyleSheet.create({
       android: {
         elevation: 8,
       },
-      web: {
-        boxShadow: "0 4px 16px rgba(0, 0, 0, 0.2)" as any,
-      },
+      default: {},
     }),
   },
   iconContainer: {
