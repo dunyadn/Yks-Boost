@@ -46,4 +46,8 @@ app-example
 .env.local
 
 # storage data
-/data
+/data/storage.json
+
+# Keep data/questions and data/text-files tracked
+!/data/questions
+!/data/text-files

@@ -44,6 +44,7 @@ npm run expo:dev
 
 ### Diğer Özellikler
 - 📝 **Soru Ekle**: Modal form ile kolay soru paylaşımı
+- 🔄 **Soru Dönüştürme**: Text dosyalarından JSON formatına otomatik soru dönüştürme
 - ✓ **Görevlerim**: Çalışma hedefleri oluşturma ve ilerleme takibi
 - 📚 **Kütüphane**: Kayıtlı sorular, ders bazlı filtreleme
 - 👥 **Topluluk**: Telegram benzeri sohbet sistemi
@@ -82,12 +83,19 @@ npm run expo:dev
 │   ├── db/             # Veritabanı yapılandırması
 │   └── routes/         # API rotaları
 ├── shared/              # Frontend ve backend arasında paylaşılan kod
-└── scripts/             # Build ve deployment scriptleri
+├── scripts/             # Build ve deployment scriptleri
+│   └── converters/      # Soru dönüştürme araçları
+└── data/                # Soru dosyaları
+    ├── text-files/      # Kaynak text dosyaları
+    └── questions/       # Dönüştürülmüş JSON dosyaları
 ```
 
 ## 📖 Dokümantasyon
 
 - [Replit Expo Setup](REPLIT_EXPO_SETUP.md) - Replit'te çalıştırma talimatları
+- [Conversion Guide](CONVERSION_GUIDE.md) - **YENİ!** Text dosyalarını JSON'a dönüştürme rehberi
+- [Text Format Examples](TEXT_FORMAT_EXAMPLES.md) - **YENİ!** Desteklenen text formatları
+- [JSON Format Guide](JSON_FORMAT_GUIDE.md) - JSON soru formatı kılavuzu
 - [Testing Guide](TESTING_GUIDE.md) - Test etme rehberi
 - [Visual Guide](VISUAL_GUIDE.md) - Görsel tasarım rehberi
 - [Soru Ekleme Kılavuzu](SORU_EKLEME_KILAVUZU.md) - Soru ekleme rehberi
@@ -96,6 +104,9 @@ npm run expo:dev
 ## 🧪 Test ve Build
 
 ```bash
+# Text dosyasını JSON'a dönüştür
+npm run convert-questions <input.txt> <output.json> -- --package-name "Paket Adı" --exam-type TYT
+
 # Tip kontrolü
 npm run check:types
 
