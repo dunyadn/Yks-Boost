@@ -36,8 +36,15 @@ check_requirements() {
     
     # EAS CLI kontrolü
     if ! command -v eas &> /dev/null; then
-        echo -e "${YELLOW}⚠️ EAS CLI bulunamadı. Yükleniyor...${NC}"
-        npm install -g eas-cli
+        echo -e "${YELLOW}⚠️ EAS CLI bulunamadı.${NC}"
+        echo -e "${YELLOW}EAS CLI'ı yüklemek ister misiniz? (y/n)${NC}"
+        read -p "Seçiminiz: " install_eas
+        if [ "$install_eas" = "y" ] || [ "$install_eas" = "Y" ]; then
+            npm install -g eas-cli
+        else
+            echo -e "${RED}EAS CLI olmadan build yapılamaz.${NC}"
+            exit 1
+        fi
     fi
     echo -e "${GREEN}✓ EAS CLI yüklü${NC}"
     
@@ -88,13 +95,20 @@ build_local() {
     ./gradlew assembleRelease
     
     # APK dosyasını bul ve kopyala
-    APK_PATH=$(find . -name "*.apk" -type f | head -1)
-    if [ -n "$APK_PATH" ]; then
+    APK_PATH="./app/build/outputs/apk/release/app-release.apk"
+    if [ -f "$APK_PATH" ]; then
         cp "$APK_PATH" ../yksreels.apk
         echo -e "${GREEN}✅ APK oluşturuldu: yksreels.apk${NC}"
     else
-        echo -e "${RED}❌ APK dosyası bulunamadı.${NC}"
-        exit 1
+        # Fallback: alternatif yolları kontrol et
+        APK_PATH=$(find ./app/build/outputs/apk -name "*.apk" -type f | head -1)
+        if [ -n "$APK_PATH" ]; then
+            cp "$APK_PATH" ../yksreels.apk
+            echo -e "${GREEN}✅ APK oluşturuldu: yksreels.apk${NC}"
+        else
+            echo -e "${RED}❌ APK dosyası bulunamadı.${NC}"
+            exit 1
+        fi
     fi
     
     cd ..
