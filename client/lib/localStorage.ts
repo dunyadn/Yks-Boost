@@ -54,25 +54,9 @@ export async function getQuestions(): Promise<Question[]> {
  */
 export async function getAllQuestionsIncludingPackages(): Promise<Question[]> {
   try {
-    // Get manual questions
-    const manualQuestions = await getQuestions();
-
-    // Get all questions (which includes package questions)
-    // Since package questions are also stored in STORAGE_KEYS.QUESTIONS
-    // with their packageId set, we just need to return all questions
-    // The getQuestions() function already returns all questions including packages
-    
-    // Create a Map to deduplicate by ID (in case there are duplicates)
-    const questionMap = new Map<string, Question>();
-    
-    for (const question of manualQuestions) {
-      if (!questionMap.has(question.id)) {
-        questionMap.set(question.id, question);
-      }
-    }
-
-    // Convert map back to array
-    return Array.from(questionMap.values());
+    // Since package questions are stored in STORAGE_KEYS.QUESTIONS with their packageId set,
+    // getQuestions() already returns all questions including packages
+    return await getQuestions();
   } catch (error) {
     console.error("Error loading all questions including packages:", error);
     return [];

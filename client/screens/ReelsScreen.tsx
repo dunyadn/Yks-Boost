@@ -232,6 +232,11 @@ function ReelCard({
         setSelectedOption(solvedData.selectedOption);
         setRevealed(solvedData.revealed);
         setIsSolved(true);
+      } else {
+        // Reset state for unsolved questions
+        setSelectedOption(null);
+        setRevealed(false);
+        setIsSolved(false);
       }
     };
     loadSolvedState();
