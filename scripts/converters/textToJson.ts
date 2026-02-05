@@ -203,6 +203,12 @@ function parseArgs(): { inputFile: string; outputFile: string; options: ParseOpt
     const key = args[i];
     const value = args[i + 1];
     
+    // Validate that value exists
+    if (!value || value.startsWith('--')) {
+      console.error(`❌ Hata: ${key} parametresi için değer belirtilmedi`);
+      process.exit(1);
+    }
+    
     switch (key) {
       case '--package-name':
         options.packageName = value;
@@ -211,7 +217,12 @@ function parseArgs(): { inputFile: string; outputFile: string; options: ParseOpt
         options.examType = value;
         break;
       case '--year':
-        options.year = parseInt(value, 10);
+        const yearValue = parseInt(value, 10);
+        if (isNaN(yearValue)) {
+          console.error(`❌ Hata: Geçersiz yıl değeri: ${value}`);
+          process.exit(1);
+        }
+        options.year = yearValue;
         break;
       case '--category':
         options.category = value;
