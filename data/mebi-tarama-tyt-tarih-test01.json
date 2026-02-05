@@ -1,0 +1,23 @@
+{
+  "packageName": "MEBİ Tarama Testi TYT Tarih - Test 1",
+  "examType": "TYT",
+  "year": 2025,
+  "lesson": "Tarih",
+  "sourceFile": "Mebi Tarama Testi tyt-tarih.txt",
+  "totalQuestions": 12,
+  "questions": [
+    {
+      "id": 1,
+      "content": "Fen bilimleri ve sosyal bilimler insanlığa farklı açılardan hizmet eder. Bu amaçlarla çalışan bilim adamları farklı metot ve ilkelere başvururlar. Bir sosyal bilim olarak tarih de incelediği konular açısından geniş bir yelpazeyi çalışma kapsamına alır. Başka bir ifadeyle tarih içinde \"insan\" olan veya insanla ilişkili konuları inceler.\n\nBuna göre,\nI. isyanların etkileri,\nII. depremlerin sebepleri,\nIII. depremlerin sonuçları\ngelişmelerinden hangileri tarihin kapsamına girer?",
+      "options": {
+        "A": "Yalnız I",
+        "B": "Yalnız II",
+        "C": "I ve II",
+        "D": "I ve III",
+        "E": "II ve III"
+      },
+      "correctAnswer": "D",
+      "solution": "Bu soruda tarihin inceleme alanının ne olduğu sorulmaktadır. Soruda da belirtildiği gibi tarih, \"insan\" olan veya insanla ilişkili konuları inceler. Adım adım inceleyelim:\n\nI. İsyanların etkileri: İsyanlar, toplumların siyasi, ekonomik ve sosyal sebeplerle başlattıkları insan kaynaklı olaylardır. İsyanların sonuçları da toplumları, devletleri ve bireyleri etkiler. Dolayısıyla bu konu doğrudan insanla ilişkilidir ve tarihin kapsamına girer.\n\nII. Depremlerin sebepleri: Depremler doğal afetlerdir ve yer kabuğundaki hareketler sonucu oluşur. Depremlerin sebepleri jeoloji, fizik gibi fen bilimlerinin konusudur. Doğrudan insanla ilişkili değildir, bu nedenle tarihin değil fen bilimlerinin konusudur.\n\nIII. Depremlerin sonuçları: Depremler doğal afet olsa da sonuçları insanları ve toplumları doğrudan etkiler. Depremler sonrası toplumların göçü, yerleşim yerlerinin değişmesi, ekonomik ve sosyal yapının etkilenmesi gibi konular tarihin inceleme alanına girer çünkü bunlar insanla ilişkili sonuçlardır.\n\nSonuç olarak: I ve III doğrudur. Cevap D şıkkıdır."
+    }
+  ]
+}
