@@ -12,6 +12,7 @@ import {
   Share,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useFocusEffect } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
@@ -21,6 +22,7 @@ import Animated, {
   withSpring,
   FadeIn,
   SlideInUp,
+  FadeInDown,
 } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
@@ -432,10 +434,13 @@ function ReelCard({
 }
 
 export default function ReelsScreen() {
+  const insets = useSafeAreaInsets();
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [unsolvedCount, setUnsolvedCount] = useState(0);
+  const [solvedCount, setSolvedCount] = useState(0);
   const flatListRef = useRef<FlatList>(null);
   const tabBarHeight = Platform.select({ ios: 88, android: 70, web: 70 }) || 70;
 
@@ -471,6 +476,10 @@ export default function ReelsScreen() {
         }
       });
       
+      // Update counts
+      setUnsolvedCount(unsolvedQuestions.length);
+      setSolvedCount(solvedQuestions.length);
+      
       // Prioritize unsolved questions first, then show solved ones
       const orderedQuestions = [...unsolvedQuestions, ...solvedQuestions];
       
@@ -483,9 +492,12 @@ export default function ReelsScreen() {
     }
   }, []);
 
-  useEffect(() => {
-    fetchQuestions();
-  }, [fetchQuestions]);
+  // Refetch when screen comes into focus to update solved state
+  useFocusEffect(
+    useCallback(() => {
+      fetchQuestions();
+    }, [fetchQuestions]),
+  );
 
   const handleRefresh = useCallback(() => {
     setRefreshing(true);
@@ -580,8 +592,53 @@ export default function ReelsScreen() {
     );
   }
 
+  // Calculate if current question is unsolved (based on index)
+  const isCurrentUnsolved = activeIndex < unsolvedCount;
+  const progressPercentage = questions.length > 0 
+    ? ((solvedCount) / questions.length) * 100 
+    : 0;
+
   return (
     <View style={styles.container}>
+      {/* Progress indicator at top */}
+      {questions.length > 0 && (
+        <Animated.View 
+          entering={FadeInDown.delay(200)}
+          style={[styles.progressContainer, { top: insets.top + Spacing.xs }]}
+        >
+          <View style={styles.progressInfo}>
+            <View style={styles.progressStats}>
+              <View style={styles.statItem}>
+                <Feather name="clock" size={12} color={Colors.dark.warning} />
+                <ThemedText style={styles.statText}>
+                  {unsolvedCount} Çözülecek
+                </ThemedText>
+              </View>
+              <View style={styles.statDivider} />
+              <View style={styles.statItem}>
+                <Feather name="check-circle" size={12} color={Colors.dark.success} />
+                <ThemedText style={styles.statText}>
+                  {solvedCount} Çözüldü
+                </ThemedText>
+              </View>
+            </View>
+            <View style={styles.progressBarContainer}>
+              <View 
+                style={[
+                  styles.progressBar, 
+                  { width: `${progressPercentage}%` }
+                ]} 
+              />
+            </View>
+          </View>
+          {isCurrentUnsolved && unsolvedCount > 0 && (
+            <View style={styles.newBadge}>
+              <ThemedText style={styles.newBadgeText}>YENİ</ThemedText>
+            </View>
+          )}
+        </Animated.View>
+      )}
+      
       <FlatList
         ref={flatListRef}
         data={questions}
@@ -608,10 +665,17 @@ export default function ReelsScreen() {
                 height: SCREEN_HEIGHT,
                 justifyContent: "center",
                 alignItems: "center",
+                gap: Spacing.lg,
               },
             ]}
           >
-            <ThemedText>Henüz soru eklenmemiş.</ThemedText>
+            <View style={styles.emptyIconContainer}>
+              <Feather name="inbox" size={48} color={Colors.dark.textSecondary} />
+            </View>
+            <ThemedText style={styles.emptyTitle}>Henüz soru eklenmemiş</ThemedText>
+            <ThemedText style={styles.emptySubtitle}>
+              Soru Ekle sekmesinden JSON formatında{'\n'}sorular ekleyebilirsiniz
+            </ThemedText>
           </View>
         )}
       />
@@ -804,5 +868,89 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: "600",
     color: Colors.dark.success,
+  },
+  // Progress indicator styles
+  progressContainer: {
+    position: "absolute",
+    left: Spacing.md,
+    right: Spacing.md,
+    zIndex: 20,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+  },
+  progressInfo: {
+    flex: 1,
+    backgroundColor: Colors.dark.backgroundSecondary + "E6",
+    borderRadius: BorderRadius.md,
+    paddingVertical: Spacing.xs + 2,
+    paddingHorizontal: Spacing.sm,
+    gap: Spacing.xs,
+    borderWidth: 1,
+    borderColor: Colors.dark.border,
+  },
+  progressStats: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+  },
+  statItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.xs - 2,
+  },
+  statText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: Colors.dark.textSecondary,
+  },
+  statDivider: {
+    width: 1,
+    height: 12,
+    backgroundColor: Colors.dark.border,
+  },
+  progressBarContainer: {
+    height: 3,
+    backgroundColor: Colors.dark.backgroundTertiary,
+    borderRadius: 2,
+    overflow: "hidden",
+  },
+  progressBar: {
+    height: "100%",
+    backgroundColor: Colors.dark.success,
+    borderRadius: 2,
+  },
+  newBadge: {
+    backgroundColor: Colors.dark.warning,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs - 2,
+    borderRadius: BorderRadius.sm,
+  },
+  newBadgeText: {
+    fontSize: 10,
+    fontWeight: "700",
+    color: Colors.dark.backgroundRoot,
+    letterSpacing: 0.5,
+  },
+  // Empty state styles
+  emptyIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    backgroundColor: Colors.dark.backgroundSecondary,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  emptyTitle: {
+    fontSize: 18,
+    fontWeight: "700",
+    color: Colors.dark.text,
+  },
+  emptySubtitle: {
+    fontSize: 14,
+    color: Colors.dark.textSecondary,
+    textAlign: "center",
+    lineHeight: 20,
   },
 });

@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   StyleSheet,
   View,
   ScrollView,
   Pressable,
-  Alert,
   ActivityIndicator,
   TextInput,
 } from "react-native";
@@ -12,11 +11,17 @@ import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import Animated, { FadeIn, SlideInUp } from "react-native-reanimated";
+import Animated, {
+  FadeIn,
+  SlideInUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import { LinearGradient } from "expo-linear-gradient";
 
 import { ThemedText } from "@/components/ThemedText";
-import { Button } from "@/components/Button";
+import { Toast } from "@/components/Toast";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 import { savePackage, saveQuestions } from "@/lib/localStorage";
 import type { InsertQuestion } from "@shared/schema";
@@ -66,10 +71,42 @@ export default function PDFUploadScreen() {
   const [jsonInput, setJsonInput] = useState("");
   const [uploading, setUploading] = useState(false);
   const [showExample, setShowExample] = useState(true);
+  
+  // Toast state
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  const [toastSubtitle, setToastSubtitle] = useState("");
+  const [toastType, setToastType] = useState<"success" | "error">("success");
+
+  // Button animation
+  const buttonScale = useSharedValue(1);
+  
+  const buttonAnimatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: buttonScale.value }],
+  }));
+
+  const showToast = useCallback((message: string, subtitle: string, type: "success" | "error") => {
+    setToastMessage(message);
+    setToastSubtitle(subtitle);
+    setToastType(type);
+    setToastVisible(true);
+  }, []);
+
+  const hideToast = useCallback(() => {
+    setToastVisible(false);
+  }, []);
 
   const handleImport = async () => {
+    // Button press animation
+    buttonScale.value = withSpring(0.95, { damping: 15, stiffness: 300 });
+    setTimeout(() => {
+      buttonScale.value = withSpring(1, { damping: 15, stiffness: 200 });
+    }, 100);
+    
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+
     if (!jsonInput.trim()) {
-      Alert.alert("Hata", "Lütfen JSON formatında soru verisi girin.");
+      showToast("Hata", "Lütfen JSON formatında soru verisi girin.", "error");
       return;
     }
 
@@ -78,7 +115,7 @@ export default function PDFUploadScreen() {
     try {
       parsedData = JSON.parse(jsonInput);
     } catch {
-      Alert.alert("Hata", "Geçersiz JSON formatı. Lütfen kontrol edin.");
+      showToast("Geçersiz JSON", "JSON formatını kontrol edin.", "error");
       return;
     }
 
@@ -87,9 +124,10 @@ export default function PDFUploadScreen() {
       !parsedData.examType ||
       !parsedData.questions
     ) {
-      Alert.alert(
-        "Hata",
-        "JSON formatında packageName, examType ve questions alanları gereklidir.",
+      showToast(
+        "Eksik Alanlar",
+        "packageName, examType ve questions gereklidir.",
+        "error"
       );
       return;
     }
@@ -98,7 +136,7 @@ export default function PDFUploadScreen() {
       !Array.isArray(parsedData.questions) ||
       parsedData.questions.length === 0
     ) {
-      Alert.alert("Hata", "En az bir soru eklemelisiniz.");
+      showToast("Hata", "En az bir soru eklemelisiniz.", "error");
       return;
     }
 
@@ -155,26 +193,26 @@ export default function PDFUploadScreen() {
       );
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      Alert.alert(
-        "Başarılı! 🎉",
-        `"${pkg.name}" paketine ${createdQuestions.length} soru eklendi!\n\nReels sekmesinden soruları görebilirsiniz.`,
-        [
-          {
-            text: "Tamam",
-            onPress: () => {
-              setJsonInput("");
-            },
-          },
-        ],
+      
+      // Show success toast
+      showToast(
+        "Sorular Eklendi! 🎉",
+        `"${pkg.name}" paketine ${createdQuestions.length} soru eklendi. Reels sekmesinden görebilirsiniz.`,
+        "success"
       );
+      
+      // Clear input after success
+      setJsonInput("");
+      setShowExample(true);
     } catch (error) {
       console.error("Error importing questions:", error);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
-      Alert.alert(
-        "Hata",
+      showToast(
+        "Hata Oluştu",
         error instanceof Error
           ? error.message
-          : "Sorular eklenirken hata oluştu. Lütfen JSON formatını kontrol edin.",
+          : "Sorular eklenirken hata oluştu.",
+        "error"
       );
     } finally {
       setUploading(false);
@@ -194,16 +232,17 @@ export default function PDFUploadScreen() {
   };
 
   return (
-    <ScrollView
-      style={styles.container}
-      contentContainerStyle={{
-        paddingTop: headerHeight + Spacing.xl,
-        paddingBottom: tabBarHeight + Spacing.xl,
-        paddingHorizontal: Spacing.lg,
-      }}
-      scrollIndicatorInsets={{ bottom: tabBarHeight }}
-      keyboardShouldPersistTaps="handled"
-    >
+    <View style={styles.wrapper}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={{
+          paddingTop: headerHeight + Spacing.xl,
+          paddingBottom: tabBarHeight + Spacing.xl,
+          paddingHorizontal: Spacing.lg,
+        }}
+        scrollIndicatorInsets={{ bottom: tabBarHeight }}
+        keyboardShouldPersistTaps="handled"
+      >
       <Animated.View entering={FadeIn} style={styles.header}>
         <LinearGradient
           colors={[Colors.dark.primary, Colors.dark.secondary]}
@@ -307,13 +346,29 @@ export default function PDFUploadScreen() {
       )}
 
       <View style={styles.buttonContainer}>
-        <Button
+        <Pressable
           onPress={handleImport}
           disabled={!jsonInput.trim() || uploading}
-          variant="primary"
         >
-          {uploading ? "Ekleniyor..." : "Soruları Ekle"}
-        </Button>
+          <Animated.View
+            style={[
+              styles.submitButton,
+              {
+                opacity: !jsonInput.trim() || uploading ? 0.5 : 1,
+              },
+              buttonAnimatedStyle,
+            ]}
+          >
+            {uploading ? (
+              <ActivityIndicator size="small" color={Colors.dark.backgroundRoot} />
+            ) : (
+              <Feather name="upload" size={20} color={Colors.dark.backgroundRoot} />
+            )}
+            <ThemedText style={styles.submitButtonText}>
+              {uploading ? "Ekleniyor..." : "Soruları Ekle"}
+            </ThemedText>
+          </Animated.View>
+        </Pressable>
       </View>
 
       <Animated.View entering={FadeIn.delay(400)} style={styles.helpSection}>
@@ -376,11 +431,26 @@ export default function PDFUploadScreen() {
           </ThemedText>
         </View>
       </Animated.View>
-    </ScrollView>
+      </ScrollView>
+      
+      {/* Toast notification */}
+      <Toast
+        visible={toastVisible}
+        message={toastMessage}
+        subtitle={toastSubtitle}
+        type={toastType}
+        duration={4000}
+        onHide={hideToast}
+      />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  wrapper: {
+    flex: 1,
+    backgroundColor: Colors.dark.backgroundRoot,
+  },
   container: {
     flex: 1,
     backgroundColor: Colors.dark.backgroundRoot,
@@ -504,6 +574,22 @@ const styles = StyleSheet.create({
   buttonContainer: {
     marginTop: Spacing.lg,
     marginBottom: Spacing.xl,
+  },
+  submitButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: Spacing.sm,
+    backgroundColor: Colors.dark.primary,
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.xl,
+    borderRadius: BorderRadius.full,
+    height: Spacing.buttonHeight,
+  },
+  submitButtonText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: Colors.dark.backgroundRoot,
   },
   helpSection: {
     backgroundColor: Colors.dark.backgroundDefault,
