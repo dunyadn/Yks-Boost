@@ -2,6 +2,40 @@
 
 Bu kılavuz, YKS Reels uygulamasının Android APK dosyasını oluşturmak ve Android cihazınıza kurmak için gereken adımları açıklar.
 
+## 🚀 GitHub Actions ile APK Oluşturma (Önerilen)
+
+GitHub Actions kullanarak APK oluşturmak en kolay yöntemdir:
+
+### 1. EXPO_TOKEN Secret Ekleme
+
+1. [expo.dev](https://expo.dev) adresine giriş yapın
+2. Hesap ayarlarına gidin: **Settings** > **Access tokens**
+3. **Create token** butonuna tıklayın
+4. Token'a bir isim verin (örn: `github-actions`)
+5. Token'ı kopyalayın
+6. GitHub repository ayarlarına gidin: **Settings** > **Secrets and variables** > **Actions**
+7. **New repository secret** butonuna tıklayın
+8. İsim: `EXPO_TOKEN`, Değer: kopyaladığınız token
+9. **Add secret** butonuna tıklayın
+
+### 2. Build Android APK Workflow Çalıştırma
+
+1. GitHub repository'de **Actions** sekmesine gidin
+2. Sol tarafta **Build Android APK** workflow'unu seçin
+3. **Run workflow** butonuna tıklayın
+4. Build profile'ı seçin (önerilen: `preview`)
+5. **Run workflow** yeşil butonuna tıklayın
+
+### 3. APK İndirme
+
+1. Workflow tamamlandığında (yeşil tik işareti görünür)
+2. Workflow run'a tıklayın
+3. **Artifacts** bölümünde `yksreels-apk` dosyasını bulun
+4. İndirmek için tıklayın
+5. Zip dosyasını açın ve `yksreels.apk` dosyasını çıkarın
+
+---
+
 ## 📱 Hızlı Başlangıç (Otomatik Script)
 
 APK oluşturmanın en kolay yolu, hazırladığımız script'i kullanmaktır:
