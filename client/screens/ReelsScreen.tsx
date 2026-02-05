@@ -596,32 +596,33 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     paddingTop: Spacing.sm,
+    flexGrow: 1,
   },
   questionTextContainer: {
     backgroundColor: Colors.dark.backgroundSecondary,
     borderRadius: BorderRadius.md,
     padding: Spacing.md,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.dark.border,
   },
   questionText: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: 15,
+    lineHeight: 22,
     color: Colors.dark.text,
   },
   optionsContainer: {
-    gap: Spacing.xs,
+    gap: Spacing.xs + 2, // 6px - compact spacing between options
   },
   optionButton: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: BorderRadius.sm,
-    paddingVertical: Spacing.sm,
+    paddingVertical: Spacing.xs + 2, // 6px - compact vertical padding
     paddingHorizontal: Spacing.sm,
     borderWidth: 1,
     gap: Spacing.sm,
-    minHeight: 44,
+    minHeight: 44, // Maintain accessibility standard
   },
   optionLabel: {
     width: 26,
@@ -638,7 +639,7 @@ const styles = StyleSheet.create({
   optionText: {
     fontSize: 13,
     flex: 1,
-    lineHeight: 18,
+    lineHeight: 17,
   },
   solutionContainer: {
     marginTop: Spacing.md,
