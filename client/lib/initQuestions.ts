@@ -4,6 +4,9 @@ import type { InsertQuestion } from '@shared/schema';
 
 // Storage key for initialization flag
 const INIT_FLAG_KEY = '@yks_boost:initial_data_loaded';
+// Version key to track data version - increment this when adding new questions
+const DATA_VERSION_KEY = '@yks_boost:data_version';
+const CURRENT_DATA_VERSION = '2'; // Version 2 includes 1188 questions in 42 packages
 
 // Import question packages
 const questionPackages = [
@@ -70,19 +73,23 @@ interface PackageData {
 
 /**
  * Load initial question packages into AsyncStorage
- * Only runs once on first app launch
+ * Checks data version and re-initializes if version has changed (new questions added)
  */
 export async function initializeQuestions(): Promise<void> {
   try {
-    // Check if data has already been loaded
-    const isLoaded = await AsyncStorage.getItem(INIT_FLAG_KEY);
+    // Check current data version
+    const storedVersion = await AsyncStorage.getItem(DATA_VERSION_KEY);
     
-    if (isLoaded === 'true') {
-      console.log('✅ Initial questions already loaded, skipping initialization');
+    if (storedVersion === CURRENT_DATA_VERSION) {
+      console.log(`✅ Questions up to date (version ${CURRENT_DATA_VERSION}), skipping initialization`);
       return;
     }
 
-    console.log('🔄 Loading initial question packages...');
+    if (storedVersion) {
+      console.log(`🔄 Data version changed (${storedVersion} -> ${CURRENT_DATA_VERSION}), reloading questions...`);
+    } else {
+      console.log('🔄 Loading initial question packages...');
+    }
     
     let totalQuestionsLoaded = 0;
     let totalPackagesLoaded = 0;
@@ -130,9 +137,11 @@ export async function initializeQuestions(): Promise<void> {
       }
     }
 
-    // Set the initialization flag
+    // Set the initialization flag and data version
     await AsyncStorage.setItem(INIT_FLAG_KEY, 'true');
+    await AsyncStorage.setItem(DATA_VERSION_KEY, CURRENT_DATA_VERSION);
     
+    console.log(`✅ Successfully loaded version ${CURRENT_DATA_VERSION}`);
     console.log(`   📦 Packages loaded: ${totalPackagesLoaded}`);
     console.log(`   📝 Total questions: ${totalQuestionsLoaded}`);
   } catch (error) {
@@ -146,7 +155,8 @@ export async function initializeQuestions(): Promise<void> {
  */
 export async function resetInitialization(): Promise<void> {
   await AsyncStorage.removeItem(INIT_FLAG_KEY);
-  console.log('🔄 Initialization flag reset');
+  await AsyncStorage.removeItem(DATA_VERSION_KEY);
+  console.log('🔄 Initialization flag and data version reset');
 }
 
 /**
