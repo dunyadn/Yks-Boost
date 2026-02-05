@@ -2,7 +2,6 @@ import React, { useState, useCallback, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
-  Dimensions,
   FlatList,
   ViewToken,
   Pressable,
@@ -10,6 +9,7 @@ import {
   Platform,
   ActivityIndicator,
   Share,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useFocusEffect } from "@react-navigation/native";
@@ -38,8 +38,11 @@ import {
   getSolvedQuestion,
   getSolvedQuestionIds,
 } from "@/lib/localStorage";
-
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
+import {
+  isSmallDevice,
+  moderateScale,
+  scaleFontSize,
+} from "@/utils/responsive";
 
 interface Option {
   label: string;
@@ -124,6 +127,12 @@ function OptionButton({
   onPress: () => void;
 }) {
   const scale = useSharedValue(1);
+  const smallDevice = isSmallDevice();
+
+  // Responsive sizes
+  const labelSize = smallDevice ? 22 : moderateScale(26, 0.3);
+  const labelFontSize = smallDevice ? 11 : scaleFontSize(12);
+  const optionFontSize = smallDevice ? 12 : scaleFontSize(13);
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -172,6 +181,8 @@ function OptionButton({
           {
             backgroundColor: getBackgroundColor(),
             borderColor: getBorderColor(),
+            paddingVertical: smallDevice ? Spacing.xs : Spacing.xs + 2,
+            minHeight: smallDevice ? 40 : 44,
           },
           animatedStyle,
         ]}
@@ -180,6 +191,9 @@ function OptionButton({
           style={[
             styles.optionLabel,
             {
+              width: labelSize,
+              height: labelSize,
+              borderRadius: labelSize / 2,
               borderColor: getLabelColor(),
               backgroundColor:
                 selected || (revealed && option.isCorrect)
@@ -189,7 +203,10 @@ function OptionButton({
           ]}
         >
           <ThemedText
-            style={[styles.optionLabelText, { color: getLabelColor() }]}
+            style={[
+              styles.optionLabelText,
+              { color: getLabelColor(), fontSize: labelFontSize },
+            ]}
           >
             {option.label}
           </ThemedText>
@@ -198,6 +215,8 @@ function OptionButton({
           style={[
             styles.optionText,
             {
+              fontSize: optionFontSize,
+              lineHeight: optionFontSize * 1.35,
               color:
                 revealed && option.isCorrect
                   ? Colors.dark.success
@@ -218,6 +237,8 @@ function ReelCard({
   question,
   isActive,
   tabBarHeight,
+  screenHeight,
+  screenWidth,
   onLike,
   onComment,
   onShare,
@@ -225,6 +246,8 @@ function ReelCard({
   question: Question;
   isActive: boolean;
   tabBarHeight: number;
+  screenHeight: number;
+  screenWidth: number;
   onLike: () => void;
   onComment: () => void;
   onShare: () => void;
@@ -235,13 +258,19 @@ function ReelCard({
   const [startTime] = useState<number>(Date.now());
   const [isSolved, setIsSolved] = useState(false);
 
+  // Responsive calculations
+  const smallDevice = isSmallDevice();
+  const questionFontSize = smallDevice ? 13 : scaleFontSize(14);
+  const solutionFontSize = smallDevice ? 11 : scaleFontSize(12);
+  const headerTopPadding = smallDevice ? Spacing.xs : Spacing.sm;
+
   // Load solved state when question loads
   useEffect(() => {
     let isMounted = true;
 
     const loadSolvedState = async () => {
       const solvedData = await getSolvedQuestion(question.id);
-      
+
       // Only update state if component is still mounted and showing the same question
       if (!isMounted) return;
 
@@ -304,11 +333,17 @@ function ReelCard({
     }, 400);
   };
 
-  const contentPaddingBottom = tabBarHeight + 70;
+  // Responsive content padding - smaller on small devices
+  const contentPaddingBottom = tabBarHeight + (smallDevice ? 50 : 70);
   const labels = ["A", "B", "C", "D", "E"];
+  const actionsBottom = tabBarHeight + (smallDevice ? 60 : 80);
+  const scrollMarginTop = smallDevice ? 50 : 60;
+  const horizontalPadding = smallDevice ? Spacing.sm : Spacing.md;
 
   return (
-    <View style={[styles.reelCard, { height: SCREEN_HEIGHT }]}>
+    <View
+      style={[styles.reelCard, { height: screenHeight, width: screenWidth }]}
+    >
       <LinearGradient
         colors={[
           "rgba(10,10,15,0.95)",
@@ -322,7 +357,10 @@ function ReelCard({
       <View
         style={[
           styles.headerContainer,
-          { paddingTop: insets.top + Spacing.sm },
+          {
+            paddingTop: insets.top + headerTopPadding,
+            paddingHorizontal: horizontalPadding,
+          },
         ]}
       >
         <View style={styles.tagRow}>
@@ -331,20 +369,35 @@ function ReelCard({
             <Tag label={`#${question.subject}`} variant="secondary" />
           )}
           {isSolved && (
-            <View style={styles.solvedBadge}>
+            <View
+              style={[
+                styles.solvedBadge,
+                smallDevice && { paddingHorizontal: Spacing.xs + 2 },
+              ]}
+            >
               <Feather
                 name="check-circle"
-                size={14}
+                size={smallDevice ? 12 : 14}
                 color={Colors.dark.success}
               />
-              <ThemedText style={styles.solvedBadgeText}>Çözüldü</ThemedText>
+              <ThemedText
+                style={[
+                  styles.solvedBadgeText,
+                  smallDevice && { fontSize: 10 },
+                ]}
+              >
+                Çözüldü
+              </ThemedText>
             </View>
           )}
         </View>
       </View>
 
       <ScrollView
-        style={styles.scrollContainer}
+        style={[
+          styles.scrollContainer,
+          { marginTop: scrollMarginTop, paddingHorizontal: horizontalPadding },
+        ]}
         contentContainerStyle={[
           styles.scrollContent,
           { paddingBottom: contentPaddingBottom },
@@ -352,13 +405,31 @@ function ReelCard({
         showsVerticalScrollIndicator={false}
         bounces={false}
       >
-        <View style={styles.questionTextContainer}>
-          <ThemedText style={styles.questionText}>
+        <View
+          style={[
+            styles.questionTextContainer,
+            { padding: smallDevice ? Spacing.xs + 2 : Spacing.sm },
+          ]}
+        >
+          <ThemedText
+            style={[
+              styles.questionText,
+              {
+                fontSize: questionFontSize,
+                lineHeight: questionFontSize * 1.45,
+              },
+            ]}
+          >
             {question.content}
           </ThemedText>
         </View>
 
-        <View style={styles.optionsContainer}>
+        <View
+          style={[
+            styles.optionsContainer,
+            { gap: smallDevice ? Spacing.xs : Spacing.xs + 2 },
+          ]}
+        >
           {question.options.map((optionText, index) => {
             const label = labels[index];
             const isCorrect = label === question.correctAnswer;
@@ -383,20 +454,36 @@ function ReelCard({
           <Animated.View entering={SlideInUp.delay(200)}>
             <Animated.View
               entering={FadeIn.delay(100)}
-              style={styles.solutionContainer}
+              style={[
+                styles.solutionContainer,
+                { padding: smallDevice ? Spacing.xs + 2 : Spacing.sm },
+              ]}
             >
               <View style={styles.solutionHeader}>
                 <Feather
                   name="check-circle"
-                  size={16}
+                  size={smallDevice ? 14 : 16}
                   color={Colors.dark.primary}
                   style={{ marginRight: Spacing.xs }}
                 />
-                <ThemedText style={styles.solutionTitle}>
+                <ThemedText
+                  style={[
+                    styles.solutionTitle,
+                    { fontSize: smallDevice ? 11 : 12 },
+                  ]}
+                >
                   Çözüm Açıklaması
                 </ThemedText>
               </View>
-              <ThemedText style={styles.solutionText}>
+              <ThemedText
+                style={[
+                  styles.solutionText,
+                  {
+                    fontSize: solutionFontSize,
+                    lineHeight: solutionFontSize * 1.5,
+                  },
+                ]}
+              >
                 {question.solution}
               </ThemedText>
             </Animated.View>
@@ -404,7 +491,15 @@ function ReelCard({
         )}
       </ScrollView>
 
-      <View style={[styles.actionsContainer, { bottom: tabBarHeight + 80 }]}>
+      <View
+        style={[
+          styles.actionsContainer,
+          {
+            bottom: actionsBottom,
+            right: smallDevice ? Spacing.xs : Spacing.sm,
+          },
+        ]}
+      >
         <ReelsActionButton
           icon="heart"
           label={question.likes ?? 0}
@@ -423,22 +518,33 @@ function ReelCard({
 }
 
 export default function ReelsScreen() {
+  // Use dynamic dimensions that update with screen changes
+  const { width: screenWidth, height: screenHeight } = useWindowDimensions();
+
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const flatListRef = useRef<FlatList>(null);
-  const tabBarHeight = Platform.select({ ios: 88, android: 70, web: 70 }) || 70;
+
+  // Responsive tab bar height based on platform and device size
+  const smallDevice = isSmallDevice();
+  const tabBarHeight =
+    Platform.select({
+      ios: smallDevice ? 78 : 88,
+      android: smallDevice ? 60 : 70,
+      web: 70,
+    }) || 70;
 
   const fetchQuestions = useCallback(async () => {
     try {
       const data = await getAllQuestionsIncludingPackages();
       const savedQuestionIds = await getSavedQuestions();
       const solvedQuestionIds = await getSolvedQuestionIds();
-      
+
       // Convert to Set for O(1) lookup performance
       const solvedIdsSet = new Set(solvedQuestionIds);
-      
+
       // Mark questions as saved if they're in the saved list
       const questionsWithSavedStatus = data.map((q) => ({
         ...q,
@@ -449,11 +555,11 @@ export default function ReelsScreen() {
         likes: 0,
         comments: 0,
       }));
-      
+
       // Separate unsolved and solved questions in a single pass
       const unsolvedQuestions: typeof questionsWithSavedStatus = [];
       const solvedQuestions: typeof questionsWithSavedStatus = [];
-      
+
       questionsWithSavedStatus.forEach((q) => {
         if (solvedIdsSet.has(q.id)) {
           solvedQuestions.push(q);
@@ -461,14 +567,14 @@ export default function ReelsScreen() {
           unsolvedQuestions.push(q);
         }
       });
-      
+
       // Shuffle both question arrays for randomized order
       shuffleArray(unsolvedQuestions);
       shuffleArray(solvedQuestions);
-      
+
       // Prioritize unsolved questions first, then show solved ones (both randomized)
       const orderedQuestions = [...unsolvedQuestions, ...solvedQuestions];
-      
+
       setQuestions(orderedQuestions);
     } catch (error) {
       console.error("Error fetching questions:", error);
@@ -506,20 +612,20 @@ export default function ReelsScreen() {
 
   const handleLike = useCallback(async (id: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    
+
     setQuestions((prev) =>
       prev.map((q) => {
         if (q.id !== id) return q;
         const currentLikes = q.likes ?? 0;
         const isLiking = !q.liked;
-        
+
         // Auto-save when liking
         if (isLiking) {
           toggleSavedQuestion(id).catch((error) => {
             console.error("Error auto-saving question:", error);
           });
         }
-        
+
         return {
           ...q,
           liked: isLiking,
@@ -533,13 +639,13 @@ export default function ReelsScreen() {
   const handleShare = useCallback(async (question: Question) => {
     try {
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-      
+
       // Format the question text with options
       const labels = ["A", "B", "C", "D", "E"];
       const optionsText = question.options
         .map((opt, idx) => `${labels[idx]}) ${opt}`)
         .join("\n");
-      
+
       const shareText = `📚 YKS Boost Sorusu\n\n${question.content}\n\n${optionsText}\n\n#${question.category || "Genel"} #YKS #${question.examType || "TYT"}`;
 
       await Share.share({
@@ -557,12 +663,21 @@ export default function ReelsScreen() {
         question={item}
         isActive={index === activeIndex}
         tabBarHeight={tabBarHeight}
+        screenHeight={screenHeight}
+        screenWidth={screenWidth}
         onLike={() => handleLike(item.id)}
         onComment={() => {}}
         onShare={() => handleShare(item)}
       />
     ),
-    [activeIndex, handleLike, handleShare, tabBarHeight],
+    [
+      activeIndex,
+      handleLike,
+      handleShare,
+      tabBarHeight,
+      screenHeight,
+      screenWidth,
+    ],
   );
 
   if (loading) {
@@ -578,6 +693,11 @@ export default function ReelsScreen() {
     );
   }
 
+  // Empty state font sizes
+  const emptyTitleSize = smallDevice ? 16 : 18;
+  const emptySubtitleSize = smallDevice ? 13 : 14;
+  const emptyIconSize = smallDevice ? 40 : 48;
+
   return (
     <View style={styles.container}>
       <FlatList
@@ -587,15 +707,15 @@ export default function ReelsScreen() {
         keyExtractor={(item) => item.id}
         pagingEnabled
         showsVerticalScrollIndicator={false}
-        snapToInterval={SCREEN_HEIGHT}
+        snapToInterval={screenHeight}
         decelerationRate="fast"
         onViewableItemsChanged={onViewableItemsChanged}
         viewabilityConfig={viewabilityConfig}
         refreshing={refreshing}
         onRefresh={handleRefresh}
         getItemLayout={(_, index) => ({
-          length: SCREEN_HEIGHT,
-          offset: SCREEN_HEIGHT * index,
+          length: screenHeight,
+          offset: screenHeight * index,
           index,
         })}
         ListEmptyComponent={() => (
@@ -603,19 +723,36 @@ export default function ReelsScreen() {
             style={[
               styles.reelCard,
               {
-                height: SCREEN_HEIGHT,
+                height: screenHeight,
+                width: screenWidth,
                 justifyContent: "center",
                 alignItems: "center",
-                gap: Spacing.lg,
+                gap: smallDevice ? Spacing.md : Spacing.lg,
               },
             ]}
           >
-            <View style={styles.emptyIconContainer}>
-              <Feather name="inbox" size={48} color={Colors.dark.textSecondary} />
+            <View
+              style={[
+                styles.emptyIconContainer,
+                smallDevice && { width: 64, height: 64, borderRadius: 32 },
+              ]}
+            >
+              <Feather
+                name="inbox"
+                size={emptyIconSize}
+                color={Colors.dark.textSecondary}
+              />
             </View>
-            <ThemedText style={styles.emptyTitle}>Henüz soru eklenmemiş</ThemedText>
-            <ThemedText style={styles.emptySubtitle}>
-              Soru Ekle sekmesinden JSON formatında{'\n'}sorular ekleyebilirsiniz
+            <ThemedText
+              style={[styles.emptyTitle, { fontSize: emptyTitleSize }]}
+            >
+              Henüz soru eklenmemiş
+            </ThemedText>
+            <ThemedText
+              style={[styles.emptySubtitle, { fontSize: emptySubtitleSize }]}
+            >
+              Soru Ekle sekmesinden JSON formatında{"\n"}sorular
+              ekleyebilirsiniz
             </ThemedText>
           </View>
         )}
@@ -630,7 +767,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dark.backgroundRoot,
   },
   reelCard: {
-    width: SCREEN_WIDTH,
     backgroundColor: Colors.dark.backgroundRoot,
   },
   gradient: {
@@ -642,7 +778,6 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: Spacing.md,
     zIndex: 10,
   },
   tagRow: {
@@ -666,8 +801,6 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     flex: 1,
-    marginTop: 60,
-    paddingHorizontal: Spacing.md,
   },
   scrollContent: {
     paddingTop: Spacing.xs,
@@ -676,51 +809,39 @@ const styles = StyleSheet.create({
   questionTextContainer: {
     backgroundColor: Colors.dark.backgroundSecondary,
     borderRadius: BorderRadius.md,
-    padding: Spacing.sm,
     marginBottom: Spacing.xs,
     borderWidth: 1,
     borderColor: Colors.dark.border,
   },
   questionText: {
-    fontSize: 14,
-    lineHeight: 20,
     color: Colors.dark.text,
   },
   optionsContainer: {
-    gap: Spacing.xs + 2, // 6px - compact spacing between options
+    // gap is set dynamically in component
   },
   optionButton: {
     flexDirection: "row",
     alignItems: "center",
     borderRadius: BorderRadius.sm,
-    paddingVertical: Spacing.xs + 2, // 6px - compact vertical padding
     paddingHorizontal: Spacing.sm,
     borderWidth: 1,
     gap: Spacing.sm,
-    minHeight: 44, // Maintain accessibility standard
   },
   optionLabel: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
     borderWidth: 1.5,
     alignItems: "center",
     justifyContent: "center",
   },
   optionLabelText: {
-    fontSize: 12,
     fontWeight: "700",
   },
   optionText: {
-    fontSize: 13,
     flex: 1,
-    lineHeight: 17,
   },
   solutionContainer: {
     marginTop: Spacing.sm,
     backgroundColor: Colors.dark.primary + "15",
     borderRadius: BorderRadius.md,
-    padding: Spacing.sm,
     borderWidth: 1,
     borderColor: Colors.dark.primary + "50",
   },
@@ -730,18 +851,14 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   solutionTitle: {
-    fontSize: 12,
     fontWeight: "700",
     color: Colors.dark.primary,
   },
   solutionText: {
-    fontSize: 12,
-    lineHeight: 18,
     color: Colors.dark.text,
   },
   actionsContainer: {
     position: "absolute",
-    right: Spacing.sm,
     gap: Spacing.sm,
     zIndex: 10,
   },
@@ -807,12 +924,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   emptyTitle: {
-    fontSize: 18,
     fontWeight: "700",
     color: Colors.dark.text,
   },
   emptySubtitle: {
-    fontSize: 14,
     color: Colors.dark.textSecondary,
     textAlign: "center",
     lineHeight: 20,

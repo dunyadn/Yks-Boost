@@ -10,7 +10,8 @@ import Animated, {
 } from "react-native-reanimated";
 
 import { ThemedText } from "@/components/ThemedText";
-import { Colors, BorderRadius, Spacing } from "@/constants/theme";
+import { Colors, Spacing } from "@/constants/theme";
+import { isSmallDevice, moderateScale } from "@/utils/responsive";
 
 interface ReelsActionButtonProps {
   icon: keyof typeof Feather.glyphMap;
@@ -30,6 +31,12 @@ export function ReelsActionButton({
   onPress,
 }: ReelsActionButtonProps) {
   const scale = useSharedValue(1);
+  const smallDevice = isSmallDevice();
+
+  // Responsive sizes
+  const containerSize = smallDevice ? 38 : moderateScale(44, 0.3);
+  const iconSize = smallDevice ? 18 : moderateScale(22, 0.3);
+  const labelFontSize = smallDevice ? 10 : 11;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -47,22 +54,33 @@ export function ReelsActionButton({
   return (
     <AnimatedPressable
       onPress={handlePress}
-      style={[styles.container, animatedStyle]}
+      style={[
+        styles.container,
+        animatedStyle,
+        { gap: smallDevice ? 2 : Spacing.xs },
+      ]}
     >
       <View
         style={[
           styles.iconContainer,
+          {
+            width: containerSize,
+            height: containerSize,
+            borderRadius: containerSize / 2,
+          },
           active && { backgroundColor: activeColor + "20" },
         ]}
       >
         <Feather
           name={icon}
-          size={22}
+          size={iconSize}
           color={active ? activeColor : Colors.dark.text}
         />
       </View>
       {label !== undefined ? (
-        <ThemedText style={styles.label}>{label}</ThemedText>
+        <ThemedText style={[styles.label, { fontSize: labelFontSize }]}>
+          {label}
+        </ThemedText>
       ) : null}
     </AnimatedPressable>
   );
@@ -71,18 +89,13 @@ export function ReelsActionButton({
 const styles = StyleSheet.create({
   container: {
     alignItems: "center",
-    gap: Spacing.xs,
   },
   iconContainer: {
-    width: 44,
-    height: 44,
-    borderRadius: BorderRadius.full,
     backgroundColor: "rgba(255,255,255,0.1)",
     alignItems: "center",
     justifyContent: "center",
   },
   label: {
-    fontSize: 11,
     color: Colors.dark.text,
     fontWeight: "500",
   },

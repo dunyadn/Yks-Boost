@@ -3,7 +3,7 @@
  * Uses Google Gemini API to generate comprehensive, step-by-step solutions
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 interface Question {
   content: string;
@@ -18,31 +18,33 @@ interface Question {
 export async function generateDetailedSolution(
   question: Question,
   lesson: string,
-  apiKey?: string
+  apiKey?: string,
 ): Promise<string> {
   // If no API key provided, return enhanced template
-  if (!apiKey || apiKey === '') {
+  if (!apiKey || apiKey === "") {
     return generateEnhancedTemplate(question, lesson);
   }
-  
+
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-    
+    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+
     const prompt = buildPrompt(question, lesson);
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
+
     // Validate solution length (must be detailed)
     if (text.length < 200) {
-      console.warn('  ⚠️  AI çözüm çok kısa, şablon kullanılıyor');
+      console.warn("  ⚠️  AI çözüm çok kısa, şablon kullanılıyor");
       return generateEnhancedTemplate(question, lesson);
     }
-    
+
     return text.trim();
   } catch (error) {
-    console.warn(`  ⚠️  AI çözüm hatası, şablon kullanılıyor: ${error instanceof Error ? error.message : error}`);
+    console.warn(
+      `  ⚠️  AI çözüm hatası, şablon kullanılıyor: ${error instanceof Error ? error.message : error}`,
+    );
     return generateEnhancedTemplate(question, lesson);
   }
 }
@@ -53,8 +55,8 @@ export async function generateDetailedSolution(
 function buildPrompt(question: Question, lesson: string): string {
   const optionsText = question.options
     .map((opt, idx) => `${String.fromCharCode(65 + idx)}) ${opt}`)
-    .join('\n');
-  
+    .join("\n");
+
   return `Sen bir ${lesson} öğretmenisin. YKS sınavına hazırlanan öğrencilere AŞIRI DETAYLI ve EĞİTİCİ çözümler yazmak zorundasın.
 
 KURALLARA AYNEN UYACAKSIN:
@@ -87,43 +89,43 @@ function generateEnhancedTemplate(question: Question, lesson: string): string {
   if (question.existingSolution && question.existingSolution.length > 200) {
     return question.existingSolution;
   }
-  
+
   const correctIndex = question.correctAnswer.charCodeAt(0) - 65;
-  const correctOption = question.options[correctIndex] || '';
-  
+  const correctOption = question.options[correctIndex] || "";
+
   // Create a more detailed template
   let solution = `Bu ${lesson} sorusunu adım adım inceleyelim:\n\n`;
-  
+
   // Add question analysis
   solution += `**Soru Analizi:**\n`;
   solution += `Bu soruda ${question.content.substring(0, 150)}... konusu ele alınmaktadır. `;
   solution += `Soruyu doğru yanıtlayabilmek için ${lesson.toLowerCase()} bilgisine ve mantıksal akıl yürütmeye ihtiyacımız var.\n\n`;
-  
+
   // Add option-by-option analysis
   solution += `**Şıkların Değerlendirilmesi:**\n\n`;
-  
+
   question.options.forEach((option, idx) => {
     const letter = String.fromCharCode(65 + idx);
     const isCorrect = letter === question.correctAnswer;
-    
+
     solution += `**${letter} Şıkkı: ${option}**\n`;
-    
+
     if (isCorrect) {
-      solution += `Bu şık DOĞRUDUR. ${question.existingSolution || 'Bu seçenek sorunun gereksinimlerini tam olarak karşılamaktadır ve bilimsel/tarihsel/matematiksel gerçeklerle uyumludur.'}\n\n`;
+      solution += `Bu şık DOĞRUDUR. ${question.existingSolution || "Bu seçenek sorunun gereksinimlerini tam olarak karşılamaktadır ve bilimsel/tarihsel/matematiksel gerçeklerle uyumludur."}\n\n`;
     } else {
       solution += `Bu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n`;
     }
   });
-  
+
   // Add conclusion
   solution += `**Sonuç:**\n`;
   solution += `Yukarıdaki analizden de görüldüğü üzere, doğru cevap **${question.correctAnswer} şıkkıdır**. `;
   solution += `${correctOption} seçeneği sorunun doğru cevabını vermektedir.\n\n`;
-  
+
   // Add educational note
   solution += `**Not:** Bu tür soruları çözerken her şıkkı dikkatle okumak ve sistematik olarak değerlendirmek önemlidir. `;
   solution += `${lesson} konusunda daha fazla pratik yapmak, benzer soruları daha hızlı ve doğru çözmenizi sağlayacaktır.`;
-  
+
   return solution;
 }
 
@@ -134,23 +136,27 @@ export async function generateDetailedSolutions(
   questions: Question[],
   lesson: string,
   apiKey?: string,
-  onProgress?: (current: number, total: number) => void
+  onProgress?: (current: number, total: number) => void,
 ): Promise<string[]> {
   const solutions: string[] = [];
-  
+
   for (let i = 0; i < questions.length; i++) {
     if (onProgress) {
       onProgress(i + 1, questions.length);
     }
-    
-    const solution = await generateDetailedSolution(questions[i], lesson, apiKey);
+
+    const solution = await generateDetailedSolution(
+      questions[i],
+      lesson,
+      apiKey,
+    );
     solutions.push(solution);
-    
+
     // Rate limiting: wait 1 second between API calls
     if (apiKey && i < questions.length - 1) {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
   }
-  
+
   return solutions;
 }

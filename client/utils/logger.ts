@@ -41,7 +41,11 @@ class Logger {
     }
   }
 
-  private formatMessage(level: LogLevel, message: string, ...args: unknown[]): string {
+  private formatMessage(
+    level: LogLevel,
+    message: string,
+    ...args: unknown[]
+  ): string {
     const timestamp = new Date().toISOString();
     const prefix = this.config.prefix ? `[${this.config.prefix}]` : "";
     return `[${timestamp}] ${prefix} [${level.toUpperCase()}] ${message}`;
@@ -68,7 +72,7 @@ class Logger {
   error(message: string, error?: Error | unknown, ...args: unknown[]): void {
     if (this.shouldLog("error")) {
       console.error(this.formatMessage("error", message), error, ...args);
-      
+
       // In production, you might want to send errors to a service like Sentry
       if (!__DEV__ && error instanceof Error) {
         // TODO: Send to error tracking service

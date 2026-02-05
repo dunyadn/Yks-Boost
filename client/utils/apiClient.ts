@@ -8,7 +8,7 @@ export class ApiError extends Error {
   constructor(
     message: string,
     public statusCode?: number,
-    public data?: unknown
+    public data?: unknown,
   ) {
     super(message);
     this.name = "ApiError";
@@ -38,7 +38,7 @@ class ApiClient {
 
   private async fetchWithTimeout(
     url: string,
-    config: RequestConfig
+    config: RequestConfig,
   ): Promise<Response> {
     const timeout = config.timeout || this.defaultConfig.timeout || 30000;
 
@@ -61,7 +61,7 @@ class ApiClient {
   private async fetchWithRetry(
     url: string,
     config: RequestConfig,
-    attempt: number = 1
+    attempt: number = 1,
   ): Promise<Response> {
     const maxRetries = config.retries || this.defaultConfig.retries || 3;
 
@@ -70,9 +70,10 @@ class ApiClient {
 
       // Retry on server errors (5xx) or specific client errors
       if (response.status >= 500 && attempt < maxRetries) {
-        const delay = config.retryDelay || this.defaultConfig.retryDelay || 1000;
+        const delay =
+          config.retryDelay || this.defaultConfig.retryDelay || 1000;
         this.apiLogger.warn(
-          `Request failed with ${response.status}, retrying (${attempt}/${maxRetries})...`
+          `Request failed with ${response.status}, retrying (${attempt}/${maxRetries})...`,
         );
         await new Promise((resolve) => setTimeout(resolve, delay * attempt));
         return this.fetchWithRetry(url, config, attempt + 1);
@@ -81,8 +82,11 @@ class ApiClient {
       return response;
     } catch (error) {
       if (attempt < maxRetries) {
-        const delay = config.retryDelay || this.defaultConfig.retryDelay || 1000;
-        this.apiLogger.warn(`Request failed, retrying (${attempt}/${maxRetries})...`);
+        const delay =
+          config.retryDelay || this.defaultConfig.retryDelay || 1000;
+        this.apiLogger.warn(
+          `Request failed, retrying (${attempt}/${maxRetries})...`,
+        );
         await new Promise((resolve) => setTimeout(resolve, delay * attempt));
         return this.fetchWithRetry(url, config, attempt + 1);
       }
@@ -90,10 +94,7 @@ class ApiClient {
     }
   }
 
-  async request<T>(
-    endpoint: string,
-    config: RequestConfig = {}
-  ): Promise<T> {
+  async request<T>(endpoint: string, config: RequestConfig = {}): Promise<T> {
     const url = `${this.baseUrl}${endpoint}`;
     const mergedConfig = { ...this.defaultConfig, ...config };
 
@@ -105,9 +106,10 @@ class ApiClient {
       if (!response.ok) {
         const errorData = await response.json().catch(() => null);
         throw new ApiError(
-          errorData?.message || `HTTP ${response.status}: ${response.statusText}`,
+          errorData?.message ||
+            `HTTP ${response.status}: ${response.statusText}`,
           response.status,
-          errorData
+          errorData,
         );
       }
 
@@ -133,7 +135,7 @@ class ApiClient {
   async post<T>(
     endpoint: string,
     body?: unknown,
-    config?: RequestConfig
+    config?: RequestConfig,
   ): Promise<T> {
     return this.request<T>(endpoint, {
       ...config,
@@ -149,7 +151,7 @@ class ApiClient {
   async put<T>(
     endpoint: string,
     body?: unknown,
-    config?: RequestConfig
+    config?: RequestConfig,
   ): Promise<T> {
     return this.request<T>(endpoint, {
       ...config,

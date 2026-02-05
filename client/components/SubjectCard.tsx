@@ -9,6 +9,11 @@ import Animated, {
 
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
+import {
+  isSmallDevice,
+  moderateScale,
+  scaleFontSize,
+} from "@/utils/responsive";
 
 interface SubjectCardProps {
   name: string;
@@ -28,6 +33,14 @@ export function SubjectCard({
   onPress,
 }: SubjectCardProps) {
   const scale = useSharedValue(1);
+  const smallDevice = isSmallDevice();
+
+  // Responsive sizes
+  const iconContainerSize = smallDevice ? 44 : moderateScale(56, 0.3);
+  const iconSize = smallDevice ? 20 : moderateScale(24, 0.3);
+  const nameSize = smallDevice ? 13 : scaleFontSize(14);
+  const countSize = smallDevice ? 11 : 12;
+  const cardPadding = smallDevice ? Spacing.md : Spacing.lg;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -46,16 +59,28 @@ export function SubjectCard({
       onPress={onPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
-      style={[styles.card, animatedStyle]}
+      style={[styles.card, { padding: cardPadding }, animatedStyle]}
     >
       <Animated.View
-        style={[styles.iconContainer, { backgroundColor: color + "20" }]}
+        style={[
+          styles.iconContainer,
+          {
+            width: iconContainerSize,
+            height: iconContainerSize,
+            borderRadius: BorderRadius.md,
+            backgroundColor: color + "20",
+          },
+        ]}
       >
-        <Feather name={icon} size={24} color={color} />
+        <Feather name={icon} size={iconSize} color={color} />
       </Animated.View>
-      <ThemedText style={styles.name}>{name}</ThemedText>
+      <ThemedText style={[styles.name, { fontSize: nameSize }]}>
+        {name}
+      </ThemedText>
       {questionCount !== undefined ? (
-        <ThemedText style={styles.count}>{questionCount} soru</ThemedText>
+        <ThemedText style={[styles.count, { fontSize: countSize }]}>
+          {questionCount} soru
+        </ThemedText>
       ) : null}
     </AnimatedPressable>
   );
@@ -65,26 +90,20 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: Colors.dark.backgroundDefault,
     borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
     alignItems: "center",
     gap: Spacing.sm,
     flex: 1,
   },
   iconContainer: {
-    width: 56,
-    height: 56,
-    borderRadius: BorderRadius.md,
     alignItems: "center",
     justifyContent: "center",
   },
   name: {
-    fontSize: 14,
     fontWeight: "600",
     color: Colors.dark.text,
     textAlign: "center",
   },
   count: {
-    fontSize: 12,
     color: Colors.dark.textSecondary,
   },
 });

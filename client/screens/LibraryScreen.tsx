@@ -1,5 +1,11 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, FlatList, Pressable } from "react-native";
+import {
+  StyleSheet,
+  View,
+  FlatList,
+  Pressable,
+  useWindowDimensions,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -19,6 +25,7 @@ import {
   getSavedQuestionsWithMeta,
   deletePackage,
 } from "@/lib/localStorage";
+import { isSmallDevice } from "@/utils/responsive";
 import type { QuestionPackage } from "@shared/schema";
 
 interface SavedQuestion {
@@ -48,13 +55,19 @@ export default function LibraryScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
+  useWindowDimensions(); // For reactivity on screen size changes
+
+  // Responsive calculations
+  const smallDevice = isSmallDevice();
+  const horizontalPadding = smallDevice ? Spacing.md : Spacing.lg;
 
   const [savedQuestions, setSavedQuestions] = useState<SavedQuestion[]>([]);
   const [packages, setPackages] = useState<QuestionPackage[]>([]);
   const [selectedFilter, setSelectedFilter] = useState("Tümü");
   const [viewMode, setViewMode] = useState<ViewMode>("saved");
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
-  const [packageToDelete, setPackageToDelete] = useState<QuestionPackage | null>(null);
+  const [packageToDelete, setPackageToDelete] =
+    useState<QuestionPackage | null>(null);
 
   const loadData = useCallback(async () => {
     try {
@@ -122,13 +135,10 @@ export default function LibraryScreen() {
     }
   };
 
-  const handleDeletePackage = useCallback(
-    (pkg: QuestionPackage) => {
-      setPackageToDelete(pkg);
-      setDeleteDialogVisible(true);
-    },
-    [],
-  );
+  const handleDeletePackage = useCallback((pkg: QuestionPackage) => {
+    setPackageToDelete(pkg);
+    setDeleteDialogVisible(true);
+  }, []);
 
   const confirmDeletePackage = useCallback(async () => {
     if (!packageToDelete) return;
@@ -150,20 +160,41 @@ export default function LibraryScreen() {
     setPackageToDelete(null);
   }, []);
 
+  // Responsive sizes
+  const packageIconSize = smallDevice ? 20 : 24;
+  const deleteIconSize = smallDevice ? 18 : 20;
+  const packageNameSize = smallDevice ? 14 : 16;
+  const packageDescSize = smallDevice ? 12 : 13;
+  const statIconSize = smallDevice ? 14 : 16;
+  const questionTextSize = smallDevice ? 13 : 14;
+  const tabTextSize = smallDevice ? 13 : 14;
+  const tabIconSize = smallDevice ? 16 : 18;
+  const cardPadding = smallDevice ? Spacing.md : Spacing.lg;
+
   const renderPackageItem = useCallback(
     ({ item, index }: { item: QuestionPackage; index: number }) => (
       <Animated.View
         entering={FadeInUp.delay(index * 50)}
-        style={styles.packageCard}
+        style={[styles.packageCard, { padding: cardPadding }]}
       >
         <View style={styles.packageHeader}>
-          <Feather name="package" size={24} color={Colors.dark.primary} />
+          <Feather
+            name="package"
+            size={packageIconSize}
+            color={Colors.dark.primary}
+          />
           <View style={styles.packageInfo}>
-            <ThemedText style={styles.packageName} numberOfLines={1}>
+            <ThemedText
+              style={[styles.packageName, { fontSize: packageNameSize }]}
+              numberOfLines={1}
+            >
               {item.name}
             </ThemedText>
             {item.description && (
-              <ThemedText style={styles.packageDesc} numberOfLines={2}>
+              <ThemedText
+                style={[styles.packageDesc, { fontSize: packageDescSize }]}
+                numberOfLines={2}
+              >
                 {item.description}
               </ThemedText>
             )}
@@ -176,17 +207,26 @@ export default function LibraryScreen() {
               pressed && styles.deleteButtonPressed,
             ]}
           >
-            <Feather name="trash-2" size={20} color={Colors.dark.accent} />
+            <Feather
+              name="trash-2"
+              size={deleteIconSize}
+              color={Colors.dark.accent}
+            />
           </Pressable>
         </View>
         <View style={styles.packageStats}>
           <View style={styles.packageStat}>
             <Feather
               name="file-text"
-              size={16}
+              size={statIconSize}
               color={Colors.dark.textSecondary}
             />
-            <ThemedText style={styles.packageStatText}>
+            <ThemedText
+              style={[
+                styles.packageStatText,
+                { fontSize: smallDevice ? 12 : 13 },
+              ]}
+            >
               {item.totalQuestions || 0} Soru
             </ThemedText>
           </View>
@@ -196,18 +236,31 @@ export default function LibraryScreen() {
           />
         </View>
         {item.year && (
-          <ThemedText style={styles.packageYear}>{item.year}</ThemedText>
+          <ThemedText
+            style={[styles.packageYear, { fontSize: smallDevice ? 11 : 12 }]}
+          >
+            {item.year}
+          </ThemedText>
         )}
       </Animated.View>
     ),
-    [handleDeletePackage],
+    [
+      handleDeletePackage,
+      packageIconSize,
+      packageNameSize,
+      packageDescSize,
+      deleteIconSize,
+      statIconSize,
+      cardPadding,
+      smallDevice,
+    ],
   );
 
   const renderItem = useCallback(
     ({ item, index }: { item: SavedQuestion; index: number }) => (
       <Animated.View
         entering={FadeInUp.delay(index * 50)}
-        style={styles.questionCard}
+        style={[styles.questionCard, { padding: cardPadding }]}
       >
         <View style={styles.cardHeader}>
           <Tag
@@ -215,16 +268,27 @@ export default function LibraryScreen() {
             variant={item.examType === "TYT" ? "primary" : "secondary"}
           />
           <Pressable onPress={() => handleRemove(item.id)} hitSlop={8}>
-            <Feather name="bookmark" size={20} color={Colors.dark.primary} />
+            <Feather
+              name="bookmark"
+              size={deleteIconSize}
+              color={Colors.dark.primary}
+            />
           </Pressable>
         </View>
-        <ThemedText style={styles.questionText} numberOfLines={3}>
+        <ThemedText
+          style={[styles.questionText, { fontSize: questionTextSize }]}
+          numberOfLines={3}
+        >
           {item.text}
         </ThemedText>
-        <ThemedText style={styles.savedAt}>{item.savedAt}</ThemedText>
+        <ThemedText
+          style={[styles.savedAt, { fontSize: smallDevice ? 11 : 12 }]}
+        >
+          {item.savedAt}
+        </ThemedText>
       </Animated.View>
     ),
-    [handleRemove],
+    [handleRemove, deleteIconSize, questionTextSize, cardPadding, smallDevice],
   );
 
   const renderEmpty = useCallback(
@@ -244,19 +308,23 @@ export default function LibraryScreen() {
       <View
         style={[
           styles.tabsContainer,
-          { paddingTop: headerHeight + Spacing.md },
+          {
+            paddingTop: headerHeight + (smallDevice ? Spacing.sm : Spacing.md),
+            paddingHorizontal: horizontalPadding,
+          },
         ]}
       >
         <Pressable
           style={[
             styles.tabButton,
             viewMode === "saved" && styles.tabButtonActive,
+            { paddingVertical: smallDevice ? Spacing.xs + 2 : Spacing.sm },
           ]}
           onPress={() => setViewMode("saved")}
         >
           <Feather
             name="bookmark"
-            size={18}
+            size={tabIconSize}
             color={
               viewMode === "saved"
                 ? Colors.dark.primary
@@ -266,6 +334,7 @@ export default function LibraryScreen() {
           <ThemedText
             style={[
               styles.tabText,
+              { fontSize: tabTextSize },
               viewMode === "saved" && styles.tabTextActive,
             ]}
           >
@@ -276,12 +345,13 @@ export default function LibraryScreen() {
           style={[
             styles.tabButton,
             viewMode === "packages" && styles.tabButtonActive,
+            { paddingVertical: smallDevice ? Spacing.xs + 2 : Spacing.sm },
           ]}
           onPress={() => setViewMode("packages")}
         >
           <Feather
             name="package"
-            size={18}
+            size={tabIconSize}
             color={
               viewMode === "packages"
                 ? Colors.dark.primary
@@ -291,6 +361,7 @@ export default function LibraryScreen() {
           <ThemedText
             style={[
               styles.tabText,
+              { fontSize: tabTextSize },
               viewMode === "packages" && styles.tabTextActive,
             ]}
           >
@@ -301,7 +372,12 @@ export default function LibraryScreen() {
 
       {/* Filters - only show for saved questions */}
       {viewMode === "saved" && (
-        <View style={styles.filtersContainer}>
+        <View
+          style={[
+            styles.filtersContainer,
+            { paddingBottom: smallDevice ? Spacing.sm : Spacing.md },
+          ]}
+        >
           <FlatList
             horizontal
             data={FILTERS}
@@ -315,9 +391,12 @@ export default function LibraryScreen() {
             )}
             keyExtractor={(item) => item}
             showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.filtersList}
+            contentContainerStyle={[
+              styles.filtersList,
+              { paddingHorizontal: horizontalPadding },
+            ]}
             ItemSeparatorComponent={() => (
-              <View style={{ width: Spacing.sm }} />
+              <View style={{ width: smallDevice ? Spacing.xs : Spacing.sm }} />
             )}
           />
         </View>
@@ -331,9 +410,12 @@ export default function LibraryScreen() {
           renderItem={renderItem}
           keyExtractor={(item) => item.id}
           numColumns={2}
-          columnWrapperStyle={styles.row}
+          columnWrapperStyle={[
+            styles.row,
+            { gap: smallDevice ? Spacing.sm : Spacing.md },
+          ]}
           contentContainerStyle={{
-            paddingHorizontal: Spacing.lg,
+            paddingHorizontal: horizontalPadding,
             paddingBottom: tabBarHeight + Spacing.xl,
             flexGrow: 1,
           }}
@@ -348,13 +430,15 @@ export default function LibraryScreen() {
           renderItem={renderPackageItem}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{
-            paddingHorizontal: Spacing.lg,
+            paddingHorizontal: horizontalPadding,
             paddingBottom: tabBarHeight + Spacing.xl,
             flexGrow: 1,
           }}
           scrollIndicatorInsets={{ bottom: insets.bottom }}
           showsVerticalScrollIndicator={false}
-          ItemSeparatorComponent={() => <View style={{ height: Spacing.md }} />}
+          ItemSeparatorComponent={() => (
+            <View style={{ height: smallDevice ? Spacing.sm : Spacing.md }} />
+          )}
           ListEmptyComponent={() => (
             <EmptyState
               image={require("../../assets/images/empty-library.png")}

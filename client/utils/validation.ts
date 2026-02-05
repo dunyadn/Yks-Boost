@@ -32,13 +32,15 @@ export const StatsSchema = z.object({
   incorrectAnswers: z.number().min(0).default(0),
   streak: z.number().min(0).default(0),
   lastStudyDate: z.string().nullable().optional(),
-  categoryStats: z.record(
-    z.object({
-      total: z.number().min(0),
-      correct: z.number().min(0),
-      incorrect: z.number().min(0),
-    })
-  ).optional(),
+  categoryStats: z
+    .record(
+      z.object({
+        total: z.number().min(0),
+        correct: z.number().min(0),
+        incorrect: z.number().min(0),
+      }),
+    )
+    .optional(),
 });
 
 // Package schema
@@ -71,7 +73,9 @@ export const EnvSchema = z.object({
   EXPO_PUBLIC_API_URL: z.string().url().optional(),
   GEMINI_API_KEY: z.string().optional(),
   DATABASE_URL: z.string().optional(),
-  NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+  NODE_ENV: z
+    .enum(["development", "production", "test"])
+    .default("development"),
   PORT: z.string().or(z.number()).optional(),
 });
 
@@ -94,7 +98,7 @@ export function validate<T>(schema: z.ZodSchema<T>, data: unknown): T {
  */
 export function safeValidate<T>(
   schema: z.ZodSchema<T>,
-  data: unknown
+  data: unknown,
 ): { success: true; data: T } | { success: false; error: z.ZodError } {
   const result = schema.safeParse(data);
   if (result.success) {
@@ -108,7 +112,7 @@ export function safeValidate<T>(
  */
 export function validatePartial<T>(
   schema: z.ZodSchema<T>,
-  data: unknown
+  data: unknown,
 ): Partial<T> {
   return schema.partial().parse(data);
 }

@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View, Pressable } from "react-native";
 import { ThemedText } from "@/components/ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
+import { isSmallDevice, scaleFontSize } from "@/utils/responsive";
 
 interface TagProps {
   label: string;
@@ -16,6 +17,11 @@ export function Tag({
   onPress,
   selected,
 }: TagProps) {
+  const smallDevice = isSmallDevice();
+  const fontSize = smallDevice ? 11 : scaleFontSize(12);
+  const horizontalPadding = smallDevice ? Spacing.sm : Spacing.md;
+  const verticalPadding = smallDevice ? Spacing.xs - 1 : Spacing.xs;
+
   const getBackgroundColor = () => {
     if (selected) {
       switch (variant) {
@@ -62,10 +68,12 @@ export function Tag({
         {
           backgroundColor: getBackgroundColor(),
           borderColor: getBorderColor(),
+          paddingHorizontal: horizontalPadding,
+          paddingVertical: verticalPadding,
         },
       ]}
     >
-      <ThemedText style={[styles.text, { color: getTextColor() }]}>
+      <ThemedText style={[styles.text, { color: getTextColor(), fontSize }]}>
         {label}
       </ThemedText>
     </Container>
@@ -74,13 +82,10 @@ export function Tag({
 
 const styles = StyleSheet.create({
   tag: {
-    paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.xs,
     borderRadius: BorderRadius.full,
     borderWidth: 1,
   },
   text: {
-    fontSize: 12,
     fontWeight: "600",
   },
 });

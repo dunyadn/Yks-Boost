@@ -5,6 +5,11 @@ import { Image, ImageSource } from "expo-image";
 import { ThemedText } from "@/components/ThemedText";
 import { Button } from "@/components/Button";
 import { Colors, Spacing } from "@/constants/theme";
+import {
+  isSmallDevice,
+  scaleFontSize,
+  moderateScale,
+} from "@/utils/responsive";
 
 interface EmptyStateProps {
   image: ImageSource;
@@ -21,11 +26,25 @@ export function EmptyState({
   actionLabel,
   onAction,
 }: EmptyStateProps) {
+  const smallDevice = isSmallDevice();
+  const imageSize = smallDevice ? 140 : moderateScale(180, 0.3);
+  const titleSize = smallDevice ? 18 : scaleFontSize(20);
+  const messageSize = smallDevice ? 13 : 14;
+  const containerPadding = smallDevice ? Spacing.xl : Spacing["3xl"];
+
   return (
-    <View style={styles.container}>
-      <Image source={image} style={styles.image} contentFit="contain" />
-      <ThemedText style={styles.title}>{title}</ThemedText>
-      <ThemedText style={styles.message}>{message}</ThemedText>
+    <View style={[styles.container, { padding: containerPadding }]}>
+      <Image
+        source={image}
+        style={[styles.image, { width: imageSize, height: imageSize }]}
+        contentFit="contain"
+      />
+      <ThemedText style={[styles.title, { fontSize: titleSize }]}>
+        {title}
+      </ThemedText>
+      <ThemedText style={[styles.message, { fontSize: messageSize }]}>
+        {message}
+      </ThemedText>
       {actionLabel && onAction ? (
         <Button onPress={onAction} style={styles.button}>
           {actionLabel}
@@ -40,22 +59,17 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    padding: Spacing["3xl"],
   },
   image: {
-    width: 180,
-    height: 180,
     marginBottom: Spacing.xl,
   },
   title: {
-    fontSize: 20,
     fontWeight: "600",
     color: Colors.dark.text,
     textAlign: "center",
     marginBottom: Spacing.sm,
   },
   message: {
-    fontSize: 14,
     color: Colors.dark.textSecondary,
     textAlign: "center",
     lineHeight: 22,

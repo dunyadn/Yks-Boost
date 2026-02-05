@@ -6,6 +6,7 @@ import {
   Pressable,
   ActivityIndicator,
   TextInput,
+  useWindowDimensions,
 } from "react-native";
 import { useHeaderHeight } from "@react-navigation/elements";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
@@ -24,6 +25,11 @@ import { ThemedText } from "@/components/ThemedText";
 import { Toast } from "@/components/Toast";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 import { savePackage, saveQuestions } from "@/lib/localStorage";
+import {
+  isSmallDevice,
+  scaleFontSize,
+  moderateScale,
+} from "@/utils/responsive";
 import type { InsertQuestion } from "@shared/schema";
 
 // Örnek JSON formatı
@@ -67,11 +73,16 @@ const EXAMPLE_JSON = `{
 export default function PDFUploadScreen() {
   const headerHeight = useHeaderHeight();
   const tabBarHeight = useBottomTabBarHeight();
+  useWindowDimensions(); // For reactivity on screen size changes
+
+  // Responsive calculations
+  const smallDevice = isSmallDevice();
+  const horizontalPadding = smallDevice ? Spacing.md : Spacing.lg;
 
   const [jsonInput, setJsonInput] = useState("");
   const [uploading, setUploading] = useState(false);
   const [showExample, setShowExample] = useState(true);
-  
+
   // Toast state
   const [toastVisible, setToastVisible] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
@@ -80,17 +91,20 @@ export default function PDFUploadScreen() {
 
   // Button animation
   const buttonScale = useSharedValue(1);
-  
+
   const buttonAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: buttonScale.value }],
   }));
 
-  const showToast = useCallback((message: string, subtitle: string, type: "success" | "error") => {
-    setToastMessage(message);
-    setToastSubtitle(subtitle);
-    setToastType(type);
-    setToastVisible(true);
-  }, []);
+  const showToast = useCallback(
+    (message: string, subtitle: string, type: "success" | "error") => {
+      setToastMessage(message);
+      setToastSubtitle(subtitle);
+      setToastType(type);
+      setToastVisible(true);
+    },
+    [],
+  );
 
   const hideToast = useCallback(() => {
     setToastVisible(false);
@@ -102,7 +116,7 @@ export default function PDFUploadScreen() {
     setTimeout(() => {
       buttonScale.value = withSpring(1, { damping: 15, stiffness: 200 });
     }, 100);
-    
+
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
 
     if (!jsonInput.trim()) {
@@ -127,7 +141,7 @@ export default function PDFUploadScreen() {
       showToast(
         "Eksik Alanlar",
         "packageName, examType ve questions gereklidir.",
-        "error"
+        "error",
       );
       return;
     }
@@ -193,14 +207,14 @@ export default function PDFUploadScreen() {
       );
 
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-      
+
       // Show success toast
       showToast(
         "Sorular Eklendi! 🎉",
         `"${pkg.name}" paketine ${createdQuestions.length} soru eklendi. Reels sekmesinden görebilirsiniz.`,
-        "success"
+        "success",
       );
-      
+
       // Clear input after success
       setJsonInput("");
       setShowExample(true);
@@ -212,7 +226,7 @@ export default function PDFUploadScreen() {
         error instanceof Error
           ? error.message
           : "Sorular eklenirken hata oluştu.",
-        "error"
+        "error",
       );
     } finally {
       setUploading(false);
@@ -231,208 +245,387 @@ export default function PDFUploadScreen() {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
+  // Responsive sizes
+  const iconContainerSize = smallDevice ? 90 : moderateScale(120, 0.3);
+  const iconSize = smallDevice ? 36 : moderateScale(48, 0.3);
+  const titleSize = smallDevice ? 22 : scaleFontSize(28);
+  const subtitleSize = smallDevice ? 14 : scaleFontSize(16);
+  const infoIconSize = smallDevice ? 18 : 20;
+  const infoTextSize = smallDevice ? 13 : 14;
+  const exampleTitleSize = smallDevice ? 14 : 16;
+  const exampleCodeSize = smallDevice ? 10 : 11;
+  const inputLabelSize = smallDevice ? 14 : 16;
+  const inputTextSize = smallDevice ? 12 : 13;
+  const helpTitleSize = smallDevice ? 14 : 16;
+  const helpFieldSize = smallDevice ? 11 : 12;
+
   return (
     <View style={styles.wrapper}>
       <ScrollView
         style={styles.container}
         contentContainerStyle={{
-          paddingTop: headerHeight + Spacing.xl,
+          paddingTop: headerHeight + (smallDevice ? Spacing.lg : Spacing.xl),
           paddingBottom: tabBarHeight + Spacing.xl,
-          paddingHorizontal: Spacing.lg,
+          paddingHorizontal: horizontalPadding,
         }}
         scrollIndicatorInsets={{ bottom: tabBarHeight }}
         keyboardShouldPersistTaps="handled"
       >
-      <Animated.View entering={FadeIn} style={styles.header}>
-        <LinearGradient
-          colors={[Colors.dark.primary, Colors.dark.secondary]}
-          style={styles.iconContainer}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <Feather name="file-text" size={48} color={Colors.dark.text} />
-        </LinearGradient>
-        <ThemedText style={styles.title}>JSON ile Soru Ekle</ThemedText>
-        <ThemedText style={styles.subtitle}>
-          Soru paketlerini JSON formatında ekleyin ve istatistiklerini takip
-          edin!
-        </ThemedText>
-      </Animated.View>
-
-      <Animated.View entering={SlideInUp.delay(100)} style={styles.infoCard}>
-        <View style={styles.infoRow}>
-          <Feather name="package" size={20} color={Colors.dark.primary} />
-          <ThemedText style={styles.infoText}>
-            Soru paketleri oluşturun (örn: TYT 2026)
-          </ThemedText>
-        </View>
-        <View style={styles.infoRow}>
-          <Feather name="bar-chart-2" size={20} color={Colors.dark.primary} />
-          <ThemedText style={styles.infoText}>
-            Paket bazlı başarı istatistikleri
-          </ThemedText>
-        </View>
-        <View style={styles.infoRow}>
-          <Feather name="clock" size={20} color={Colors.dark.primary} />
-          <ThemedText style={styles.infoText}>Çözüm süresi takibi</ThemedText>
-        </View>
-        <View style={styles.infoRow}>
-          <Feather name="target" size={20} color={Colors.dark.primary} />
-          <ThemedText style={styles.infoText}>
-            Konu bazlı yanlış analizi
-          </ThemedText>
-        </View>
-      </Animated.View>
-
-      {showExample && (
         <Animated.View
-          entering={SlideInUp.delay(200)}
-          style={styles.exampleSection}
+          entering={FadeIn}
+          style={[
+            styles.header,
+            { marginBottom: smallDevice ? Spacing.lg : Spacing.xl },
+          ]}
         >
-          <View style={styles.exampleHeader}>
-            <ThemedText style={styles.exampleTitle}>
-              📋 Örnek JSON Formatı
-            </ThemedText>
-            <Pressable onPress={handleUseExample} style={styles.useExampleBtn}>
-              <ThemedText style={styles.useExampleText}>Kullan</ThemedText>
-            </Pressable>
-          </View>
-          <ScrollView
-            style={styles.exampleBox}
-            horizontal
-            showsHorizontalScrollIndicator={false}
+          <LinearGradient
+            colors={[Colors.dark.primary, Colors.dark.secondary]}
+            style={[
+              styles.iconContainer,
+              {
+                width: iconContainerSize,
+                height: iconContainerSize,
+                borderRadius: iconContainerSize / 2,
+              },
+            ]}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
           >
-            <ThemedText style={styles.exampleCode}>{EXAMPLE_JSON}</ThemedText>
-          </ScrollView>
-        </Animated.View>
-      )}
-
-      <Animated.View
-        entering={SlideInUp.delay(300)}
-        style={styles.inputSection}
-      >
-        <View style={styles.inputHeader}>
-          <ThemedText style={styles.inputLabel}>JSON Verisi</ThemedText>
-          {jsonInput.length > 0 && (
-            <Pressable onPress={handleClearInput}>
-              <Feather
-                name="x-circle"
-                size={20}
-                color={Colors.dark.textSecondary}
-              />
-            </Pressable>
-          )}
-        </View>
-        <TextInput
-          style={styles.textInput}
-          multiline
-          placeholder="JSON formatında soru verisi yapıştırın..."
-          placeholderTextColor={Colors.dark.textSecondary}
-          value={jsonInput}
-          onChangeText={setJsonInput}
-          textAlignVertical="top"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
-      </Animated.View>
-
-      {uploading && (
-        <Animated.View entering={FadeIn} style={styles.progressContainer}>
-          <ActivityIndicator size="large" color={Colors.dark.primary} />
-          <ThemedText style={styles.progressText}>
-            Sorular ekleniyor...
+            <Feather
+              name="file-text"
+              size={iconSize}
+              color={Colors.dark.text}
+            />
+          </LinearGradient>
+          <ThemedText style={[styles.title, { fontSize: titleSize }]}>
+            JSON ile Soru Ekle
+          </ThemedText>
+          <ThemedText style={[styles.subtitle, { fontSize: subtitleSize }]}>
+            Soru paketlerini JSON formatında ekleyin ve istatistiklerini takip
+            edin!
           </ThemedText>
         </Animated.View>
-      )}
 
-      <View style={styles.buttonContainer}>
-        <Pressable
-          onPress={handleImport}
-          disabled={!jsonInput.trim() || uploading}
+        <Animated.View
+          entering={SlideInUp.delay(100)}
+          style={[
+            styles.infoCard,
+            {
+              padding: smallDevice ? Spacing.md : Spacing.lg,
+              marginBottom: smallDevice ? Spacing.lg : Spacing.xl,
+            },
+          ]}
         >
+          <View style={styles.infoRow}>
+            <Feather
+              name="package"
+              size={infoIconSize}
+              color={Colors.dark.primary}
+            />
+            <ThemedText style={[styles.infoText, { fontSize: infoTextSize }]}>
+              Soru paketleri oluşturun (örn: TYT 2026)
+            </ThemedText>
+          </View>
+          <View style={styles.infoRow}>
+            <Feather
+              name="bar-chart-2"
+              size={infoIconSize}
+              color={Colors.dark.primary}
+            />
+            <ThemedText style={[styles.infoText, { fontSize: infoTextSize }]}>
+              Paket bazlı başarı istatistikleri
+            </ThemedText>
+          </View>
+          <View style={styles.infoRow}>
+            <Feather
+              name="clock"
+              size={infoIconSize}
+              color={Colors.dark.primary}
+            />
+            <ThemedText style={[styles.infoText, { fontSize: infoTextSize }]}>
+              Çözüm süresi takibi
+            </ThemedText>
+          </View>
+          <View style={styles.infoRow}>
+            <Feather
+              name="target"
+              size={infoIconSize}
+              color={Colors.dark.primary}
+            />
+            <ThemedText style={[styles.infoText, { fontSize: infoTextSize }]}>
+              Konu bazlı yanlış analizi
+            </ThemedText>
+          </View>
+        </Animated.View>
+
+        {showExample && (
           <Animated.View
+            entering={SlideInUp.delay(200)}
             style={[
-              styles.submitButton,
-              {
-                opacity: !jsonInput.trim() || uploading ? 0.5 : 1,
-              },
-              buttonAnimatedStyle,
+              styles.exampleSection,
+              { marginBottom: smallDevice ? Spacing.lg : Spacing.xl },
             ]}
           >
-            {uploading ? (
-              <ActivityIndicator size="small" color={Colors.dark.backgroundRoot} />
-            ) : (
-              <Feather name="upload" size={20} color={Colors.dark.backgroundRoot} />
+            <View style={styles.exampleHeader}>
+              <ThemedText
+                style={[styles.exampleTitle, { fontSize: exampleTitleSize }]}
+              >
+                📋 Örnek JSON Formatı
+              </ThemedText>
+              <Pressable
+                onPress={handleUseExample}
+                style={[
+                  styles.useExampleBtn,
+                  smallDevice && {
+                    paddingHorizontal: Spacing.sm,
+                    paddingVertical: Spacing.xs - 1,
+                  },
+                ]}
+              >
+                <ThemedText
+                  style={[
+                    styles.useExampleText,
+                    { fontSize: smallDevice ? 12 : 13 },
+                  ]}
+                >
+                  Kullan
+                </ThemedText>
+              </Pressable>
+            </View>
+            <ScrollView
+              style={[
+                styles.exampleBox,
+                {
+                  maxHeight: smallDevice ? 150 : 200,
+                  padding: smallDevice ? Spacing.sm : Spacing.md,
+                },
+              ]}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+            >
+              <ThemedText
+                style={[
+                  styles.exampleCode,
+                  {
+                    fontSize: exampleCodeSize,
+                    lineHeight: exampleCodeSize * 1.5,
+                  },
+                ]}
+              >
+                {EXAMPLE_JSON}
+              </ThemedText>
+            </ScrollView>
+          </Animated.View>
+        )}
+
+        <Animated.View
+          entering={SlideInUp.delay(300)}
+          style={[
+            styles.inputSection,
+            { marginBottom: smallDevice ? Spacing.md : Spacing.lg },
+          ]}
+        >
+          <View style={styles.inputHeader}>
+            <ThemedText
+              style={[styles.inputLabel, { fontSize: inputLabelSize }]}
+            >
+              JSON Verisi
+            </ThemedText>
+            {jsonInput.length > 0 && (
+              <Pressable onPress={handleClearInput}>
+                <Feather
+                  name="x-circle"
+                  size={smallDevice ? 18 : 20}
+                  color={Colors.dark.textSecondary}
+                />
+              </Pressable>
             )}
-            <ThemedText style={styles.submitButtonText}>
-              {uploading ? "Ekleniyor..." : "Soruları Ekle"}
+          </View>
+          <TextInput
+            style={[
+              styles.textInput,
+              { fontSize: inputTextSize, minHeight: smallDevice ? 150 : 200 },
+            ]}
+            multiline
+            placeholder="JSON formatında soru verisi yapıştırın..."
+            placeholderTextColor={Colors.dark.textSecondary}
+            value={jsonInput}
+            onChangeText={setJsonInput}
+            textAlignVertical="top"
+            autoCapitalize="none"
+            autoCorrect={false}
+          />
+        </Animated.View>
+
+        {uploading && (
+          <Animated.View entering={FadeIn} style={styles.progressContainer}>
+            <ActivityIndicator size="large" color={Colors.dark.primary} />
+            <ThemedText
+              style={[styles.progressText, { fontSize: smallDevice ? 14 : 16 }]}
+            >
+              Sorular ekleniyor...
             </ThemedText>
           </Animated.View>
-        </Pressable>
-      </View>
+        )}
 
-      <Animated.View entering={FadeIn.delay(400)} style={styles.helpSection}>
-        <ThemedText style={styles.helpTitle}>📌 JSON Alanları</ThemedText>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>packageName</ThemedText>
-          <ThemedText style={styles.helpDesc}>Paket adı (zorunlu)</ThemedText>
+        <View
+          style={[
+            styles.buttonContainer,
+            {
+              marginTop: smallDevice ? Spacing.md : Spacing.lg,
+              marginBottom: smallDevice ? Spacing.lg : Spacing.xl,
+            },
+          ]}
+        >
+          <Pressable
+            onPress={handleImport}
+            disabled={!jsonInput.trim() || uploading}
+          >
+            <Animated.View
+              style={[
+                styles.submitButton,
+                {
+                  opacity: !jsonInput.trim() || uploading ? 0.5 : 1,
+                  height: smallDevice ? 46 : Spacing.buttonHeight,
+                },
+                buttonAnimatedStyle,
+              ]}
+            >
+              {uploading ? (
+                <ActivityIndicator
+                  size="small"
+                  color={Colors.dark.backgroundRoot}
+                />
+              ) : (
+                <Feather
+                  name="upload"
+                  size={smallDevice ? 18 : 20}
+                  color={Colors.dark.backgroundRoot}
+                />
+              )}
+              <ThemedText
+                style={[
+                  styles.submitButtonText,
+                  { fontSize: smallDevice ? 14 : 16 },
+                ]}
+              >
+                {uploading ? "Ekleniyor..." : "Soruları Ekle"}
+              </ThemedText>
+            </Animated.View>
+          </Pressable>
         </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>examType</ThemedText>
-          <ThemedText style={styles.helpDesc}>
-            TYT veya AYT (zorunlu)
+
+        <Animated.View
+          entering={FadeIn.delay(400)}
+          style={[
+            styles.helpSection,
+            { padding: smallDevice ? Spacing.md : Spacing.lg },
+          ]}
+        >
+          <ThemedText style={[styles.helpTitle, { fontSize: helpTitleSize }]}>
+            📌 JSON Alanları
           </ThemedText>
-        </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>year</ThemedText>
-          <ThemedText style={styles.helpDesc}>
-            Sınav yılı (opsiyonel)
-          </ThemedText>
-        </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>description</ThemedText>
-          <ThemedText style={styles.helpDesc}>Açıklama (opsiyonel)</ThemedText>
-        </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>questions</ThemedText>
-          <ThemedText style={styles.helpDesc}>Soru dizisi (zorunlu)</ThemedText>
-        </View>
-        <ThemedText style={styles.helpSubtitle}>Her Soru İçin:</ThemedText>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>content</ThemedText>
-          <ThemedText style={styles.helpDesc}>Soru metni</ThemedText>
-        </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>options</ThemedText>
-          <ThemedText style={styles.helpDesc}>Şıklar dizisi (A-E)</ThemedText>
-        </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>correctAnswer</ThemedText>
-          <ThemedText style={styles.helpDesc}>
-            Doğru cevap (A/B/C/D/E)
-          </ThemedText>
-        </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>solution</ThemedText>
-          <ThemedText style={styles.helpDesc}>
-            Çözüm açıklaması (opsiyonel)
-          </ThemedText>
-        </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>category</ThemedText>
-          <ThemedText style={styles.helpDesc}>
-            Ders (Matematik, Fizik...)
-          </ThemedText>
-        </View>
-        <View style={styles.helpItem}>
-          <ThemedText style={styles.helpField}>subject</ThemedText>
-          <ThemedText style={styles.helpDesc}>
-            Alt konu (Türev, Paragraf...)
-          </ThemedText>
-        </View>
-      </Animated.View>
+          <View style={styles.helpItem}>
+            <ThemedText
+              style={[
+                styles.helpField,
+                { fontSize: helpFieldSize, minWidth: smallDevice ? 85 : 100 },
+              ]}
+            >
+              packageName
+            </ThemedText>
+            <ThemedText style={[styles.helpDesc, { fontSize: helpFieldSize }]}>
+              Paket adı (zorunlu)
+            </ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText
+              style={[
+                styles.helpField,
+                { fontSize: helpFieldSize, minWidth: smallDevice ? 85 : 100 },
+              ]}
+            >
+              examType
+            </ThemedText>
+            <ThemedText style={[styles.helpDesc, { fontSize: helpFieldSize }]}>
+              TYT veya AYT (zorunlu)
+            </ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText
+              style={[
+                styles.helpField,
+                { fontSize: helpFieldSize, minWidth: smallDevice ? 85 : 100 },
+              ]}
+            >
+              year
+            </ThemedText>
+            <ThemedText style={[styles.helpDesc, { fontSize: helpFieldSize }]}>
+              Sınav yılı (opsiyonel)
+            </ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText
+              style={[
+                styles.helpField,
+                { fontSize: helpFieldSize, minWidth: smallDevice ? 85 : 100 },
+              ]}
+            >
+              description
+            </ThemedText>
+            <ThemedText style={[styles.helpDesc, { fontSize: helpFieldSize }]}>
+              Açıklama (opsiyonel)
+            </ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText
+              style={[
+                styles.helpField,
+                { fontSize: helpFieldSize, minWidth: smallDevice ? 85 : 100 },
+              ]}
+            >
+              questions
+            </ThemedText>
+            <ThemedText style={[styles.helpDesc, { fontSize: helpFieldSize }]}>
+              Soru dizisi (zorunlu)
+            </ThemedText>
+          </View>
+          <ThemedText style={styles.helpSubtitle}>Her Soru İçin:</ThemedText>
+          <View style={styles.helpItem}>
+            <ThemedText style={styles.helpField}>content</ThemedText>
+            <ThemedText style={styles.helpDesc}>Soru metni</ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText style={styles.helpField}>options</ThemedText>
+            <ThemedText style={styles.helpDesc}>Şıklar dizisi (A-E)</ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText style={styles.helpField}>correctAnswer</ThemedText>
+            <ThemedText style={styles.helpDesc}>
+              Doğru cevap (A/B/C/D/E)
+            </ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText style={styles.helpField}>solution</ThemedText>
+            <ThemedText style={styles.helpDesc}>
+              Çözüm açıklaması (opsiyonel)
+            </ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText style={styles.helpField}>category</ThemedText>
+            <ThemedText style={styles.helpDesc}>
+              Ders (Matematik, Fizik...)
+            </ThemedText>
+          </View>
+          <View style={styles.helpItem}>
+            <ThemedText style={styles.helpField}>subject</ThemedText>
+            <ThemedText style={styles.helpDesc}>
+              Alt konu (Türev, Paragraf...)
+            </ThemedText>
+          </View>
+        </Animated.View>
       </ScrollView>
-      
+
       {/* Toast notification */}
       <Toast
         visible={toastVisible}

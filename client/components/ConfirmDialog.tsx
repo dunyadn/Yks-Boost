@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  Modal,
-  View,
-  StyleSheet,
-  Pressable,
-  Platform,
-} from "react-native";
+import { Modal, View, StyleSheet, Pressable, Platform } from "react-native";
 import { ThemedText } from "./ThemedText";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
@@ -64,7 +58,9 @@ export function ConfirmDialog({
               onPress={onConfirm}
             >
               <ThemedText
-                style={destructive ? styles.destructiveText : styles.confirmText}
+                style={
+                  destructive ? styles.destructiveText : styles.confirmText
+                }
               >
                 {confirmText}
               </ThemedText>
