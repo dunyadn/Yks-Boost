@@ -445,6 +445,9 @@ export default function ReelsScreen() {
       const savedQuestionIds = await getSavedQuestions();
       const solvedQuestionIds = await getSolvedQuestionIds();
       
+      // Convert to Set for O(1) lookup performance
+      const solvedIdsSet = new Set(solvedQuestionIds);
+      
       // Mark questions as saved if they're in the saved list
       const questionsWithSavedStatus = data.map((q) => ({
         ...q,
@@ -456,13 +459,17 @@ export default function ReelsScreen() {
         comments: 0,
       }));
       
-      // Separate unsolved and solved questions
-      const unsolvedQuestions = questionsWithSavedStatus.filter(
-        (q) => !solvedQuestionIds.includes(q.id)
-      );
-      const solvedQuestions = questionsWithSavedStatus.filter((q) =>
-        solvedQuestionIds.includes(q.id)
-      );
+      // Separate unsolved and solved questions in a single pass
+      const unsolvedQuestions: typeof questionsWithSavedStatus = [];
+      const solvedQuestions: typeof questionsWithSavedStatus = [];
+      
+      questionsWithSavedStatus.forEach((q) => {
+        if (solvedIdsSet.has(q.id)) {
+          solvedQuestions.push(q);
+        } else {
+          unsolvedQuestions.push(q);
+        }
+      });
       
       // Prioritize unsolved questions first, then show solved ones
       const orderedQuestions = [...unsolvedQuestions, ...solvedQuestions];
