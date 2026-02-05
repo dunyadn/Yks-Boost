@@ -20,6 +20,7 @@ import { queryClient } from "@/lib/query-client";
 import RootStackNavigator from "@/navigation/RootStackNavigator";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { initializeNotifications } from "@/lib/notifications";
+import { initializeQuestions } from "@/lib/initQuestions";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -40,6 +41,11 @@ export default function App() {
   // Initialize notifications on app startup
   useEffect(() => {
     initializeNotifications();
+  }, []);
+
+  // Initialize questions on app startup (runs only once)
+  useEffect(() => {
+    initializeQuestions();
   }, []);
 
   if (!fontsLoaded && !fontError) {
