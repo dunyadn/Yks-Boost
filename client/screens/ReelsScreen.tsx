@@ -28,11 +28,13 @@ import { Tag } from "@/components/Tag";
 import { ReelsActionButton } from "@/components/ReelsActionButton";
 import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 import {
-  getQuestions,
+  getAllQuestionsIncludingPackages,
   updateStats,
   updatePackageStats,
   toggleSavedQuestion,
   getSavedQuestions,
+  saveSolvedQuestion,
+  getSolvedQuestion,
 } from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -220,6 +222,20 @@ function ReelCard({
   const [revealed, setRevealed] = useState(false);
   const [showSolution, setShowSolution] = useState(false);
   const [startTime] = useState<number>(Date.now());
+  const [isSolved, setIsSolved] = useState(false);
+
+  // Load solved state when question loads
+  useEffect(() => {
+    const loadSolvedState = async () => {
+      const solvedData = await getSolvedQuestion(question.id);
+      if (solvedData) {
+        setSelectedOption(solvedData.selectedOption);
+        setRevealed(solvedData.revealed);
+        setIsSolved(true);
+      }
+    };
+    loadSolvedState();
+  }, [question.id]);
 
   const handleOptionPress = async (label: string) => {
     if (revealed) return;
@@ -243,6 +259,10 @@ function ReelCard({
       if (question.packageId) {
         await updatePackageStats(question.packageId, isCorrect, solvingTimeMs);
       }
+
+      // Save solved question state
+      await saveSolvedQuestion(question.id, label, isCorrect, true);
+      setIsSolved(true);
     } catch (error) {
       console.error("Error updating stats:", error);
     }
@@ -285,6 +305,16 @@ function ReelCard({
       >
         <View style={styles.tagRow}>
           <Tag label={`#${question.category || "Genel"}`} variant="accent" />
+          {isSolved && (
+            <View style={styles.solvedBadge}>
+              <Feather
+                name="check-circle"
+                size={14}
+                color={Colors.dark.success}
+              />
+              <ThemedText style={styles.solvedBadgeText}>Çözüldü</ThemedText>
+            </View>
+          )}
         </View>
       </View>
 
@@ -394,7 +424,7 @@ export default function ReelsScreen() {
 
   const fetchQuestions = useCallback(async () => {
     try {
-      const data = await getQuestions();
+      const data = await getAllQuestionsIncludingPackages();
       const savedQuestionIds = await getSavedQuestions();
       // Mark questions as saved if they're in the saved list
       const questionsWithSavedStatus = data.map((q) => ({
@@ -720,5 +750,21 @@ const styles = StyleSheet.create({
     fontSize: 13,
     fontWeight: "600",
     color: Colors.dark.backgroundRoot,
+  },
+  solvedBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: Colors.dark.success + "20",
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs - 2,
+    borderRadius: BorderRadius.xs,
+    gap: Spacing.xs - 2,
+    borderWidth: 1,
+    borderColor: Colors.dark.success + "40",
+  },
+  solvedBadgeText: {
+    fontSize: 11,
+    fontWeight: "600",
+    color: Colors.dark.success,
   },
 });
