@@ -1,0 +1,568 @@
+{
+  "packageName": "TYT 2022 Fizik",
+  "examType": "TYT",
+  "year": 2022,
+  "description": "TYT 2022 Fizik Soruları - 40 Soru",
+  "questions": [
+    {
+      "content": "Bir cisim 10 m/s hızla atıldığında 3 saniye sonra hızı 19 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (19 - 10) / 3 = 9 / 3 = 3 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "12 N kuvvet uygulanan 3 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 12 = 3 × a → a = 12/3 = 4 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "28 V gerilim altında 4 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "2",
+        "5",
+        "7",
+        "9",
+        "12"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 28 = 4 × R → R = 28/4 = 7 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "5 kg kütleli 8 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "110",
+        "135",
+        "160",
+        "185",
+        "210"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 5 × 8² = (1/2) × 5 × 64 = 160 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 14 m/s hızla atıldığında 7 saniye sonra hızı 63 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (63 - 14) / 7 = 49 / 7 = 7 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "56 N kuvvet uygulanan 7 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 56 = 7 × a → a = 56/7 = 8 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "33 V gerilim altında 3 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "6",
+        "9",
+        "11",
+        "13",
+        "16"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 33 = 3 × R → R = 33/3 = 11 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "9 kg kütleli 12 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "598",
+        "623",
+        "648",
+        "673",
+        "698"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 9 × 12² = (1/2) × 9 × 144 = 648 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 18 m/s hızla atıldığında 5 saniye sonra hızı 48 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (48 - 18) / 5 = 30 / 5 = 6 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "12 N kuvvet uygulanan 2 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 12 = 2 × a → a = 12/2 = 6 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "30 V gerilim altında 2 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "10",
+        "13",
+        "15",
+        "17",
+        "20"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 30 = 2 × R → R = 30/2 = 15 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "4 kg kütleli 5 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "0",
+        "25",
+        "50",
+        "75",
+        "100"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 4 × 5² = (1/2) × 4 × 25 = 50 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 22 m/s hızla atıldığında 3 saniye sonra hızı 37 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (37 - 22) / 3 = 15 / 3 = 5 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "24 N kuvvet uygulanan 6 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 24 = 6 × a → a = 24/6 = 4 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "48 V gerilim altında 6 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "3",
+        "6",
+        "8",
+        "10",
+        "13"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 48 = 6 × R → R = 48/6 = 8 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "8 kg kütleli 9 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "274",
+        "299",
+        "324",
+        "349",
+        "374"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 8 × 9² = (1/2) × 8 × 81 = 324 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 26 m/s hızla atıldığında 7 saniye sonra hızı 54 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (54 - 26) / 7 = 28 / 7 = 4 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "80 N kuvvet uygulanan 10 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 80 = 10 × a → a = 80/10 = 8 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "60 V gerilim altında 5 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "7",
+        "10",
+        "12",
+        "14",
+        "17"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 60 = 5 × R → R = 60/5 = 12 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "3 kg kütleli 13 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "203",
+        "228",
+        "253",
+        "278",
+        "303"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 3 × 13² = (1/2) × 3 × 169 = 253 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 30 m/s hızla atıldığında 5 saniye sonra hızı 45 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (45 - 30) / 5 = 15 / 5 = 3 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "30 N kuvvet uygulanan 5 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 30 = 5 × a → a = 30/5 = 6 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "20 V gerilim altında 4 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "0",
+        "3",
+        "5",
+        "7",
+        "10"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 20 = 4 × R → R = 20/4 = 5 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "7 kg kütleli 6 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "76",
+        "101",
+        "126",
+        "151",
+        "176"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 7 × 6² = (1/2) × 7 × 36 = 126 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 13 m/s hızla atıldığında 3 saniye sonra hızı 34 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (34 - 13) / 3 = 21 / 3 = 7 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "36 N kuvvet uygulanan 9 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 36 = 9 × a → a = 36/9 = 4 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "27 V gerilim altında 3 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "4",
+        "7",
+        "9",
+        "11",
+        "14"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 27 = 3 × R → R = 27/3 = 9 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "2 kg kütleli 10 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "50",
+        "75",
+        "100",
+        "125",
+        "150"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 2 × 10² = (1/2) × 2 × 100 = 100 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 17 m/s hızla atıldığında 7 saniye sonra hızı 59 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (59 - 17) / 7 = 42 / 7 = 6 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "32 N kuvvet uygulanan 4 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 32 = 4 × a → a = 32/4 = 8 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "26 V gerilim altında 2 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "8",
+        "11",
+        "13",
+        "15",
+        "18"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 26 = 2 × R → R = 26/2 = 13 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "6 kg kütleli 14 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "538",
+        "563",
+        "588",
+        "613",
+        "638"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 6 × 14² = (1/2) × 6 × 196 = 588 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 21 m/s hızla atıldığında 5 saniye sonra hızı 46 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (46 - 21) / 5 = 25 / 5 = 5 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "48 N kuvvet uygulanan 8 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 48 = 8 × a → a = 48/8 = 6 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "36 V gerilim altında 6 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "1",
+        "4",
+        "6",
+        "8",
+        "11"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 36 = 6 × R → R = 36/6 = 6 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "10 kg kütleli 7 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "195",
+        "220",
+        "245",
+        "270",
+        "295"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 10 × 7² = (1/2) × 10 × 49 = 245 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    },
+    {
+      "content": "Bir cisim 25 m/s hızla atıldığında 3 saniye sonra hızı 37 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "a = (v - v₀) / t = (37 - 25) / 3 = 12 / 3 = 4 m/s²",
+      "category": "Fizik",
+      "subject": "Hareket"
+    },
+    {
+      "content": "12 N kuvvet uygulanan 3 kg kütleli cisme etki eden ivme kaç m/s²'dir?",
+      "options": [
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "correctAnswer": "C",
+      "solution": "Newton'un 2. yasasından F = m × a → 12 = 3 × a → a = 12/3 = 4 m/s²",
+      "category": "Fizik",
+      "subject": "Dinamik"
+    },
+    {
+      "content": "50 V gerilim altında 5 A akım çeken bir direncin değeri kaç Ω'dur?",
+      "options": [
+        "5",
+        "8",
+        "10",
+        "12",
+        "15"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ohm yasasından V = I × R → 50 = 5 × R → R = 50/5 = 10 Ω",
+      "category": "Fizik",
+      "subject": "Elektrik"
+    },
+    {
+      "content": "5 kg kütleli 11 m/s hızla hareket eden cismin kinetik enerjisi kaç J'dür?",
+      "options": [
+        "252",
+        "277",
+        "302",
+        "327",
+        "352"
+      ],
+      "correctAnswer": "C",
+      "solution": "Ek = (1/2) × m × v² = (1/2) × 5 × 11² = (1/2) × 5 × 121 = 302 J",
+      "category": "Fizik",
+      "subject": "Enerji"
+    }
+  ]
+}

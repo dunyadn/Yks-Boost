@@ -12,6 +12,7 @@
     "db:push": "drizzle-kit push",
     "convert-questions": "npx tsx scripts/converters/textToJson.ts",
     "convert-bulk": "npx tsx scripts/converters/comprehensiveConverter.ts",
+    "generate-questions": "npx tsx scripts/generators/questionGenerator.ts",
     "lint": "npx expo lint",
     "lint:fix": "npx expo lint --fix",
     "check:types": "tsc --noEmit",

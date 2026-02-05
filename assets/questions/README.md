@@ -16,17 +16,32 @@ Questions in this directory are automatically loaded into AsyncStorage when the 
 
 ## Current Question Packages
 
-### Basic Packages (Simple Solutions)
-- **tyt-tarih-2026.json** - TYT 2026 Tarih (10 questions)
-- **tyt-matematik-2026.json** - TYT 2026 Matematik (8 questions)
-- **tyt-fizik-2026.json** - TYT 2026 Fizik (6 questions)
+### Generated Question Banks (2020-2025)
+**1188 total questions** across **42 packages** covering 6 years (2020-2025):
 
-### Complete Packages (Detailed AI-Generated Solutions)
-- **tyt-tarih-complete-2026.json** - TYT 2026 Tarih - Tam Çözümlü (10 questions with detailed solutions)
-- **tyt-matematik-complete-2026.json** - TYT 2026 Matematik - Tam Çözümlü (8 questions with detailed solutions)
-- **tyt-fizik-complete-2026.json** - TYT 2026 Fizik - Tam Çözümlü (6 questions with detailed solutions)
+#### Matematik (240 questions)
+- tyt-matematik-2020.json through tyt-matematik-2025.json (40 questions each × 6 years)
 
-**Total: 48 questions across 6 packages**
+#### Fizik (240 questions)
+- tyt-fizik-2020.json through tyt-fizik-2025.json (40 questions each × 6 years)
+
+#### Kimya (240 questions)
+- tyt-kimya-2020.json through tyt-kimya-2025.json (40 questions each × 6 years)
+
+#### Biyoloji (180 questions)
+- tyt-biyoloji-2020.json through tyt-biyoloji-2025.json (30 questions each × 6 years)
+
+#### Tarih (120 questions)
+- tyt-tarih-2020.json through tyt-tarih-2025.json (20 questions each × 6 years)
+
+#### Coğrafya (120 questions)
+- tyt-cografya-2020.json through tyt-cografya-2025.json (20 questions each × 6 years)
+
+#### Legacy Packages (48 questions)
+- tyt-tarih-2026.json, tyt-matematik-2026.json, tyt-fizik-2026.json (Basic)
+- tyt-tarih-complete-2026.json, tyt-matematik-complete-2026.json, tyt-fizik-complete-2026.json (Complete)
+
+**Grand Total: 1188 questions across 42 packages**
 
 ## JSON Format
 

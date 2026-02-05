@@ -1,0 +1,568 @@
+{
+  "packageName": "TYT 2024 Matematik",
+  "examType": "TYT",
+  "year": 2024,
+  "description": "TYT 2024 Matematik Soruları - 40 Soru",
+  "questions": [
+    {
+      "content": "2x - 3 = 11 denkleminin çözüm kümesi aşağıdakilerden hangisidir?",
+      "options": [
+        "{5}",
+        "{6}",
+        "{7}",
+        "{8}",
+        "{9}"
+      ],
+      "correctAnswer": "C",
+      "solution": "2x - 3 = 11 denkleminde 3'i sağa atarsak: 2x = 11 + 3 → 2x = 14 → x = 7 bulunur.",
+      "category": "Matematik",
+      "subject": "Denklemler"
+    },
+    {
+      "content": "Bir dikdörtgenin uzun kenarı kısa kenarının 3 katıdır. Çevresi 88 cm ise, alanı kaç cm²'dir?",
+      "options": [
+        "309",
+        "363",
+        "413",
+        "463",
+        "513"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kısa kenar = x = 11 cm, uzun kenar = 3x = 33 cm. Çevre = 2(x + 3x) = 8x = 88 → x = 11 cm. Alan = 11 × 33 = 363 cm²",
+      "category": "Matematik",
+      "subject": "Geometri"
+    },
+    {
+      "content": "f(x) = 4x + 7 fonksiyonu için f(2) değeri kaçtır?",
+      "options": [
+        "11",
+        "13",
+        "15",
+        "17",
+        "19"
+      ],
+      "correctAnswer": "C",
+      "solution": "f(2) = 4(2) + 7 = 8 + 7 = 15",
+      "category": "Matematik",
+      "subject": "Fonksiyonlar"
+    },
+    {
+      "content": "√64 + √121 işleminin sonucu kaçtır?",
+      "options": [
+        "14",
+        "17",
+        "19",
+        "21",
+        "24"
+      ],
+      "correctAnswer": "C",
+      "solution": "√64 = 8 ve √121 = 11 olduğundan, 8 + 11 = 19 bulunur.",
+      "category": "Matematik",
+      "subject": "Kökler"
+    },
+    {
+      "content": "2^7 × 2^6 işleminin sonucu kaçtır?",
+      "options": [
+        "2^11",
+        "2^12",
+        "2^13",
+        "2^14",
+        "8192"
+      ],
+      "correctAnswer": "C",
+      "solution": "Üslü sayıların çarpımında tabanlar aynı ise üsler toplanır: 2^7 × 2^6 = 2^(7+6) = 2^13",
+      "category": "Matematik",
+      "subject": "Üslü Sayılar"
+    },
+    {
+      "content": "Bir sayının %45'i 90 ise, bu sayı kaçtır?",
+      "options": [
+        "150",
+        "180",
+        "200",
+        "220",
+        "250"
+      ],
+      "correctAnswer": "C",
+      "solution": "x × 45/100 = 90 → x × 0.45 = 90 → x = 90/0.45 = 200",
+      "category": "Matematik",
+      "subject": "Yüzdeler"
+    },
+    {
+      "content": "8x - 9 = 55 denkleminin çözüm kümesi aşağıdakilerden hangisidir?",
+      "options": [
+        "{6}",
+        "{7}",
+        "{8}",
+        "{9}",
+        "{10}"
+      ],
+      "correctAnswer": "C",
+      "solution": "8x - 9 = 55 denkleminde 9'i sağa atarsak: 8x = 55 + 9 → 8x = 64 → x = 8 bulunur.",
+      "category": "Matematik",
+      "subject": "Denklemler"
+    },
+    {
+      "content": "Bir dikdörtgenin uzun kenarı kısa kenarının 5 katıdır. Çevresi 204 cm ise, alanı kaç cm²'dir?",
+      "options": [
+        "1391",
+        "1445",
+        "1495",
+        "1545",
+        "1595"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kısa kenar = x = 17 cm, uzun kenar = 5x = 85 cm. Çevre = 2(x + 5x) = 12x = 204 → x = 17 cm. Alan = 17 × 85 = 1445 cm²",
+      "category": "Matematik",
+      "subject": "Geometri"
+    },
+    {
+      "content": "f(x) = 4x + 13 fonksiyonu için f(4) değeri kaçtır?",
+      "options": [
+        "25",
+        "27",
+        "29",
+        "31",
+        "33"
+      ],
+      "correctAnswer": "C",
+      "solution": "f(4) = 4(4) + 13 = 16 + 13 = 29",
+      "category": "Matematik",
+      "subject": "Fonksiyonlar"
+    },
+    {
+      "content": "√36 + √81 işleminin sonucu kaçtır?",
+      "options": [
+        "10",
+        "13",
+        "15",
+        "17",
+        "20"
+      ],
+      "correctAnswer": "C",
+      "solution": "√36 = 6 ve √81 = 9 olduğundan, 6 + 9 = 15 bulunur.",
+      "category": "Matematik",
+      "subject": "Kökler"
+    },
+    {
+      "content": "2^7 × 2^2 işleminin sonucu kaçtır?",
+      "options": [
+        "2^7",
+        "2^8",
+        "2^9",
+        "2^10",
+        "512"
+      ],
+      "correctAnswer": "C",
+      "solution": "Üslü sayıların çarpımında tabanlar aynı ise üsler toplanır: 2^7 × 2^2 = 2^(7+2) = 2^9",
+      "category": "Matematik",
+      "subject": "Üslü Sayılar"
+    },
+    {
+      "content": "Bir sayının %45'i 40 ise, bu sayı kaçtır?",
+      "options": [
+        "38",
+        "68",
+        "88",
+        "108",
+        "138"
+      ],
+      "correctAnswer": "C",
+      "solution": "x × 45/100 = 40 → x × 0.45 = 40 → x = 40/0.45 = 88",
+      "category": "Matematik",
+      "subject": "Yüzdeler"
+    },
+    {
+      "content": "6x - 15 = 39 denkleminin çözüm kümesi aşağıdakilerden hangisidir?",
+      "options": [
+        "{7}",
+        "{8}",
+        "{9}",
+        "{10}",
+        "{11}"
+      ],
+      "correctAnswer": "C",
+      "solution": "6x - 15 = 39 denkleminde 15'i sağa atarsak: 6x = 39 + 15 → 6x = 54 → x = 9 bulunur.",
+      "category": "Matematik",
+      "subject": "Denklemler"
+    },
+    {
+      "content": "Bir dikdörtgenin uzun kenarı kısa kenarının 3 katıdır. Çevresi 96 cm ise, alanı kaç cm²'dir?",
+      "options": [
+        "378",
+        "432",
+        "482",
+        "532",
+        "582"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kısa kenar = x = 12 cm, uzun kenar = 3x = 36 cm. Çevre = 2(x + 3x) = 8x = 96 → x = 12 cm. Alan = 12 × 36 = 432 cm²",
+      "category": "Matematik",
+      "subject": "Geometri"
+    },
+    {
+      "content": "f(x) = 4x + 19 fonksiyonu için f(5) değeri kaçtır?",
+      "options": [
+        "35",
+        "37",
+        "39",
+        "41",
+        "43"
+      ],
+      "correctAnswer": "C",
+      "solution": "f(5) = 4(5) + 19 = 20 + 19 = 39",
+      "category": "Matematik",
+      "subject": "Fonksiyonlar"
+    },
+    {
+      "content": "√144 + √49 işleminin sonucu kaçtır?",
+      "options": [
+        "14",
+        "17",
+        "19",
+        "21",
+        "24"
+      ],
+      "correctAnswer": "C",
+      "solution": "√144 = 12 ve √49 = 7 olduğundan, 12 + 7 = 19 bulunur.",
+      "category": "Matematik",
+      "subject": "Kökler"
+    },
+    {
+      "content": "2^7 × 2^3 işleminin sonucu kaçtır?",
+      "options": [
+        "2^8",
+        "2^9",
+        "2^10",
+        "2^11",
+        "1024"
+      ],
+      "correctAnswer": "C",
+      "solution": "Üslü sayıların çarpımında tabanlar aynı ise üsler toplanır: 2^7 × 2^3 = 2^(7+3) = 2^10",
+      "category": "Matematik",
+      "subject": "Üslü Sayılar"
+    },
+    {
+      "content": "Bir sayının %45'i 100 ise, bu sayı kaçtır?",
+      "options": [
+        "172",
+        "202",
+        "222",
+        "242",
+        "272"
+      ],
+      "correctAnswer": "C",
+      "solution": "x × 45/100 = 100 → x × 0.45 = 100 → x = 100/0.45 = 222",
+      "category": "Matematik",
+      "subject": "Yüzdeler"
+    },
+    {
+      "content": "4x - 3 = 37 denkleminin çözüm kümesi aşağıdakilerden hangisidir?",
+      "options": [
+        "{8}",
+        "{9}",
+        "{10}",
+        "{11}",
+        "{12}"
+      ],
+      "correctAnswer": "C",
+      "solution": "4x - 3 = 37 denkleminde 3'i sağa atarsak: 4x = 37 + 3 → 4x = 40 → x = 10 bulunur.",
+      "category": "Matematik",
+      "subject": "Denklemler"
+    },
+    {
+      "content": "Bir dikdörtgenin uzun kenarı kısa kenarının 5 katıdır. Çevresi 216 cm ise, alanı kaç cm²'dir?",
+      "options": [
+        "1566",
+        "1620",
+        "1670",
+        "1720",
+        "1770"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kısa kenar = x = 18 cm, uzun kenar = 5x = 90 cm. Çevre = 2(x + 5x) = 12x = 216 → x = 18 cm. Alan = 18 × 90 = 1620 cm²",
+      "category": "Matematik",
+      "subject": "Geometri"
+    },
+    {
+      "content": "f(x) = 4x + 9 fonksiyonu için f(3) değeri kaçtır?",
+      "options": [
+        "17",
+        "19",
+        "21",
+        "23",
+        "25"
+      ],
+      "correctAnswer": "C",
+      "solution": "f(3) = 4(3) + 9 = 12 + 9 = 21",
+      "category": "Matematik",
+      "subject": "Fonksiyonlar"
+    },
+    {
+      "content": "√100 + √25 işleminin sonucu kaçtır?",
+      "options": [
+        "10",
+        "13",
+        "15",
+        "17",
+        "20"
+      ],
+      "correctAnswer": "C",
+      "solution": "√100 = 10 ve √25 = 5 olduğundan, 10 + 5 = 15 bulunur.",
+      "category": "Matematik",
+      "subject": "Kökler"
+    },
+    {
+      "content": "2^7 × 2^4 işleminin sonucu kaçtır?",
+      "options": [
+        "2^9",
+        "2^10",
+        "2^11",
+        "2^12",
+        "2048"
+      ],
+      "correctAnswer": "C",
+      "solution": "Üslü sayıların çarpımında tabanlar aynı ise üsler toplanır: 2^7 × 2^4 = 2^(7+4) = 2^11",
+      "category": "Matematik",
+      "subject": "Üslü Sayılar"
+    },
+    {
+      "content": "Bir sayının %45'i 50 ise, bu sayı kaçtır?",
+      "options": [
+        "61",
+        "91",
+        "111",
+        "131",
+        "161"
+      ],
+      "correctAnswer": "C",
+      "solution": "x × 45/100 = 50 → x × 0.45 = 50 → x = 50/0.45 = 111",
+      "category": "Matematik",
+      "subject": "Yüzdeler"
+    },
+    {
+      "content": "2x - 9 = 13 denkleminin çözüm kümesi aşağıdakilerden hangisidir?",
+      "options": [
+        "{9}",
+        "{10}",
+        "{11}",
+        "{12}",
+        "{13}"
+      ],
+      "correctAnswer": "C",
+      "solution": "2x - 9 = 13 denkleminde 9'i sağa atarsak: 2x = 13 + 9 → 2x = 22 → x = 11 bulunur.",
+      "category": "Matematik",
+      "subject": "Denklemler"
+    },
+    {
+      "content": "Bir dikdörtgenin uzun kenarı kısa kenarının 3 katıdır. Çevresi 104 cm ise, alanı kaç cm²'dir?",
+      "options": [
+        "453",
+        "507",
+        "557",
+        "607",
+        "657"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kısa kenar = x = 13 cm, uzun kenar = 3x = 39 cm. Çevre = 2(x + 3x) = 8x = 104 → x = 13 cm. Alan = 13 × 39 = 507 cm²",
+      "category": "Matematik",
+      "subject": "Geometri"
+    },
+    {
+      "content": "f(x) = 4x + 15 fonksiyonu için f(4) değeri kaçtır?",
+      "options": [
+        "27",
+        "29",
+        "31",
+        "33",
+        "35"
+      ],
+      "correctAnswer": "C",
+      "solution": "f(4) = 4(4) + 15 = 16 + 15 = 31",
+      "category": "Matematik",
+      "subject": "Fonksiyonlar"
+    },
+    {
+      "content": "√64 + √121 işleminin sonucu kaçtır?",
+      "options": [
+        "14",
+        "17",
+        "19",
+        "21",
+        "24"
+      ],
+      "correctAnswer": "C",
+      "solution": "√64 = 8 ve √121 = 11 olduğundan, 8 + 11 = 19 bulunur.",
+      "category": "Matematik",
+      "subject": "Kökler"
+    },
+    {
+      "content": "2^7 × 2^5 işleminin sonucu kaçtır?",
+      "options": [
+        "2^10",
+        "2^11",
+        "2^12",
+        "2^13",
+        "4096"
+      ],
+      "correctAnswer": "C",
+      "solution": "Üslü sayıların çarpımında tabanlar aynı ise üsler toplanır: 2^7 × 2^5 = 2^(7+5) = 2^12",
+      "category": "Matematik",
+      "subject": "Üslü Sayılar"
+    },
+    {
+      "content": "Bir sayının %45'i 110 ise, bu sayı kaçtır?",
+      "options": [
+        "194",
+        "224",
+        "244",
+        "264",
+        "294"
+      ],
+      "correctAnswer": "C",
+      "solution": "x × 45/100 = 110 → x × 0.45 = 110 → x = 110/0.45 = 244",
+      "category": "Matematik",
+      "subject": "Yüzdeler"
+    },
+    {
+      "content": "8x - 15 = 41 denkleminin çözüm kümesi aşağıdakilerden hangisidir?",
+      "options": [
+        "{5}",
+        "{6}",
+        "{7}",
+        "{8}",
+        "{9}"
+      ],
+      "correctAnswer": "C",
+      "solution": "8x - 15 = 41 denkleminde 15'i sağa atarsak: 8x = 41 + 15 → 8x = 56 → x = 7 bulunur.",
+      "category": "Matematik",
+      "subject": "Denklemler"
+    },
+    {
+      "content": "Bir dikdörtgenin uzun kenarı kısa kenarının 5 katıdır. Çevresi 228 cm ise, alanı kaç cm²'dir?",
+      "options": [
+        "1751",
+        "1805",
+        "1855",
+        "1905",
+        "1955"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kısa kenar = x = 19 cm, uzun kenar = 5x = 95 cm. Çevre = 2(x + 5x) = 12x = 228 → x = 19 cm. Alan = 19 × 95 = 1805 cm²",
+      "category": "Matematik",
+      "subject": "Geometri"
+    },
+    {
+      "content": "f(x) = 4x + 5 fonksiyonu için f(2) değeri kaçtır?",
+      "options": [
+        "9",
+        "11",
+        "13",
+        "15",
+        "17"
+      ],
+      "correctAnswer": "C",
+      "solution": "f(2) = 4(2) + 5 = 8 + 5 = 13",
+      "category": "Matematik",
+      "subject": "Fonksiyonlar"
+    },
+    {
+      "content": "√36 + √81 işleminin sonucu kaçtır?",
+      "options": [
+        "10",
+        "13",
+        "15",
+        "17",
+        "20"
+      ],
+      "correctAnswer": "C",
+      "solution": "√36 = 6 ve √81 = 9 olduğundan, 6 + 9 = 15 bulunur.",
+      "category": "Matematik",
+      "subject": "Kökler"
+    },
+    {
+      "content": "2^7 × 2^6 işleminin sonucu kaçtır?",
+      "options": [
+        "2^11",
+        "2^12",
+        "2^13",
+        "2^14",
+        "8192"
+      ],
+      "correctAnswer": "C",
+      "solution": "Üslü sayıların çarpımında tabanlar aynı ise üsler toplanır: 2^7 × 2^6 = 2^(7+6) = 2^13",
+      "category": "Matematik",
+      "subject": "Üslü Sayılar"
+    },
+    {
+      "content": "Bir sayının %45'i 60 ise, bu sayı kaçtır?",
+      "options": [
+        "83",
+        "113",
+        "133",
+        "153",
+        "183"
+      ],
+      "correctAnswer": "C",
+      "solution": "x × 45/100 = 60 → x × 0.45 = 60 → x = 60/0.45 = 133",
+      "category": "Matematik",
+      "subject": "Yüzdeler"
+    },
+    {
+      "content": "6x - 3 = 45 denkleminin çözüm kümesi aşağıdakilerden hangisidir?",
+      "options": [
+        "{6}",
+        "{7}",
+        "{8}",
+        "{9}",
+        "{10}"
+      ],
+      "correctAnswer": "C",
+      "solution": "6x - 3 = 45 denkleminde 3'i sağa atarsak: 6x = 45 + 3 → 6x = 48 → x = 8 bulunur.",
+      "category": "Matematik",
+      "subject": "Denklemler"
+    },
+    {
+      "content": "Bir dikdörtgenin uzun kenarı kısa kenarının 3 katıdır. Çevresi 112 cm ise, alanı kaç cm²'dir?",
+      "options": [
+        "534",
+        "588",
+        "638",
+        "688",
+        "738"
+      ],
+      "correctAnswer": "B",
+      "solution": "Kısa kenar = x = 14 cm, uzun kenar = 3x = 42 cm. Çevre = 2(x + 3x) = 8x = 112 → x = 14 cm. Alan = 14 × 42 = 588 cm²",
+      "category": "Matematik",
+      "subject": "Geometri"
+    },
+    {
+      "content": "f(x) = 4x + 11 fonksiyonu için f(3) değeri kaçtır?",
+      "options": [
+        "19",
+        "21",
+        "23",
+        "25",
+        "27"
+      ],
+      "correctAnswer": "C",
+      "solution": "f(3) = 4(3) + 11 = 12 + 11 = 23",
+      "category": "Matematik",
+      "subject": "Fonksiyonlar"
+    },
+    {
+      "content": "√144 + √49 işleminin sonucu kaçtır?",
+      "options": [
+        "14",
+        "17",
+        "19",
+        "21",
+        "24"
+      ],
+      "correctAnswer": "C",
+      "solution": "√144 = 12 ve √49 = 7 olduğundan, 12 + 7 = 19 bulunur.",
+      "category": "Matematik",
+      "subject": "Kökler"
+    }
+  ]
+}
