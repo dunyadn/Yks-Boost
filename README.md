@@ -1,8 +1,21 @@
-# YKS Boost - YKS Sosyal Medya Platformu
+# YKS Boost - YKS Reels Platformu
 
 [![Run on Replit](https://replit.com/badge/github/dunyadn/Yks-Boost)](https://replit.com/@doubleflyingfis/Yks-Boost)
 
 YKS öğrencileri için soru odaklı sosyal medya platformu. Video paylaşımı olmadan, soru ve çözüm paylaşımına odaklanan modern bir mobil uygulama.
+
+## 📥 APK İndirme
+
+Android cihazınıza doğrudan kurulum için:
+
+1. **GitHub Actions ile Build**:
+   - Repository'nin "Actions" sekmesine gidin
+   - "Build Android APK" workflow'unu çalıştırın
+   - Build tamamlandıktan sonra "yksreels.apk" dosyasını indirin
+
+2. **Manuel Build**:
+   - Detaylı talimatlar için [ANDROID_APK_KILAVUZU.md](ANDROID_APK_KILAVUZU.md) dosyasına bakın
+   - Veya `./scripts/build-apk.sh` script'ini çalıştırın
 
 ## 🚀 Hızlı Başlangıç
 

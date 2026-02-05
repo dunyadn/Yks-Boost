@@ -1,6 +1,19 @@
-# YKS Sosyal - Android APK Oluşturma ve Kurulum Kılavuzu
+# YKS Reels - Android APK Oluşturma ve Kurulum Kılavuzu
 
-Bu kılavuz, YKS Sosyal uygulamasının Android APK dosyasını oluşturmak ve Android 14 cihazınıza kurmak için gereken adımları açıklar.
+Bu kılavuz, YKS Reels uygulamasının Android APK dosyasını oluşturmak ve Android cihazınıza kurmak için gereken adımları açıklar.
+
+## 📱 Hızlı Başlangıç (Otomatik Script)
+
+APK oluşturmanın en kolay yolu, hazırladığımız script'i kullanmaktır:
+
+```bash
+# Script'i çalıştırın
+./scripts/build-apk.sh
+```
+
+Bu script sizi adım adım yönlendirecektir.
+
+---
 
 ## 📋 Gereksinimler
 
@@ -8,9 +21,9 @@ Bu kılavuz, YKS Sosyal uygulamasının Android APK dosyasını oluşturmak ve A
 - npm veya yarn
 - Expo CLI
 - EAS CLI
-- Expo hesabı (ücretsiz)
+- Expo hesabı (ücretsiz) - [expo.dev](https://expo.dev)
 
-## 🚀 Kurulum Adımları
+## 🚀 Manuel Kurulum Adımları
 
 ### 1. Bağımlılıkları Yükleyin
 
@@ -34,7 +47,11 @@ Hesabınız yoksa [expo.dev](https://expo.dev) adresinden ücretsiz hesap oluşt
 
 ### 4. APK Oluşturun
 
-#### Önizleme APK'sı (Önerilen - Doğrudan Kurulabilir)
+#### 🌟 Yöntem 1: EAS Build (Önerilen - Bulut Tabanlı)
+
+En kolay ve önerilen yöntem. İnternet bağlantısı ve Expo hesabı gerektirir.
+
+**Önizleme APK'sı (Doğrudan Kurulabilir):**
 
 ```bash
 npm run build:android
@@ -46,28 +63,49 @@ veya doğrudan:
 eas build --platform android --profile preview
 ```
 
-#### Geliştirme APK'sı
+**Geliştirme APK'sı:**
 
 ```bash
 npm run build:android:dev
 ```
 
-#### Üretim APK'sı
+**Üretim APK'sı:**
 
 ```bash
 npm run build:android:prod
 ```
 
+#### 🔧 Yöntem 2: Lokal Build (Android SDK Gerekli)
+
+Bilgisayarınızda Android SDK kurulu olmalıdır.
+
+```bash
+# Android SDK yolunu ayarlayın
+export ANDROID_HOME=$HOME/Android/Sdk
+export PATH=$PATH:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+
+# Android projesini oluşturun
+npx expo prebuild --platform android --clean
+
+# APK'yı derleyin
+cd android
+./gradlew assembleRelease
+
+# APK dosyası: android/app/build/outputs/apk/release/app-release.apk
+```
+
 ### 5. APK'yı İndirin
 
-Build tamamlandıktan sonra:
+EAS Build tamamlandıktan sonra:
 
 1. Terminal'de görünen indirme bağlantısını tıklayın
 2. VEYA [expo.dev](https://expo.dev) hesabınıza giriş yapın
 3. "Builds" sekmesine gidin
 4. Son build'i bulun ve "Download" butonuna tıklayın
 
-## 📱 Android 14 Cihazınıza Kurulum
+APK dosyasını `yksreels.apk` olarak yeniden adlandırabilirsiniz.
+
+## 📱 Android Cihazınıza Kurulum
 
 ### APK'yı Cihazınıza Aktarın
 
@@ -84,6 +122,11 @@ Build tamamlandıktan sonra:
 1. APK dosyasını kendinize e-posta ile gönderin
 2. Telefonunuzda e-postayı açıp eki indirin
 
+**Yöntem 4: GitHub Releases**
+1. Repository'nin Releases sayfasına gidin
+2. En son sürümü bulun
+3. Assets kısmından `yksreels.apk` dosyasını indirin
+
 ### APK'yı Kurun
 
 1. **Bilinmeyen Kaynaklara İzin Verin:**
@@ -99,9 +142,9 @@ Build tamamlandıktan sonra:
    - "Yükle" butonuna tıklayın
    - Kurulum tamamlandıktan sonra "Aç" butonuna tıklayın
 
-## ⚠️ Android 14 Özel Notları
+## ⚠️ Android İzinleri
 
-Android 14 (API 34) için özel izinler yapılandırılmıştır:
+Uygulama için gerekli izinler:
 
 - **INTERNET**: Sunucuyla iletişim için
 - **CAMERA**: Soru fotoğrafı çekmek için
@@ -127,6 +170,18 @@ npm install
 
 # EAS build'i tekrar deneyin
 eas build --platform android --profile preview --clear-cache
+```
+
+### Lokal build başarısız olursa
+```bash
+# Android projesini temizleyin
+rm -rf android
+
+# Yeniden oluşturun
+npx expo prebuild --platform android --clean
+
+# Tekrar deneyin
+cd android && ./gradlew clean assembleRelease
 ```
 
 ### Uygulama açılmıyor
@@ -157,4 +212,4 @@ Sorun yaşarsanız:
 
 ---
 
-**Başarılı kurulum!** 🎉 YKS Sosyal uygulamasını kullanmaya hazırsınız.
+**Başarılı kurulum!** 🎉 YKS Reels uygulamasını kullanmaya hazırsınız.
