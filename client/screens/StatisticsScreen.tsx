@@ -264,7 +264,10 @@ export default function StatisticsScreen() {
       {/* Soru Çözüm Durumu */}
       {totalQuestions > 0 && (
         <Animated.View entering={FadeIn.delay(125)} style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>📝 Soru Çözüm Durumu</ThemedText>
+          <View style={styles.sectionTitleRow}>
+            <Feather name="edit-3" size={18} color={Colors.dark.text} />
+            <ThemedText style={styles.sectionTitle}>Soru Çözüm Durumu</ThemedText>
+          </View>
           <View style={styles.questionProgressCard}>
             <View style={styles.questionProgressStats}>
               <View style={styles.questionProgressStatItem}>
@@ -345,7 +348,10 @@ export default function StatisticsScreen() {
 
       {/* Detaylı Analiz */}
       <Animated.View entering={FadeIn.delay(350)} style={styles.section}>
-        <ThemedText style={styles.sectionTitle}>📊 Detaylı Analiz</ThemedText>
+        <View style={styles.sectionTitleRow}>
+          <Feather name="bar-chart-2" size={18} color={Colors.dark.text} />
+          <ThemedText style={styles.sectionTitle}>Detaylı Analiz</ThemedText>
+        </View>
 
         <View style={styles.progressCard}>
           <View style={styles.progressItem}>
@@ -381,9 +387,12 @@ export default function StatisticsScreen() {
       {/* En Çok Yanlış Yapılan Konular */}
       {stats?.worstTopics && stats.worstTopics.length > 0 && (
         <Animated.View entering={FadeIn.delay(500)} style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>
-            ⚠️ Geliştirilmesi Gereken Konular
-          </ThemedText>
+          <View style={styles.sectionTitleRow}>
+            <Feather name="alert-triangle" size={18} color={Colors.dark.text} />
+            <ThemedText style={styles.sectionTitle}>
+              Geliştirilmesi Gereken Konular
+            </ThemedText>
+          </View>
 
           <View style={styles.worstTopicsCard}>
             {stats.worstTopics.map((topic, index) => {
@@ -428,9 +437,12 @@ export default function StatisticsScreen() {
       {/* Soru Paketi İstatistikleri */}
       {packageStats.length > 0 && (
         <Animated.View entering={FadeIn.delay(550)} style={styles.section}>
-          <ThemedText style={styles.sectionTitle}>
-            📦 Soru Paketi İstatistikleri
-          </ThemedText>
+          <View style={styles.sectionTitleRow}>
+            <Feather name="package" size={18} color={Colors.dark.text} />
+            <ThemedText style={styles.sectionTitle}>
+              Soru Paketi İstatistikleri
+            </ThemedText>
+          </View>
 
           {packageStats.map((pkg, index) => (
             <View key={pkg.id} style={styles.packageCard}>
@@ -578,11 +590,16 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: Spacing.lg,
   },
+  sectionTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: Spacing.sm,
+    marginBottom: Spacing.md,
+  },
   sectionTitle: {
     fontSize: 18,
     fontWeight: "600",
     color: Colors.dark.text,
-    marginBottom: Spacing.md,
   },
   statCard: {
     borderRadius: BorderRadius.lg,
