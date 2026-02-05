@@ -91,6 +91,7 @@ export async function initializeQuestions(): Promise<void> {
     for (const packageData of questionPackages as PackageData[]) {
       try {
         // Validate package data
+        if (!packageData.packageName || !packageData.examType || !packageData.questions || !Array.isArray(packageData.questions) || packageData.questions.length === 0) {
           console.warn(`⚠️  Skipping invalid package:`, packageData);
           continue;
         }
