@@ -165,16 +165,8 @@ export default function StatisticsScreen() {
 
       // Calculate solved/unsolved counts
       const solvedIdsSet = new Set(solvedQuestionIds);
-      let solved = 0;
-      let unsolved = 0;
-      
-      questionsData.forEach((q) => {
-        if (solvedIdsSet.has(q.id)) {
-          solved++;
-        } else {
-          unsolved++;
-        }
-      });
+      const solved = questionsData.filter(q => solvedIdsSet.has(q.id)).length;
+      const unsolved = questionsData.length - solved;
       
       setUnsolvedCount(unsolved);
       setSolvedCount(solved);
@@ -293,7 +285,7 @@ export default function StatisticsScreen() {
               <View 
                 style={[
                   styles.questionProgressBarFill, 
-                  { width: `${totalQuestions > 0 ? (solvedCount / totalQuestions) * 100 : 0}%` }
+                  { width: `${(solvedCount / totalQuestions) * 100}%` }
                 ]} 
               />
             </View>
