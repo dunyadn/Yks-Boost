@@ -545,6 +545,22 @@ export async function getSolvedQuestion(
 }
 
 /**
+ * Get all solved question IDs
+ */
+export async function getSolvedQuestionIds(): Promise<string[]> {
+  try {
+    const data = await AsyncStorage.getItem(STORAGE_KEYS.SOLVED_QUESTIONS);
+    if (!data) return [];
+
+    const solvedQuestions: SolvedQuestionsMap = JSON.parse(data);
+    return Object.keys(solvedQuestions);
+  } catch (error) {
+    console.error("Error getting solved question IDs:", error);
+    return [];
+  }
+}
+
+/**
  * Clear all solved questions (reset)
  */
 export async function clearSolvedQuestions(): Promise<void> {

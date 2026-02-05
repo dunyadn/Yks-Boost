@@ -35,6 +35,7 @@ import {
   getSavedQuestions,
   saveSolvedQuestion,
   getSolvedQuestion,
+  getSolvedQuestionIds,
 } from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -442,6 +443,11 @@ export default function ReelsScreen() {
     try {
       const data = await getAllQuestionsIncludingPackages();
       const savedQuestionIds = await getSavedQuestions();
+      const solvedQuestionIds = await getSolvedQuestionIds();
+      
+      // Convert to Set for O(1) lookup performance
+      const solvedIdsSet = new Set(solvedQuestionIds);
+      
       // Mark questions as saved if they're in the saved list
       const questionsWithSavedStatus = data.map((q) => ({
         ...q,
@@ -452,7 +458,23 @@ export default function ReelsScreen() {
         likes: 0,
         comments: 0,
       }));
-      setQuestions(questionsWithSavedStatus);
+      
+      // Separate unsolved and solved questions in a single pass
+      const unsolvedQuestions: typeof questionsWithSavedStatus = [];
+      const solvedQuestions: typeof questionsWithSavedStatus = [];
+      
+      questionsWithSavedStatus.forEach((q) => {
+        if (solvedIdsSet.has(q.id)) {
+          solvedQuestions.push(q);
+        } else {
+          unsolvedQuestions.push(q);
+        }
+      });
+      
+      // Prioritize unsolved questions first, then show solved ones
+      const orderedQuestions = [...unsolvedQuestions, ...solvedQuestions];
+      
+      setQuestions(orderedQuestions);
     } catch (error) {
       console.error("Error fetching questions:", error);
     } finally {
