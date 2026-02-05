@@ -97,10 +97,12 @@ npm run expo:dev
 ## 📖 Dokümantasyon
 
 - [Replit Expo Setup](REPLIT_EXPO_SETUP.md) - Replit'te çalıştırma talimatları
-- [Conversion Guide](CONVERSION_GUIDE.md) - **YENİ!** Text dosyalarını JSON'a dönüştürme rehberi
-- [Text Format Examples](TEXT_FORMAT_EXAMPLES.md) - **YENİ!** Desteklenen text formatları
+- [Quick Start: Soru Dönüştürme](QUICK_START_CONVERTER.md) - **YENİ!** PDF/TXT soru dönüştürme hızlı başlangıç
+- [Comprehensive Converter Guide](COMPREHENSIVE_CONVERTER_GUIDE.md) - **YENİ!** Detaylı dönüştürme kılavuzu
+- [Conversion Guide](CONVERSION_GUIDE.md) - Text dosyalarını JSON'a dönüştürme rehberi
+- [Text Format Examples](TEXT_FORMAT_EXAMPLES.md) - Desteklenen text formatları
 - [JSON Format Guide](JSON_FORMAT_GUIDE.md) - JSON soru formatı kılavuzu
-- [Auto-loaded Questions](assets/questions/README.md) - **YENİ!** Otomatik yüklenen soru paketleri
+- [Auto-loaded Questions](assets/questions/README.md) - Otomatik yüklenen soru paketleri
 - [Testing Guide](TESTING_GUIDE.md) - Test etme rehberi
 - [Visual Guide](VISUAL_GUIDE.md) - Görsel tasarım rehberi
 - [Soru Ekleme Kılavuzu](SORU_EKLEME_KILAVUZU.md) - Soru ekleme rehberi
@@ -120,8 +122,14 @@ Yeni soru paketleri eklemek için `assets/questions/README.md` dosyasına bakın
 ## 🧪 Test ve Build
 
 ```bash
-# Text dosyasını JSON'a dönüştür
+# Text dosyasını JSON'a dönüştür (tekil)
 npm run convert-questions <input.txt> <output.json> -- --package-name "Paket Adı" --exam-type TYT
+
+# Toplu dönüştürme (dizindeki tüm PDF/TXT dosyaları)
+npm run convert-bulk <kaynak-dizin> <hedef-dizin>
+
+# AI destekli detaylı çözümlerle toplu dönüştürme
+npm run convert-bulk <kaynak-dizin> <hedef-dizin> -- --api-key YOUR_GEMINI_API_KEY
 
 # Tip kontrolü
 npm run check:types

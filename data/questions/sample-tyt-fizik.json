@@ -1,0 +1,88 @@
+{
+  "packageName": "TYT 2026 Fizik",
+  "examType": "TYT",
+  "year": 2026,
+  "lesson": "Fizik",
+  "sourceFile": "sample-tyt-fizik.txt",
+  "totalQuestions": 6,
+  "questions": [
+    {
+      "id": 1,
+      "content": "Işığın kırılma olayı hangi ortamlar arasında gerçekleşir?",
+      "options": {
+        "A": "Aynı yoğunluktaki ortamlar",
+        "B": "Farklı yoğunluktaki ortamlar",
+        "C": "Sadece hava ve su arasında",
+        "D": "Sadece katı ortamlarda",
+        "E": "Sadece sıvı ortamlarda"
+      },
+      "correctAnswer": "B",
+      "solution": "Bu Fizik sorusunu adım adım inceleyelim:\n\n**Soru Analizi:**\nBu soruda Işığın kırılma olayı hangi ortamlar arasında gerçekleşir?... konusu ele alınmaktadır. Soruyu doğru yanıtlayabilmek için fizik bilgisine ve mantıksal akıl yürütmeye ihtiyacımız var.\n\n**Şıkların Değerlendirilmesi:**\n\n**A Şıkkı: Aynı yoğunluktaki ortamlar**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**B Şıkkı: Farklı yoğunluktaki ortamlar**\nBu şık DOĞRUDUR. Işık, farklı yoğunluktaki iki ortam arasında geçerken kırılma gösterir. Bu durum Snell yasası ile açıklanır.\n\n**C Şıkkı: Sadece hava ve su arasında**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**D Şıkkı: Sadece katı ortamlarda**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**E Şıkkı: Sadece sıvı ortamlarda**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**Sonuç:**\nYukarıdaki analizden de görüldüğü üzere, doğru cevap **B şıkkıdır**. Farklı yoğunluktaki ortamlar seçeneği sorunun doğru cevabını vermektedir.\n\n**Not:** Bu tür soruları çözerken her şıkkı dikkatle okumak ve sistematik olarak değerlendirmek önemlidir. Fizik konusunda daha fazla pratik yapmak, benzer soruları daha hızlı ve doğru çözmenizi sağlayacaktır."
+    },
+    {
+      "id": 2,
+      "content": "Bir cisim 10 m/s hızla atıldığında 5 saniye sonra hızı 30 m/s oluyor. İvmesi kaç m/s²'dir?",
+      "options": {
+        "A": "2",
+        "B": "3",
+        "C": "4",
+        "D": "5",
+        "E": "6"
+      },
+      "correctAnswer": "C",
+      "solution": "Bu Fizik sorusunu adım adım inceleyelim:\n\n**Soru Analizi:**\nBu soruda Bir cisim 10 m/s hızla atıldığında 5 saniye sonra hızı 30 m/s oluyor. İvmesi kaç m/s²'dir?... konusu ele alınmaktadır. Soruyu doğru yanıtlayabilmek için fizik bilgisine ve mantıksal akıl yürütmeye ihtiyacımız var.\n\n**Şıkların Değerlendirilmesi:**\n\n**A Şıkkı: 2**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**B Şıkkı: 3**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**C Şıkkı: 4**\nBu şık DOĞRUDUR. a = (v - v₀) / t = (30 - 10) / 5 = 20 / 5 = 4 m/s²\n\n**D Şıkkı: 5**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**E Şıkkı: 6**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**Sonuç:**\nYukarıdaki analizden de görüldüğü üzere, doğru cevap **C şıkkıdır**. 4 seçeneği sorunun doğru cevabını vermektedir.\n\n**Not:** Bu tür soruları çözerken her şıkkı dikkatle okumak ve sistematik olarak değerlendirmek önemlidir. Fizik konusunda daha fazla pratik yapmak, benzer soruları daha hızlı ve doğru çözmenizi sağlayacaktır."
+    },
+    {
+      "id": 3,
+      "content": "Sabit basınçta bir gazın hacmi 2 katına çıkarılırsa sıcaklığı kaç katına çıkar?",
+      "options": {
+        "A": "1/2",
+        "B": "1",
+        "C": "2",
+        "D": "3",
+        "E": "4"
+      },
+      "correctAnswer": "C",
+      "solution": "Bu Fizik sorusunu adım adım inceleyelim:\n\n**Soru Analizi:**\nBu soruda Sabit basınçta bir gazın hacmi 2 katına çıkarılırsa sıcaklığı kaç katına çıkar?... konusu ele alınmaktadır. Soruyu doğru yanıtlayabilmek için fizik bilgisine ve mantıksal akıl yürütmeye ihtiyacımız var.\n\n**Şıkların Değerlendirilmesi:**\n\n**A Şıkkı: 1/2**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**B Şıkkı: 1**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**C Şıkkı: 2**\nBu şık DOĞRUDUR. Gay-Lussac yasasına göre V/T = sabit. V₂ = 2V₁ ise T₂ = 2T₁ olur.\n\n**D Şıkkı: 3**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**E Şıkkı: 4**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**Sonuç:**\nYukarıdaki analizden de görüldüğü üzere, doğru cevap **C şıkkıdır**. 2 seçeneği sorunun doğru cevabını vermektedir.\n\n**Not:** Bu tür soruları çözerken her şıkkı dikkatle okumak ve sistematik olarak değerlendirmek önemlidir. Fizik konusunda daha fazla pratik yapmak, benzer soruları daha hızlı ve doğru çözmenizi sağlayacaktır."
+    },
+    {
+      "id": 4,
+      "content": "Elektrik akımının birimi nedir?",
+      "options": {
+        "A": "Volt",
+        "B": "Amper",
+        "C": "Ohm",
+        "D": "Watt",
+        "E": "Joule"
+      },
+      "correctAnswer": "B",
+      "solution": "Bu Fizik sorusunu adım adım inceleyelim:\n\n**Soru Analizi:**\nBu soruda Elektrik akımının birimi nedir?... konusu ele alınmaktadır. Soruyu doğru yanıtlayabilmek için fizik bilgisine ve mantıksal akıl yürütmeye ihtiyacımız var.\n\n**Şıkların Değerlendirilmesi:**\n\n**A Şıkkı: Volt**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**B Şıkkı: Amper**\nBu şık DOĞRUDUR. Elektrik akımının SI birim sistemi birimi Amper'dir (A). 1 Amper, 1 saniyede 1 Coulomb yükün geçişi demektir.\n\n**C Şıkkı: Ohm**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**D Şıkkı: Watt**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**E Şıkkı: Joule**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**Sonuç:**\nYukarıdaki analizden de görüldüğü üzere, doğru cevap **B şıkkıdır**. Amper seçeneği sorunun doğru cevabını vermektedir.\n\n**Not:** Bu tür soruları çözerken her şıkkı dikkatle okumak ve sistematik olarak değerlendirmek önemlidir. Fizik konusunda daha fazla pratik yapmak, benzer soruları daha hızlı ve doğru çözmenizi sağlayacaktır."
+    },
+    {
+      "id": 5,
+      "content": "Newton'un 2. yasası hangi formülle ifade edilir?",
+      "options": {
+        "A": "F = m × a",
+        "B": "E = m × c²",
+        "C": "P = m × v",
+        "D": "W = F × d",
+        "E": "Q = m × c × ΔT"
+      },
+      "correctAnswer": "A",
+      "solution": "Bu Fizik sorusunu adım adım inceleyelim:\n\n**Soru Analizi:**\nBu soruda Newton'un 2. yasası hangi formülle ifade edilir?... konusu ele alınmaktadır. Soruyu doğru yanıtlayabilmek için fizik bilgisine ve mantıksal akıl yürütmeye ihtiyacımız var.\n\n**Şıkların Değerlendirilmesi:**\n\n**A Şıkkı: F = m × a**\nBu şık DOĞRUDUR. Newton'un 2. yasası, net kuvvetin kütleyle ivmenin çarpımına eşit olduğunu belirtir: F = m × a\n\n**B Şıkkı: E = m × c²**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**C Şıkkı: P = m × v**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**D Şıkkı: W = F × d**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**E Şıkkı: Q = m × c × ΔT**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**Sonuç:**\nYukarıdaki analizden de görüldüğü üzere, doğru cevap **A şıkkıdır**. F = m × a seçeneği sorunun doğru cevabını vermektedir.\n\n**Not:** Bu tür soruları çözerken her şıkkı dikkatle okumak ve sistematik olarak değerlendirmek önemlidir. Fizik konusunda daha fazla pratik yapmak, benzer soruları daha hızlı ve doğru çözmenizi sağlayacaktır."
+    },
+    {
+      "id": 6,
+      "content": "Ses dalgaları hangi ortamda en hızlı yayılır?",
+      "options": {
+        "A": "Vakum",
+        "B": "Hava",
+        "C": "Su",
+        "D": "Demir",
+        "E": "Yayılmaz"
+      },
+      "correctAnswer": "D",
+      "solution": "Bu Fizik sorusunu adım adım inceleyelim:\n\n**Soru Analizi:**\nBu soruda Ses dalgaları hangi ortamda en hızlı yayılır?... konusu ele alınmaktadır. Soruyu doğru yanıtlayabilmek için fizik bilgisine ve mantıksal akıl yürütmeye ihtiyacımız var.\n\n**Şıkların Değerlendirilmesi:**\n\n**A Şıkkı: Vakum**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**B Şıkkı: Hava**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**C Şıkkı: Su**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**D Şıkkı: Demir**\nBu şık DOĞRUDUR. Ses dalgaları mekanik dalgalardır ve katı ortamlarda en hızlı yayılır. Demir gibi katı metallerde ses hızı en yüksektir.\n\n**E Şıkkı: Yayılmaz**\nBu şık YANLIŞTIR. Bu seçenek sorunun bağlamına uymamaktadır veya yanlış bilgi içermektedir.\n\n**Sonuç:**\nYukarıdaki analizden de görüldüğü üzere, doğru cevap **D şıkkıdır**. Demir seçeneği sorunun doğru cevabını vermektedir.\n\n**Not:** Bu tür soruları çözerken her şıkkı dikkatle okumak ve sistematik olarak değerlendirmek önemlidir. Fizik konusunda daha fazla pratik yapmak, benzer soruları daha hızlı ve doğru çözmenizi sağlayacaktır."
+    }
+  ]
+}
