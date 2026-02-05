@@ -10,6 +10,9 @@ const questionPackages = [
   require("../../assets/questions/tyt-tarih-2026.json"),
   require("../../assets/questions/tyt-matematik-2026.json"),
   require("../../assets/questions/tyt-fizik-2026.json"),
+  require("../../assets/questions/tyt-tarih-complete-2026.json"),
+  require("../../assets/questions/tyt-matematik-complete-2026.json"),
+  require("../../assets/questions/tyt-fizik-complete-2026.json"),
 ];
 
 interface QuestionData {

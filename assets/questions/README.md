@@ -16,11 +16,17 @@ Questions in this directory are automatically loaded into AsyncStorage when the 
 
 ## Current Question Packages
 
+### Basic Packages (Simple Solutions)
 - **tyt-tarih-2026.json** - TYT 2026 Tarih (10 questions)
 - **tyt-matematik-2026.json** - TYT 2026 Matematik (8 questions)
 - **tyt-fizik-2026.json** - TYT 2026 Fizik (6 questions)
 
-**Total: 24 questions across 3 packages**
+### Complete Packages (Detailed AI-Generated Solutions)
+- **tyt-tarih-complete-2026.json** - TYT 2026 Tarih - Tam Çözümlü (10 questions with detailed solutions)
+- **tyt-matematik-complete-2026.json** - TYT 2026 Matematik - Tam Çözümlü (8 questions with detailed solutions)
+- **tyt-fizik-complete-2026.json** - TYT 2026 Fizik - Tam Çözümlü (6 questions with detailed solutions)
+
+**Total: 48 questions across 6 packages**
 
 ## JSON Format
 
