@@ -24,11 +24,10 @@ export function Tag({
         case "secondary":
           return Colors.dark.secondary;
         case "accent":
+        case "error":
           return Colors.dark.accent;
         case "success":
           return Colors.dark.success;
-        case "error":
-          return Colors.dark.accent;
         default:
           return Colors.dark.primary;
       }
@@ -43,11 +42,10 @@ export function Tag({
       case "secondary":
         return Colors.dark.secondary;
       case "accent":
+      case "error":
         return Colors.dark.accent;
       case "success":
         return Colors.dark.success;
-      case "error":
-        return Colors.dark.accent;
       default:
         return Colors.dark.primary;
     }

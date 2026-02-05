@@ -552,12 +552,17 @@ export async function clearSolvedQuestions(): Promise<void> {
 }
 
 // Get all questions including those from packages
+// Note: In the current implementation, getQuestions() already returns all questions
+// (both manually added and those from packages) because packages are stored in the
+// same questions array with packageId set. This function exists for:
+// 1. Semantic clarity - making it explicit that we want ALL questions
+// 2. Future-proofing - if package questions need special handling later
+// 3. API consistency - matching the requirement specification
 export async function getAllQuestionsIncludingPackages(): Promise<Question[]> {
   try {
     const questions = await getQuestions();
     // Questions from packages already have packageId set
     // getQuestions() returns all questions including those in packages
-    // So we just return them all
     return questions;
   } catch (error) {
     console.error("Error getting all questions including packages:", error);
