@@ -426,7 +426,7 @@ export default function ReelsScreen() {
           options: Array.isArray(q.options) ? (q.options as string[]) : [],
           saved: savedQuestionIds.includes(q.id),
           solved: !!solvedData,
-          solvedCorrectly: solvedData?.isCorrect || false,
+          solvedCorrectly: solvedData?.isCorrect ?? false,
           // TODO: Implement like/comment functionality in future
           liked: false,
           likes: 0,
