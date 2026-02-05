@@ -15,7 +15,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import pdfParse from 'pdf-parse';
+import * as pdfParse from 'pdf-parse';
 import { generateDetailedSolution } from './aiSolutionGenerator.js';
 
 interface Question {
@@ -55,7 +55,7 @@ interface ParsedQuestion {
 async function extractPdfText(filePath: string): Promise<string> {
   try {
     const dataBuffer = fs.readFileSync(filePath);
-    const data = await pdfParse(dataBuffer);
+    const data = await (pdfParse as any)(dataBuffer);
     return data.text;
   } catch (error) {
     console.error(`❌ PDF okuma hatası: ${filePath}`, error);
