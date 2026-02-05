@@ -49,13 +49,13 @@ export async function getQuestions(): Promise<Question[]> {
 }
 
 /**
- * Get all questions including both manual questions and package questions
- * Deduplicates by question ID
+ * Get all questions including both manual questions and package questions.
+ * This is an alias for getQuestions() since all questions (manual and package-based)
+ * are stored in the same storage location. Provided for semantic clarity and
+ * potential future separation of storage mechanisms.
  */
 export async function getAllQuestionsIncludingPackages(): Promise<Question[]> {
   try {
-    // Since package questions are stored in STORAGE_KEYS.QUESTIONS with their packageId set,
-    // getQuestions() already returns all questions including packages
     return await getQuestions();
   } catch (error) {
     console.error("Error loading all questions including packages:", error);

@@ -226,8 +226,14 @@ function ReelCard({
 
   // Load solved state when question loads
   useEffect(() => {
+    let isMounted = true;
+
     const loadSolvedState = async () => {
       const solvedData = await getSolvedQuestion(question.id);
+      
+      // Only update state if component is still mounted and showing the same question
+      if (!isMounted) return;
+
       if (solvedData) {
         setSelectedOption(solvedData.selectedOption);
         setRevealed(solvedData.revealed);
@@ -239,7 +245,12 @@ function ReelCard({
         setIsSolved(false);
       }
     };
+
     loadSolvedState();
+
+    return () => {
+      isMounted = false;
+    };
   }, [question.id]);
 
   const handleOptionPress = async (label: string) => {
