@@ -1,0 +1,55 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Build profile (preview, development, production)'
+        required: true
+        default: 'preview'
+        type: choice
+        options:
+          - preview
+          - development
+          - production
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 🏗 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🏗 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: 📦 Install dependencies
+        run: npm ci
+
+      - name: 🏗 Setup EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: 🚀 Build APK
+        run: eas build --platform android --profile ${{ github.event.inputs.profile }} --non-interactive --no-wait
+
+      - name: 📋 Build Info
+        run: |
+          echo "APK build has been submitted to Expo Application Services (EAS)."
+          echo "Build profile: ${{ github.event.inputs.profile }}"
+          echo ""
+          echo "To download the APK:"
+          echo "1. Go to https://expo.dev"
+          echo "2. Sign in with your account"
+          echo "3. Navigate to your project builds"
+          echo "4. Download the APK once the build is complete"
