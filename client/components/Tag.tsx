@@ -5,7 +5,7 @@ import { Colors, BorderRadius, Spacing } from "@/constants/theme";
 
 interface TagProps {
   label: string;
-  variant?: "primary" | "secondary" | "accent";
+  variant?: "primary" | "secondary" | "accent" | "success" | "error";
   onPress?: () => void;
   selected?: boolean;
 }
@@ -25,6 +25,10 @@ export function Tag({
           return Colors.dark.secondary;
         case "accent":
           return Colors.dark.accent;
+        case "success":
+          return Colors.dark.success;
+        case "error":
+          return Colors.dark.accent;
         default:
           return Colors.dark.primary;
       }
@@ -39,6 +43,10 @@ export function Tag({
       case "secondary":
         return Colors.dark.secondary;
       case "accent":
+        return Colors.dark.accent;
+      case "success":
+        return Colors.dark.success;
+      case "error":
         return Colors.dark.accent;
       default:
         return Colors.dark.primary;

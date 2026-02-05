@@ -33,6 +33,10 @@ import {
   updatePackageStats,
   toggleSavedQuestion,
   getSavedQuestions,
+  saveSolvedQuestion,
+  getSolvedQuestion,
+  getSolvedQuestions,
+  getAllQuestionsIncludingPackages,
 } from "@/lib/localStorage";
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get("window");
@@ -57,6 +61,8 @@ interface Question {
   comments?: number;
   saved?: boolean;
   liked?: boolean;
+  solved?: boolean;
+  solvedCorrectly?: boolean;
 }
 
 const MOCK_REELS: Question[] = [
@@ -243,6 +249,9 @@ function ReelCard({
       if (question.packageId) {
         await updatePackageStats(question.packageId, isCorrect, solvingTimeMs);
       }
+
+      // Save the solved question status
+      await saveSolvedQuestion(question.id, isCorrect, label);
     } catch (error) {
       console.error("Error updating stats:", error);
     }
@@ -285,6 +294,12 @@ function ReelCard({
       >
         <View style={styles.tagRow}>
           <Tag label={`#${question.category || "Genel"}`} variant="accent" />
+          {question.solved && (
+            <Tag 
+              label={question.solvedCorrectly ? "✓ Doğru" : "✗ Yanlış"} 
+              variant={question.solvedCorrectly ? "success" : "error"} 
+            />
+          )}
         </View>
       </View>
 
@@ -394,19 +409,31 @@ export default function ReelsScreen() {
 
   const fetchQuestions = useCallback(async () => {
     try {
-      const data = await getQuestions();
+      const data = await getAllQuestionsIncludingPackages();
       const savedQuestionIds = await getSavedQuestions();
-      // Mark questions as saved if they're in the saved list
-      const questionsWithSavedStatus = data.map((q) => ({
-        ...q,
-        options: Array.isArray(q.options) ? (q.options as string[]) : [],
-        saved: savedQuestionIds.includes(q.id),
-        // TODO: Implement like/comment functionality in future
-        liked: false,
-        likes: 0,
-        comments: 0,
-      }));
-      setQuestions(questionsWithSavedStatus);
+      
+      // Get solved questions to mark them in the UI
+      const solvedQuestionsData = await getSolvedQuestions();
+      const solvedMap = new Map(
+        solvedQuestionsData.map((sq) => [sq.questionId, sq])
+      );
+      
+      // Mark questions as saved and solved if they're in the respective lists
+      const questionsWithStatus = data.map((q) => {
+        const solvedData = solvedMap.get(q.id);
+        return {
+          ...q,
+          options: Array.isArray(q.options) ? (q.options as string[]) : [],
+          saved: savedQuestionIds.includes(q.id),
+          solved: !!solvedData,
+          solvedCorrectly: solvedData?.isCorrect || false,
+          // TODO: Implement like/comment functionality in future
+          liked: false,
+          likes: 0,
+          comments: 0,
+        };
+      });
+      setQuestions(questionsWithStatus);
     } catch (error) {
       console.error("Error fetching questions:", error);
     } finally {
