@@ -73,13 +73,13 @@ class PerformanceMonitor {
     return (
       _target: unknown,
       _propertyKey: string,
-      descriptor: PropertyDescriptor
+      descriptor: PropertyDescriptor,
     ) => {
       const originalMethod = descriptor.value;
 
       descriptor.value = async function (...args: unknown[]) {
         return performanceMonitor.measure(metricName, () =>
-          originalMethod.apply(this, args)
+          originalMethod.apply(this, args),
         );
       };
 

@@ -4,7 +4,7 @@ import {
   View,
   ScrollView,
   ActivityIndicator,
-  Dimensions,
+  useWindowDimensions,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useHeaderHeight } from "@react-navigation/elements";
@@ -22,8 +22,11 @@ import {
   getAllQuestionsIncludingPackages,
   getSolvedQuestionIds,
 } from "@/lib/localStorage";
-
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
+import {
+  isSmallDevice,
+  scaleFontSize,
+  moderateScale,
+} from "@/utils/responsive";
 
 interface TopicStat {
   id: string;
@@ -73,23 +76,48 @@ function StatCard({
   gradientColors: [string, string, ...string[]];
   delay?: number;
 }) {
+  const smallDevice = isSmallDevice();
+  const iconContainerSize = smallDevice ? 40 : moderateScale(48, 0.3);
+  const iconSize = smallDevice ? 20 : moderateScale(24, 0.3);
+  const titleFontSize = smallDevice ? 14 : scaleFontSize(16);
+  const valueFontSize = smallDevice ? 36 : scaleFontSize(48);
+  const subtitleFontSize = smallDevice ? 12 : scaleFontSize(14);
+  const cardPadding = smallDevice ? Spacing.lg : Spacing.xl;
+
   return (
     <Animated.View entering={SlideInRight.delay(delay).springify()}>
       <LinearGradient
         colors={gradientColors}
-        style={styles.statCard}
+        style={[styles.statCard, { padding: cardPadding }]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
       >
         <View style={styles.statCardHeader}>
-          <View style={styles.statIconContainer}>
-            <Feather name={icon} size={24} color={Colors.dark.text} />
+          <View
+            style={[
+              styles.statIconContainer,
+              {
+                width: iconContainerSize,
+                height: iconContainerSize,
+                borderRadius: BorderRadius.md,
+              },
+            ]}
+          >
+            <Feather name={icon} size={iconSize} color={Colors.dark.text} />
           </View>
-          <ThemedText style={styles.statTitle}>{title}</ThemedText>
+          <ThemedText style={[styles.statTitle, { fontSize: titleFontSize }]}>
+            {title}
+          </ThemedText>
         </View>
-        <ThemedText style={styles.statValue}>{value}</ThemedText>
+        <ThemedText style={[styles.statValue, { fontSize: valueFontSize }]}>
+          {value}
+        </ThemedText>
         {subtitle && (
-          <ThemedText style={styles.statSubtitle}>{subtitle}</ThemedText>
+          <ThemedText
+            style={[styles.statSubtitle, { fontSize: subtitleFontSize }]}
+          >
+            {subtitle}
+          </ThemedText>
         )}
       </LinearGradient>
     </Animated.View>
@@ -140,6 +168,7 @@ function formatTime(ms: number): string {
 export default function StatisticsScreen() {
   const insets = useSafeAreaInsets();
   const headerHeight = useHeaderHeight();
+  useWindowDimensions(); // For reactivity on screen size changes
   const [stats, setStats] = useState<Stats | null>(null);
   const [packageStats, setPackageStats] = useState<PackageWithStats[]>([]);
   const [loading, setLoading] = useState(true);
@@ -147,27 +176,37 @@ export default function StatisticsScreen() {
   const [solvedCount, setSolvedCount] = useState(0);
   const [totalQuestions, setTotalQuestions] = useState(0);
 
+  // Responsive calculations
+  const smallDevice = isSmallDevice();
+  const horizontalPadding = smallDevice ? Spacing.md : Spacing.lg;
+
   useEffect(() => {
     fetchStats();
   }, []);
 
   const fetchStats = async () => {
     try {
-      const [statsData, worstTopicsData, packagesData, packageStatsData, questionsData, solvedQuestionIds] =
-        await Promise.all([
-          getStats(),
-          getWorstTopics(5),
-          getPackages(),
-          getPackageStats(),
-          getAllQuestionsIncludingPackages(),
-          getSolvedQuestionIds(),
-        ]);
+      const [
+        statsData,
+        worstTopicsData,
+        packagesData,
+        packageStatsData,
+        questionsData,
+        solvedQuestionIds,
+      ] = await Promise.all([
+        getStats(),
+        getWorstTopics(5),
+        getPackages(),
+        getPackageStats(),
+        getAllQuestionsIncludingPackages(),
+        getSolvedQuestionIds(),
+      ]);
 
       // Calculate solved/unsolved counts
       const solvedIdsSet = new Set(solvedQuestionIds);
-      const solved = questionsData.filter(q => solvedIdsSet.has(q.id)).length;
+      const solved = questionsData.filter((q) => solvedIdsSet.has(q.id)).length;
       const unsolved = questionsData.length - solved;
-      
+
       setUnsolvedCount(unsolved);
       setSolvedCount(solved);
       setTotalQuestions(questionsData.length);
@@ -244,52 +283,99 @@ export default function StatisticsScreen() {
     });
   };
 
+  // Responsive font sizes
+  const headerTitleSize = smallDevice ? 26 : scaleFontSize(32);
+  const headerSubtitleSize = smallDevice ? 12 : scaleFontSize(14);
+  const sectionTitleSize = smallDevice ? 16 : scaleFontSize(18);
+  const progressStatTextSize = smallDevice ? 13 : 14;
+
   return (
     <ScrollView
       style={styles.container}
       contentContainerStyle={{
-        paddingTop: headerHeight + Spacing.lg,
+        paddingTop: headerHeight + (smallDevice ? Spacing.md : Spacing.lg),
         paddingBottom: insets.bottom + Spacing.xl,
-        paddingHorizontal: Spacing.lg,
+        paddingHorizontal: horizontalPadding,
       }}
       showsVerticalScrollIndicator={false}
     >
       <Animated.View entering={FadeIn.delay(100)}>
-        <ThemedText style={styles.headerTitle}>İstatistiklerim</ThemedText>
-        <ThemedText style={styles.headerSubtitle}>
+        <ThemedText style={[styles.headerTitle, { fontSize: headerTitleSize }]}>
+          İstatistiklerim
+        </ThemedText>
+        <ThemedText
+          style={[styles.headerSubtitle, { fontSize: headerSubtitleSize }]}
+        >
           Son güncelleme: {formatDate(stats?.lastUpdated)}
         </ThemedText>
       </Animated.View>
 
       {/* Soru Çözüm Durumu */}
       {totalQuestions > 0 && (
-        <Animated.View entering={FadeIn.delay(125)} style={styles.section}>
+        <Animated.View
+          entering={FadeIn.delay(125)}
+          style={[
+            styles.section,
+            { marginBottom: smallDevice ? Spacing.md : Spacing.lg },
+          ]}
+        >
           <View style={styles.sectionTitleRow}>
-            <Feather name="edit-3" size={18} color={Colors.dark.text} />
-            <ThemedText style={styles.sectionTitle}>Soru Çözüm Durumu</ThemedText>
+            <Feather
+              name="edit-3"
+              size={smallDevice ? 16 : 18}
+              color={Colors.dark.text}
+            />
+            <ThemedText
+              style={[styles.sectionTitle, { fontSize: sectionTitleSize }]}
+            >
+              Soru Çözüm Durumu
+            </ThemedText>
           </View>
-          <View style={styles.questionProgressCard}>
+          <View
+            style={[
+              styles.questionProgressCard,
+              { padding: smallDevice ? Spacing.md : Spacing.lg },
+            ]}
+          >
             <View style={styles.questionProgressStats}>
               <View style={styles.questionProgressStatItem}>
-                <Feather name="clock" size={16} color={Colors.dark.warning} />
-                <ThemedText style={styles.questionProgressStatText}>
+                <Feather
+                  name="clock"
+                  size={smallDevice ? 14 : 16}
+                  color={Colors.dark.warning}
+                />
+                <ThemedText
+                  style={[
+                    styles.questionProgressStatText,
+                    { fontSize: progressStatTextSize },
+                  ]}
+                >
                   {unsolvedCount} Çözülecek
                 </ThemedText>
               </View>
               <View style={styles.questionProgressDivider} />
               <View style={styles.questionProgressStatItem}>
-                <Feather name="check-circle" size={16} color={Colors.dark.success} />
-                <ThemedText style={styles.questionProgressStatText}>
+                <Feather
+                  name="check-circle"
+                  size={smallDevice ? 14 : 16}
+                  color={Colors.dark.success}
+                />
+                <ThemedText
+                  style={[
+                    styles.questionProgressStatText,
+                    { fontSize: progressStatTextSize },
+                  ]}
+                >
                   {solvedCount} Çözüldü
                 </ThemedText>
               </View>
             </View>
             <View style={styles.questionProgressBarContainer}>
-              <View 
+              <View
                 style={[
-                  styles.questionProgressBarFill, 
-                  { width: `${(solvedCount / totalQuestions) * 100}%` }
-                ]} 
+                  styles.questionProgressBarFill,
+                  { width: `${(solvedCount / totalQuestions) * 100}%` },
+                ]}
               />
             </View>
           </View>
@@ -297,7 +383,12 @@ export default function StatisticsScreen() {
       )}
 
       {/* Ana İstatistikler */}
-      <View style={styles.section}>
+      <View
+        style={[
+          styles.section,
+          { marginBottom: smallDevice ? Spacing.md : Spacing.lg },
+        ]}
+      >
         <StatCard
           title="Toplam Soru"
           value={totalAnswered}
@@ -308,7 +399,12 @@ export default function StatisticsScreen() {
         />
       </View>
 
-      <View style={styles.section}>
+      <View
+        style={[
+          styles.section,
+          { marginBottom: smallDevice ? Spacing.md : Spacing.lg },
+        ]}
+      >
         <StatCard
           title="Doğru Cevap"
           value={correctAnswers}
@@ -319,7 +415,12 @@ export default function StatisticsScreen() {
         />
       </View>
 
-      <View style={styles.section}>
+      <View
+        style={[
+          styles.section,
+          { marginBottom: smallDevice ? Spacing.md : Spacing.lg },
+        ]}
+      >
         <StatCard
           title="Başarı Oranı"
           value={`${successRate.toFixed(1)}%`}
@@ -335,7 +436,12 @@ export default function StatisticsScreen() {
       </View>
 
       {/* Çözüm Süresi */}
-      <View style={styles.section}>
+      <View
+        style={[
+          styles.section,
+          { marginBottom: smallDevice ? Spacing.md : Spacing.lg },
+        ]}
+      >
         <StatCard
           title="Ort. Çözüm Süresi"
           value={formatTime(avgTime)}
@@ -577,15 +683,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   headerTitle: {
-    fontSize: 32,
     fontWeight: "700",
     color: Colors.dark.text,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
-    fontSize: 14,
     color: Colors.dark.textSecondary,
-    marginBottom: Spacing["2xl"],
+    marginBottom: Spacing.xl,
   },
   section: {
     marginBottom: Spacing.lg,
@@ -597,13 +701,11 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   sectionTitle: {
-    fontSize: 18,
     fontWeight: "600",
     color: Colors.dark.text,
   },
   statCard: {
     borderRadius: BorderRadius.lg,
-    padding: Spacing.xl,
     overflow: "hidden",
   },
   statCardHeader: {
@@ -612,27 +714,21 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   statIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: BorderRadius.md,
     backgroundColor: "rgba(255, 255, 255, 0.2)",
     alignItems: "center",
     justifyContent: "center",
     marginRight: Spacing.md,
   },
   statTitle: {
-    fontSize: 16,
     fontWeight: "600",
     color: Colors.dark.text,
   },
   statValue: {
-    fontSize: 48,
     fontWeight: "700",
     color: Colors.dark.text,
     marginBottom: Spacing.xs,
   },
   statSubtitle: {
-    fontSize: 14,
     color: Colors.dark.text,
     opacity: 0.8,
   },

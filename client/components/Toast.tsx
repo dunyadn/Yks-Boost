@@ -1,9 +1,5 @@
 import React, { useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Platform,
-} from "react-native";
+import { StyleSheet, View, Platform } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Feather } from "@expo/vector-icons";
 import Animated, {
@@ -28,7 +24,9 @@ interface ToastProps {
   subtitle?: string;
 }
 
-const getIconName = (type: ToastType): "check-circle" | "x-circle" | "info" | "alert-triangle" => {
+const getIconName = (
+  type: ToastType,
+): "check-circle" | "x-circle" | "info" | "alert-triangle" => {
   switch (type) {
     case "success":
       return "check-circle";
@@ -119,13 +117,17 @@ export function Toast({
           opacity.value = withTiming(0, {
             duration: 300,
           });
-          scale.value = withTiming(0.8, {
-            duration: 300,
-          }, () => {
-            runOnJS(onHide)();
-          });
+          scale.value = withTiming(
+            0.8,
+            {
+              duration: 300,
+            },
+            () => {
+              runOnJS(onHide)();
+            },
+          );
         };
-        
+
         setTimeout(hideAnimation, duration);
       }
     } else {
@@ -136,10 +138,7 @@ export function Toast({
   }, [visible, duration, onHide, translateY, opacity, scale]);
 
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateY: translateY.value },
-      { scale: scale.value },
-    ],
+    transform: [{ translateY: translateY.value }, { scale: scale.value }],
     opacity: opacity.value,
   }));
 
@@ -178,9 +177,7 @@ export function Toast({
           />
         </View>
         <View style={styles.content}>
-          <ThemedText
-            style={[styles.message, { color: getIconColor(type) }]}
-          >
+          <ThemedText style={[styles.message, { color: getIconColor(type) }]}>
             {message}
           </ThemedText>
           {subtitle && (
